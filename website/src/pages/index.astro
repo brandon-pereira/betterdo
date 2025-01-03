@@ -1,0 +1,52 @@
+---
+import Header from '../components/Header.astro';
+import Section1 from '../components/Section1.astro';
+import Section2 from '../components/Section2.astro';
+import Section3 from '../components/Section3.astro';
+import Section4 from '../components/Section4.astro';
+import Section5 from '../components/Section5.astro';
+import Section6 from '../components/Section6.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+        />
+        <title>BetterDo.</title>
+        <meta name="description" content="The better task manager" />
+        <meta property="og:image:width" content="183" />
+        <meta property="og:image:height" content="183" />
+        <meta
+            property="og:description"
+            content="A todo application designed with you in mind. Featuring shared lists, personalization, and a slick user interface."
+        />
+        <meta property="og:title" content="Introducing BetterDo" />
+        <meta property="og:url" content="https://betterdo.app" />
+        <meta property="og:image" content="https://betterdo.app/og-image.jpg" />
+        <meta name="twitter:creator" content="@branclon_" />
+        <meta name="twitter:card" content="summary" />
+
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link
+            rel="stylesheet"
+            lang="scss"
+            href={Astro.resolve('../styles/global.scss')}
+        />
+    </head>
+    <body>
+        <main>
+            <Header />
+            <Section1 />
+            <Section2 />
+            <Section3 />
+            <Section4 />
+            <Section5 />
+            <Section6 />
+            <Footer />
+        </main>
+    </body>
+</html>

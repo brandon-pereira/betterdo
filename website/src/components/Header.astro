@@ -1,0 +1,59 @@
+---
+import BetterDo from '../svgs/betterdo.svg';
+---
+
+<script hoist type="module" src={Astro.resolve('../scripts/header')}></script>
+
+<header>
+    <div class="foreground">
+        <img src={BetterDo} alt="BetterDo logo" />
+        <h1 class="heading-first">BetterDo.</h1>
+        <div class="heading-second">
+            For
+            <span data-scroll-text="the motivated|achievers|doers|busy people"
+                >the motivated</span
+            >.
+        </div>
+        <a href="auth/google" class="button cta">Launch</a>
+    </div>
+</header>
+
+<style lang="scss">
+    @import '../styles/_config.scss';
+    @import '../styles/_mixins.scss';
+
+    header {
+        background: linear-gradient(to bottom, #e1efff, #b4cfff);
+        color: #2b2b2b;
+        text-align: center;
+        padding: 1rem 0 5rem;
+        clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+        position: relative;
+        img {
+            height: 8rem;
+            color: #000;
+            fill: $accent2;
+            filter: drop-shadow(1px 3px 3px rgba(0, 0, 0, 0.3));
+        }
+        .heading-first {
+            line-height: 80px;
+            margin: 0;
+            @include responsive-font(15vw, 50px, 90px);
+        }
+        .heading-second {
+            font-weight: 500;
+            margin: 0.5rem 0 0;
+            @include responsive-font(6vw, 20px, 30px);
+        }
+        p {
+            margin: 2rem auto 0;
+            @include responsive-font(5vw, 16px, 22px);
+            max-width: 30%;
+        }
+        .cta {
+            margin: 1rem 0 0;
+            position: relative;
+            z-index: 1;
+        }
+    }
+</style>

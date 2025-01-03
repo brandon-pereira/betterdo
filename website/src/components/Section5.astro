@@ -1,0 +1,64 @@
+<article class="section5">
+    <div class="background"></div>
+    <div class="foreground row">
+        <a
+            href="https://github.com/brandon-pereira/betterdo-ui"
+            target="_"
+            class="column"
+        >
+            <h2>BetterDo UI</h2>
+            <p>
+                This is the user interface for BetterDo. It's powered by React,
+                Styled Components, and Service Workers.
+            </p>
+        </a>
+        <a
+            href="https://github.com/brandon-pereira/betterdo-api"
+            target="_"
+            class="column"
+        >
+            <h2>BetterDo API</h2>
+            <p>
+                This is the application and server for BetterDo. It's powered by
+                Express, Mongoose, and is tested with Jest.
+            </p>
+        </a>
+    </div>
+</article>
+
+<style lang="scss">
+    @import '../styles/_config.scss';
+    @import '../styles/_mixins.scss';
+
+    .section5 {
+        background: #fff;
+        position: relative;
+        padding: 1rem 3rem;
+        .background {
+            clip-path: polygon(0 100%, 100% 0, 100% 100%, 0% 100%);
+            background: $accent3;
+        }
+        .column {
+            color: inherit;
+            text-decoration: none;
+            border-radius: 6px;
+            padding: 1rem 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            transition: box-shadow 0.3s;
+            background: #fff;
+            margin-bottom: 2rem;
+            &:hover {
+                box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+            }
+        }
+        @include medium() {
+            padding: 1rem 5rem;
+            .row {
+                align-items: stretch;
+            }
+            .column {
+                margin-bottom: 0;
+            }
+        }
+    }
+</style>

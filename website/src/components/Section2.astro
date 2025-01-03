@@ -1,0 +1,37 @@
+--- import Loading from '../svgs/loading.svg'; ---
+
+<article class="section2">
+    <div class="row">
+        <div class="column">
+            <img src={Loading} alt="Image of loading website" />
+        </div>
+        <div class="column">
+            <h2>We're ready when and <br />where you are.</h2>
+            <p>
+                BetterDo provides you with a web application for both iOS and
+                Android. It also has Windows, Linux, and Mac applications. This
+                means you can use BetterDo anywhere!
+            </p>
+            <p>
+                Built on the latest web technologies, BetterDo also loads
+                incredibly fast, works offline, and has support for almost all
+                browsers!
+            </p>
+        </div>
+    </div>
+</article>
+
+<style lang="scss">
+    @import '../styles/_config.scss';
+    @import '../styles/_mixins.scss';
+
+    .section2 {
+        padding-top: 3rem;
+        padding-bottom: 0;
+        background: $accent3;
+        clip-path: polygon(0 20%, 100% 0, 100% 100%, 0% 100%);
+        svg {
+            margin-bottom: 2rem;
+        }
+    }
+</style>

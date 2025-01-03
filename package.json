@@ -1,0 +1,16 @@
+{
+  "name": "betterdo",
+  "version": "6.5.0",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "app",
+    "api",
+    "shared",
+    "website"
+  ],
+  "description": "BetterDo is a simple todo list app that helps you organize your tasks.",
+  "repository": "https://github.com/brandon-pereira/betterdo",
+  "author": "Brandon Pereira",
+  "license": "ISC"
+}

@@ -1,0 +1,31 @@
+[
+    {
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "app.betterdo.twa",
+            "sha256_cert_fingerprints": [
+                "2D:62:BF:ED:FD:6A:69:B9:16:E6:62:0F:06:D5:B1:4D:C3:FF:90:26:A9:E8:5D:B6:B0:25:B5:9A:CD:90:0B:F4"
+            ]
+        }
+    },
+    {
+        "relation": ["delegate_permission/common.get_login_creds"],
+        "target": {
+            "namespace": "web",
+            "site": "https://betterdo.app"
+        }
+    },
+    {
+        "relation": ["delegate_permission/common.get_login_creds"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "app.betterdo.twa",
+            "sha256_cert_fingerprints": [
+                [
+                    "2D:62:BF:ED:FD:6A:69:B9:16:E6:62:0F:06:D5:B1:4D:C3:FF:90:26:A9:E8:5D:B6:B0:25:B5:9A:CD:90:0B:F4"
+                ]
+            ]
+        }
+    }
+]
