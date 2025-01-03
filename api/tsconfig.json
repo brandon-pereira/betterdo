@@ -1,0 +1,9 @@
+{
+  "extends": "@tsconfig/node14/tsconfig.json",
+  "exclude": ["node_modules", "types"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "moduleResolution": "node"
+  }
+}
