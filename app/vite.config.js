@@ -34,11 +34,11 @@ export default defineConfig({
     __SERVER_URL__: `"${
       process.env.NODE_ENV === "production"
         ? "https://betterdo.app"
-        : "http://localhost:8000"
+        : "http://localhost:4000"
     }"`,
   },
   base: "./",
   server: {
-    port: 8080,
+    port: 4001,
   },
 });

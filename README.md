@@ -19,5 +19,5 @@ npm start
 
 If both server and UI are running, you'll have the option of visiting:
 
-- [http://localhost:8000/](http://localhost:8000/) for full user experience
-- [http://localhost:8080/](http://localhost:8080/) for front-end live reloading
+- [http://localhost:4000/](http://localhost:4000/) for full user experience
+- [http://localhost:4001/](http://localhost:4001/) for front-end live reloading

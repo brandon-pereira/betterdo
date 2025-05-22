@@ -35,8 +35,8 @@ Api(router);
 import Root from "./routes/root";
 Root(router);
 
-app.listen(process.env.SERVER_PORT || 8080, () => {
+app.listen(process.env.SERVER_PORT || 4000, () => {
   console.info(
-    `🚀 Server started at http://localhost:${process.env.SERVER_PORT || 8080}/`,
+    `🚀 Server started at http://localhost:${process.env.SERVER_PORT || 4000}/`,
   );
 });

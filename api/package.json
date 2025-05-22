@@ -6,7 +6,7 @@
   "scripts": {
     "start:production": "node ./dist/src/index.js",
     "build": "tsc",
-    "start": "tsx -r dotenv/config src/index.ts",
+    "start": "tsx watch -r dotenv/config src/index.ts",
     "test": "eslint . && tsc --noemit && jest"
   },
   "dependencies": {
