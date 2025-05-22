@@ -1,0 +1,86 @@
+---
+import { Image } from "astro:assets";
+import BetterDo from "../svgs/betterdo.svg";
+import Button from "../components/Button.astro";
+---
+
+<header>
+  <Image src={BetterDo} alt="BetterDo logo" />
+  <h1>BetterDo.</h1>
+  <h2>
+    Get more done, beautifully—<span>BetterDo</span> makes organizing your life
+    <span>effortless, smart, and personalized</span>.
+  </h2>
+  <h3>
+    For
+    <span data-scroll-text="the motivated|achievers|doers|busy people"
+      >the motivated</span
+    >.
+  </h3>
+  <Button href="auth/google">Launch</Button>
+</header>
+
+<style>
+  header {
+    text-align: center;
+    padding: 1rem 0 10rem;
+    background: rgba(255, 255, 255, 0.05);
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+
+    img {
+      height: 8rem;
+      color: #000;
+      fill: $accent2;
+      filter: drop-shadow(1px 3px 3px rgba(0, 0, 0, 0.3));
+    }
+  }
+
+  h1 {
+    margin: 0;
+  }
+  h2 {
+    margin: 0;
+    max-width: 80vw;
+    margin: 0 auto;
+    font-size: 3rem;
+    font-weight: 400;
+    span {
+      font-weight: 600;
+    }
+  }
+  h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 400;
+  }
+</style>
+
+<style is:global>
+  [data-scroll-text] {
+    display: inline-block;
+    position: relative;
+    span {
+      transition: all 0.2s;
+      position: absolute;
+      opacity: 0;
+      left: 0;
+      transform: translateY(20px);
+    }
+    .current {
+      position: relative;
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  import ScrollText from "../scripts/scroll-text";
+
+  new ScrollText(document.querySelector("[data-scroll-text]")!);
+</script>

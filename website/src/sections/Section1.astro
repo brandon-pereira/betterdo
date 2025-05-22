@@ -1,0 +1,37 @@
+---
+import Automation from "../svgs/automation.svg";
+---
+
+<article class="section1">
+  <div class="row">
+    <div class="column">
+      <h2>Ready to de-clutter <br />your mind?</h2>
+      <p>
+        Spend less time trying to remember what you're supposed to be doing and
+        more time doing the important stuff.
+      </p>
+      <p>
+        BetterDo provides you with an intelligent system for sorting your tasks.
+        It can also prioritize tasks and provide you an agenda for when things
+        should be completed.
+      </p>
+    </div>
+    <div class="column">
+      <img src={Automation} alt="Image of automation facility" />
+    </div>
+  </div>
+</article>
+
+<style lang="scss">
+  @import "../styles/_config.scss";
+  @import "../styles/_mixins.scss";
+
+  .section1 {
+    @include medium() {
+      p,
+      h2 {
+        text-align: right;
+      }
+    }
+  }
+</style>
