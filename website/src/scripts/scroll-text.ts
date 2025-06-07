@@ -1,55 +1,58 @@
-interface Options {
+type ScrollTextOptions = {
   textAttribute?: string;
   speed?: number;
   scrollAmount?: string;
   delimiter?: string;
   text?: string[];
-}
-
-const defaultOptions = {
-  textAttribute: "data-scroll-text", // What attribute to look for. ie data-scroll-text="hello|world|i'm|brandon"
-  speed: 2000, // How often to switch slides
-  scrollAmount: "20px", // how often to scroll
-  delimiter: "|", // what to break on for textAttribute
-  // text: [] // Text to use (rather than getting from attribute)
 };
 
-type InternalOptions = Required<Options>;
-class ScrollText {
-  el: HTMLElement;
-  options: InternalOptions;
-  children: HTMLElement[];
-  text: string[];
-  index: number;
-  currentElement: HTMLElement;
-  timer: NodeJS.Timeout;
+export default class ScrollText {
+  private el: HTMLElement;
+  private options: Required<ScrollTextOptions>;
+  private text: string[];
+  private children: HTMLSpanElement[];
+  private index: number;
+  private currentElement: HTMLSpanElement;
+  private timer: number | undefined;
 
-  constructor(el: HTMLElement, options?: Options) {
+  constructor(el: HTMLElement, options: ScrollTextOptions = {}) {
     this.el = el;
     this.options = Object.assign(
-      {},
-      defaultOptions,
+      {
+        textAttribute: "data-scroll-text",
+        speed: 3000,
+        scrollAmount: "20px",
+        delimiter: "|",
+        text: undefined,
+      },
       options,
-    ) as InternalOptions;
+    );
+    this.init();
+  }
 
-    this.el.innerHTML = ""; // Clear the content (this is for if browser has js disabled)
+  /**
+   * Method to bootstrap the component.
+   */
+  private init() {
+    this.el.innerHTML = "";
     this.text =
       this.options.text ||
-      (this.el.getAttribute(this.options.textAttribute) || "").split(
-        this.options.delimiter,
-      );
+      (this.el
+        .getAttribute(this.options.textAttribute)
+        ?.split(this.options.delimiter) ??
+        []);
     this.children = this.text.map((el, i) =>
       this._createTextElement(el, i === 0),
     );
     this.index = 0;
     this.currentElement = this.children[this.index];
-    this.timer = setInterval(this.next.bind(this), this.options.speed);
+    this.timer = window.setInterval(this.next.bind(this), this.options.speed);
   }
 
   /**
    * Public method to switch to the next available slide.
    */
-  next() {
+  public next() {
     this.index += 1;
     if (this.index > this.text.length - 1) {
       this.index = 0;
@@ -59,11 +62,8 @@ class ScrollText {
 
   /**
    * Method to switch slide, handles delegating animations and setting styles.
-   * @private
-   * @param {Element} curr currently visible element (pushes it off screen from center)
-   * @param {*} next visible to transition to (pushes it up from bottom)
    */
-  setCurrentSlide(index: number) {
+  private setCurrentSlide(index: number) {
     const prev = this.currentElement;
     const next = this.children[index];
     if (prev && next) {
@@ -85,7 +85,6 @@ class ScrollText {
         ],
         { fill: "both", duration: 200 },
         () => {
-          // on animation end OR unsupported browser
           prev.classList.remove("current");
           next.classList.add("current");
         },
@@ -98,41 +97,39 @@ class ScrollText {
 
   /**
    * Method to call Element.animate if available.
-   * @param {Element} el Element to animate
-   * @param {Array} transition transition to pass
-   * @param {Object} opts options to pass
-   * @param {Function} Callback on complete (called immediately if not supported)
    */
-  _animate(
+  private _animate(
     el: HTMLElement,
     transition: Keyframe[],
     opts: KeyframeAnimationOptions,
-    cb?: () => void,
+    cb: () => void = () => {},
   ) {
-    if (el && "animate" in el && cb) {
-      el.animate(transition, opts).onfinish = cb;
+    if (el && "animate" in el) {
+      (el as any).animate(transition, opts).onfinish = cb;
     } else if (cb) {
-      cb(); // dont animate just call callback
+      cb();
     }
   }
 
   /**
    * Creates and appends a text element to the root node. If index is 0 will make it visible, else will be hidden.
    */
-  _createTextElement(text: string, isCurrent: boolean) {
+  private _createTextElement(
+    text: string,
+    isCurrent: boolean,
+  ): HTMLSpanElement {
     const el = document.createElement("span");
     el.innerText = text;
     el.classList.toggle("current", isCurrent);
-    return this.el.appendChild(el);
+    this.el.appendChild(el);
+    return el;
   }
 
   /**
    * Cleanup method. Call this if the component needs to unmount and be removed.
    */
-  destroy() {
-    clearInterval(this.timer);
+  public destroy() {
+    if (this.timer) clearInterval(this.timer);
     this.el.innerHTML = this.text[0] || "";
   }
 }
-
-export default ScrollText;

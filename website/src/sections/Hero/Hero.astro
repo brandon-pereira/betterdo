@@ -8,7 +8,7 @@ import Button from "../../components/Button.astro";
   <div class="copy">
     <h2 class="title">Meet BetterDo.</h2>
     <h2 class="subtitle">AI-powered productivity for people who Do.</h2>
-    <p>
+    <p class="description">
       Say goodbye to scattered lists and mental clutter. BetterDo uses AI to
       help you organize, prioritize, and actually do the things that matter.
       Whether it’s planning your day or collaborating with others, BetterDo
@@ -35,8 +35,8 @@ import Button from "../../components/Button.astro";
       display: flex;
       justify-content: center;
       margin-top: 2rem;
-      width: 700px;
-      /* width: 100%; */
+      max-width: 700px;
+      width: 90%;
       aspect-ratio: 1906 / 1565;
       max-width: 1000px;
       margin: 0 auto;
@@ -61,28 +61,38 @@ import Button from "../../components/Button.astro";
       }
     }
 
-    @media (min-width: 1200px) {
-      .container {
-        flex-direction: row;
-      }
-    }
     .title {
       margin: 0;
-      font-size: 2rem;
+      font-size: 3rem;
       font-weight: 700;
     }
     .subtitle {
       margin: 0;
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 400;
       text-wrap: balance;
     }
     .copy {
-      width: 40%;
+      padding: 0 2rem;
       display: flex;
       flex-direction: column;
       gap: 0.2rem;
       align-items: flex-start;
+    }
+    .description {
+      font-size: 1.1rem;
+      text-wrap: balance;
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+    }
+    @media (min-width: 1200px) {
+      .copy {
+        width: 600px;
+        padding: 0;
+      }
+      .container {
+        flex-direction: row;
+      }
     }
   </style>
 </div>

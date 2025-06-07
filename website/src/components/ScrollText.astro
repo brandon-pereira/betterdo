@@ -1,0 +1,39 @@
+---
+interface Props {
+  text: string[];
+}
+
+const { text, delay } = Astro.props;
+---
+
+<span data-scroll-text-delay={delay} data-scroll-text={text.join("|")}
+  >{text.at(0)}</span
+>
+
+<style is:global>
+  [data-scroll-text] {
+    display: inline;
+    position: relative;
+    span {
+      white-space: nowrap;
+      transition: all 0.2s;
+      position: absolute;
+      opacity: 0;
+      left: 0;
+      transform: translateY(-100%);
+    }
+    .current {
+      position: relative;
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  import ScrollText from "../scripts/scroll-text";
+
+  document.querySelectorAll("[data-scroll-text]")!.forEach((el) => {
+    new ScrollText(el);
+  });
+</script>
