@@ -1,0 +1,88 @@
+---
+import { Image } from "astro:assets";
+import BetterDo from "./betterdo.webp";
+import Button from "../../components/Button.astro";
+---
+
+<div class="container">
+  <div class="copy">
+    <h2 class="title">Meet BetterDo.</h2>
+    <h2 class="subtitle">AI-powered productivity for people who Do.</h2>
+    <p>
+      Say goodbye to scattered lists and mental clutter. BetterDo uses AI to
+      help you organize, prioritize, and actually do the things that matter.
+      Whether it’s planning your day or collaborating with others, BetterDo
+      keeps you focused and in flow.
+    </p>
+    <Button href="auth/google">Launch</Button>
+  </div>
+  <div class="screenshot-container">
+    <Image src={BetterDo} alt="BetterDo app screenshot" />
+  </div>
+
+  <style>
+    .container {
+      gap: 5rem;
+      max-width: var(--max-width);
+      margin: 0 auto 3rem;
+      padding: 2rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .screenshot-container {
+      --color: #3d8099;
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+      width: 700px;
+      /* width: 100%; */
+      aspect-ratio: 1906 / 1565;
+      max-width: 1000px;
+      margin: 0 auto;
+      height: auto;
+      position: relative;
+      border-radius: 8px;
+      & img {
+        border-radius: 8px;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
+      &:before {
+        content: "";
+        border-radius: inherit;
+        position: absolute;
+        inset: 0;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 30px 1000px 0
+          color-mix(in lab, var(--color) 100%, black 60%);
+        z-index: -1;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .container {
+        flex-direction: row;
+      }
+    }
+    .title {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .subtitle {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 400;
+      text-wrap: balance;
+    }
+    .copy {
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      align-items: flex-start;
+    }
+  </style>
+</div>

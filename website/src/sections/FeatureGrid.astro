@@ -1,18 +1,118 @@
-<div class="grid">
-  <div class="tile">
-    <h3>Customize</h3>
-    <p>Lorem Ipsum</p>
+<div class="container">
+  <h2 class="title">Smart Features for People Who Do</h2>
+  <p class="description">
+    BetterDo is more than just a to-do list. It’s a powerful, flexible tool
+    designed to help you stay organized, focused, and in control—with a little
+    help from AI.
+  </p>
+  <div class="tiles">
+    <div class="tile ai-generated">
+      <div class="icon">✅</div>
+      <h3 class="title">AI-Generated Lists</h3>
+      <p class="description">
+        BetterDo uses AI to suggest and organize your tasks, so you can start
+        with structure—not stress.
+      </p>
+    </div>
+
+    <div class="tile smart-prioritization">
+      <div class="icon">🎯</div>
+      <h3 class="title">Smart Prioritization</h3>
+      <p class="description">
+        Automatically sort your tasks by urgency, deadlines, or energy level so
+        you always know what to do next.
+      </p>
+    </div>
+
+    <div class="tile custom-themes">
+      <div class="icon">🎨</div>
+      <h3 class="title">Custom Themes & Layouts</h3>
+      <p class="description">
+        Personalize your workspace with full control over colors, layout, and
+        display preferences to match your style.
+      </p>
+    </div>
+
+    <div class="tile shared-lists">
+      <div class="icon">👥</div>
+      <h3 class="title">Shared Lists</h3>
+      <p class="description">
+        Collaborate with friends, family, or coworkers—share and edit lists
+        together in real-time.
+      </p>
+    </div>
+
+    <div class="tile fast-offline">
+      <div class="icon">⚡</div>
+      <h3 class="title">Fast, Offline-First</h3>
+      <p class="description">
+        BetterDo runs smoothly on any device and keeps working even when you're
+        offline—no lag, no fuss.
+      </p>
+    </div>
+
+    <div class="tile open-source">
+      <div class="icon">💡</div>
+      <h3 class="title">Open Source & Always Free</h3>
+      <p class="description">
+        Fully open-source and free forever. Dive into the code, suggest
+        features, or build your own extensions.
+      </p>
+    </div>
   </div>
 </div>
 
 <style>
-  h3 {
-    font-size: 2rem;
-    color: var(--core-color);
-    font-weight: 800;
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+  .title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  .description {
+    text-wrap: balance;
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
   }
   .tile {
-    border: 1px solid #ffffff1a;
-    border-radius: 1.8rem;
+    background-image: linear-gradient(
+      40deg,
+      var(--color),
+      color-mix(in lab, var(--color) 100%, black 100%)
+    );
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      inset 0 -1px rgba(255, 255, 255, 0.1);
+    border-radius: 3rem;
+    overflow: hidden;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    & .icon {
+      font-size: 3rem;
+    }
+    & .title {
+      font-size: 1.5rem;
+    }
+    &.ai-generated {
+      --color: green;
+      grid-column: span 2;
+    }
+    &.smart-prioritization {
+      --color: orange;
+      grid-row: span 2;
+    }
+    &.fast-offline {
+      --color: blue;
+      grid-column: span 2;
+    }
   }
 </style>
