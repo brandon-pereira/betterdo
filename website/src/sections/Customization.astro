@@ -1,0 +1,111 @@
+---
+import Noise from "./noise.svg";
+
+const noiseUrl = `url(${Noise.src})`;
+---
+
+<section class="container">
+  <div class="content">
+    <h2 class="title">
+      BetterDo isn’t just powerful—it’s <span class="rainbow-text"
+        >personal</span
+      >.
+    </h2>
+    <p class="description">
+      From themes and layouts to behavior and interactions, you can tailor your
+      workspace to fit your mood, workflow, or aesthetic. Whether you want a
+      calm, minimalist vibe or a bold, colorful interface, BetterDo adapts to
+      you.
+    </p>
+  </div>
+  <div class="palette-container">
+    <div class="palette"></div>
+    <div class="palette blur"></div>
+  </div>
+</section>
+
+<style define:vars={{ noiseUrl }}>
+  @property --palette-rotate {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  .title {
+    font-size: 2.5rem;
+    text-wrap: balance;
+  }
+  .rainbow-text {
+    background: linear-gradient(
+      to right,
+      #f06b6b,
+      orange,
+      yellow,
+      green,
+      #57c4ff,
+      #b44bff,
+      violet
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .content {
+    /* flex- */
+  }
+  .container {
+    display: flex;
+    max-width: var(--max-width);
+    margin: 2rem auto 4rem;
+    padding: 0 2rem;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .palette-container {
+    position: relative;
+    --size: 400px;
+    /* overflow: hidden; */
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .palette {
+    background-blend-mode: multiply;
+    background-image: conic-gradient(
+        from var(--palette-rotate),
+        /* // nice rainbow */ red,
+        orange,
+        yellow,
+        green,
+        #264fc9,
+        indigo,
+        violet,
+        red
+      ),
+      var(--noiseUrl);
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background-position: center;
+    animation: rotate 10s linear infinite;
+    position: absolute;
+    &.blur {
+      z-index: -1;
+      inset: -50px;
+      top: 20px;
+      width: calc(var(--size) + 100px);
+      height: calc(var(--size) + 100px);
+      filter: blur(50px) brightness(0.5);
+    }
+  }
+
+  @keyframes rotate {
+    from {
+      --palette-rotate: 0deg;
+    }
+    to {
+      --palette-rotate: 360deg;
+    }
+  }
+</style>

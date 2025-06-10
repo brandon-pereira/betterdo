@@ -1,7 +1,5 @@
 ---
-import ScrollText from "../../components/ScrollText.astro";
-import Noise from "../noise.svg";
-const noiseUrl = `url(${Noise.src})`;
+import ScrollText from "../components/ScrollText.astro";
 ---
 
 <div class="container">
@@ -26,13 +24,15 @@ const noiseUrl = `url(${Noise.src})`;
   </div>
 </div>
 
-<style define:vars={{ noiseUrl }}>
+<style>
   .container {
     --padding: 15px;
     position: relative;
+    z-index: 1;
     margin: 0 auto;
     padding: calc(var(--padding) * 4) calc(var(--padding) * 2);
     overflow: hidden;
+    box-shadow: 0 0 0 2px var(--core-background);
     max-width: var(--max-width);
     &:after {
       content: "";
@@ -43,7 +43,7 @@ const noiseUrl = `url(${Noise.src})`;
       background-image: linear-gradient(-40deg, red, blue);
       z-index: -2;
       filter: blur(100px);
-      animation: rotate 10s linear infinite;
+      animation: ai-rotate 10s linear infinite;
       background-size: 100rem 100rem;
       height: 1000px;
       width: 1000px;
@@ -86,7 +86,7 @@ const noiseUrl = `url(${Noise.src})`;
     text-wrap: balance;
     width: 800px;
   }
-  @keyframes rotate {
+  @keyframes ai-rotate {
     from {
       transform: rotate(0deg);
     }
