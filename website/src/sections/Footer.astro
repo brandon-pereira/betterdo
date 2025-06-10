@@ -1,13 +1,21 @@
-<footer>Site design, built, and maintained by Brandon Pereira.</footer>
+---
+const year = new Date().getFullYear();
+---
 
-<style lang="scss">
-    @import '../styles/_config.scss';
-    @import '../styles/_mixins.scss';
+<footer>
+  &copy; <span id="footer-year">{year}</span> BetterDo. <br />Site design,
+  built, and maintained by Brandon Pereira.
+</footer>
 
-    footer {
-        background: linear-gradient(45deg, $accent1, $accent2);
-        color: #fff;
-        line-height: 5rem;
-        text-align: center;
-    }
+<style>
+  footer {
+    /* background: linear-gradient(45deg, $accent1, $accent2); */
+    color: #fff;
+    line-height: 5rem;
+    text-align: center;
+  }
 </style>
+
+<script is:inline>
+  document.getElementById("footer-year").innerText = new Date().getFullYear();
+</script>

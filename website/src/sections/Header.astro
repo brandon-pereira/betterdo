@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import BetterDo from "../svgs/betterdo.svg";
 import Button from "../components/Button.astro";
+import { LAUNCH_URL } from "../constants";
 ---
 
 <header>
@@ -17,7 +18,7 @@ import Button from "../components/Button.astro";
       <li><a href="/contact">Contact</a></li>
     </ul>
   </nav>
-  <Button href="auth/google">Launch</Button>
+  <Button href={LAUNCH_URL}>Launch</Button>
 </header>
 
 <style>

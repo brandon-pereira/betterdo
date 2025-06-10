@@ -66,7 +66,7 @@
   .container {
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 2rem 0;
+    padding: 2rem 2rem;
   }
   .title {
     margin: 0;
@@ -77,18 +77,16 @@
     text-wrap: balance;
   }
   .tiles {
+    margin-top: 2rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
   }
   .tile {
-    background-image: linear-gradient(
-      40deg,
-      var(--color),
-      color-mix(in lab, var(--color) 100%, black 100%)
-    );
+    background-image: linear-gradient(-40deg, transparent, rgba(0, 0, 0, 0.5));
+    background-color: var(--color);
     box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.2),
       inset 0 -1px rgba(255, 255, 255, 0.1);
     border-radius: 3rem;
     overflow: hidden;

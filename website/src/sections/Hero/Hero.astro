@@ -1,4 +1,5 @@
 ---
+import { LAUNCH_URL } from "../../constants";
 import { Image } from "astro:assets";
 import BetterDo from "./betterdo.webp";
 import Button from "../../components/Button.astro";
@@ -14,7 +15,7 @@ import Button from "../../components/Button.astro";
       Whether it’s planning your day or collaborating with others, BetterDo
       keeps you focused and in flow.
     </p>
-    <Button href="auth/google">Launch</Button>
+    <Button href={LAUNCH_URL}>Launch</Button>
   </div>
   <div class="screenshot-container">
     <Image src={BetterDo} alt="BetterDo app screenshot" />

@@ -1,18 +1,22 @@
+---
+import { LAUNCH_URL } from "../constants";
+---
+
 <article class="section6">
-    <div class="row">
-        <div class="column">
-            <h2 class="centered">Ready to de-clutter your mind?</h2>
-            <a class="button" href="auth/google">Launch</a>
-        </div>
+  <div class="row">
+    <div class="column">
+      <h2 class="centered">Ready to de-clutter your mind?</h2>
+      <a class="button" href={LAUNCH_URL}>Launch</a>
     </div>
+  </div>
 </article>
 
 <style lang="scss">
-    @import '../styles/_config.scss';
+  @import "../styles/_config.scss";
 
-    .section6 {
-        background: $accent3;
-        text-align: center;
-        padding-bottom: 3rem;
-    }
+  .section6 {
+    background: $accent3;
+    text-align: center;
+    padding-bottom: 3rem;
+  }
 </style>
