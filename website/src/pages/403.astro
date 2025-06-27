@@ -1,0 +1,9 @@
+---
+import ErrorLayout from "../layouts/ErrorLayout.astro";
+---
+
+<ErrorLayout title="403: Forbidden">
+  <h1>Invalid Permissions<span></span></h1>
+  <h2>You don't have the rights to access this</h2>
+  <a href={Astro.site} class="cta">Go to homepage</a>
+</ErrorLayout>

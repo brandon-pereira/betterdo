@@ -1,0 +1,154 @@
+---
+import clon from "../assets/betterdo.svg";
+
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href={clon.src} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {/* https://stackoverflow.com/a/60477207/7033335 */}
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="preload"
+      as="style"
+      onload="
+      this.onload = null; this.rel = 'stylesheet'
+      "
+    />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+    <style is:global>
+      body {
+        background: #000;
+        font-family: "Press Start 2P", monospace;
+        -webkit-font-smoothing: none;
+        -moz-osx-font-smoothing: auto;
+        text-align: center;
+        color: #0f0;
+        padding: 100px 0;
+      }
+      h1 {
+        margin: 0;
+        font-weight: 400;
+        font-size: 32px;
+      }
+      h1 span {
+        -webkit-animation: blink 1s 0s infinite step-end;
+        animation: blink 1s 0s infinite step-end;
+      }
+      h1 span:before {
+        content: "_";
+      }
+      canvas {
+        margin-bottom: 20px;
+      }
+      h2 {
+        margin: 16px 0 30px 0;
+        font-weight: 400;
+        font-size: 16px;
+      }
+      a.cta,
+      button.cta {
+        background: #0f0;
+        color: #000;
+        font-size: 8px;
+        padding: 8px;
+        text-decoration: none;
+        text-transform: uppercase;
+        outline: none;
+        border: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      @-webkit-keyframes blink {
+        from,
+        to {
+          color: #000;
+        }
+        50% {
+          color: #0f0;
+        }
+      }
+      @keyframes blink {
+        from,
+        to {
+          color: #000;
+        }
+        50% {
+          color: #0f0;
+        }
+      }
+    </style>
+    <script>
+      const canvas = document.createElement("canvas");
+      canvas.height = 165;
+      canvas.width = 125;
+      const ctx = canvas.getContext("2d");
+      const pixelSize = 5;
+      const _ = "transparent";
+      const g = "#0f0";
+
+      // prettier-ignore
+      const bitmap = [
+        [_, _, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, _, _],
+        [_, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _],
+        [g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g],
+        [g, _, _, _, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, _, _, _, g],
+        [g, _, _, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, g, _, g, _, _, _, _, _, g, _, g, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, _, g, _, _, _, _, _, _, _, g, _, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, g, _, g, _, _, _, _, _, g, _, g, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, _, _, _, g, _, _, g, _, _, _, _, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, _, _, _, _, g, g, _, _, _, _, _, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, _, _, g, g, g, g, g, g, _, _, _, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, _, g, _, _, _, _, _, _, g, g, _, _, _, _, g, _, _, g],
+        [g, _, _, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _, _, g],
+        [g, _, _, _, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, _, _, _, g],
+        [g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g],
+        [g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g],
+        [g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g],
+        [g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g],
+        [g, _, _, g, g, _, _, _, _, _, _, _, _, _, _, _, _, g, g, g, g, _, _, _, g],
+        [g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g],
+        [g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g],
+        [g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g],
+        [g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g],
+        [_, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, _],
+        [_, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _],
+        [_, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _],
+        [_, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _],
+        [_, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, _],
+        [_, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, _]
+    ];
+
+      bitmap.forEach((row, j) => {
+        row.forEach((pixel, i) => {
+          if (ctx) {
+            ctx.fillStyle = pixel;
+            ctx.fillRect(i * pixelSize, j * pixelSize, pixelSize, pixelSize);
+          }
+        });
+      });
+
+      document.body.prepend(canvas);
+    </script>
+  </body>
+</html>

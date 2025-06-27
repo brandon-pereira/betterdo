@@ -1,0 +1,9 @@
+---
+import ErrorLayout from "../layouts/ErrorLayout.astro";
+---
+
+<ErrorLayout title="404: Page Not Found">
+  <h1>Page Not Found<span></span></h1>
+  <h2>It may be a dead link, we'll look into it.</h2>
+  <a href={Astro.site} class="cta">Go to homepage</a>
+</ErrorLayout>
