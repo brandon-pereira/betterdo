@@ -118,6 +118,12 @@ const noiseUrl = `url(${Noise.src})`;
     background-position: center;
     animation: rotate 10s linear infinite;
     position: absolute;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.1),
+      0 8px 16px rgba(0, 0, 0, 0.1),
+      inset -1px -1px rgba(255, 255, 255, 0.05);
     &.blur {
       z-index: -1;
       inset: -50px;

@@ -1,4 +1,5 @@
 ---
+import Layout from "../layouts/Layout.astro";
 import Header from "../sections/Header.astro";
 import Hero from "../sections/Hero/Hero.astro";
 import FeatureGrid from "../sections/FeatureGrid.astro";
@@ -7,63 +8,11 @@ import Footer from "../sections/Footer.astro";
 import Personalization from "../sections/Personalization.astro";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1"
-    />
-    <title>BetterDo.</title>
-    <meta name="description" content="The better task manager" />
-    <meta property="og:image:width" content="183" />
-    <meta property="og:image:height" content="183" />
-    <meta
-      property="og:description"
-      content="A todo application designed with you in mind. Featuring shared lists, personalization, and a slick user interface."
-    />
-    <meta property="og:title" content="Introducing BetterDo" />
-    <meta property="og:url" content="https://betterdo.app" />
-    <meta property="og:image" content="https://betterdo.app/og-image.jpg" />
-    <meta name="twitter:creator" content="@branclon_" />
-    <meta name="twitter:card" content="summary" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat&family=DM+Serif+Display&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      html {
-        height: 100%;
-        width: 100%;
-        font-family: "Montserrat", serif;
-        font-optical-sizing: auto;
-        --accent1: #00407f;
-        --accent2: #14c9ff;
-        --accent3: #ecf0f1;
-        --core-background: #080808;
-        --core-color: #f4f4f4;
-        --max-width: 1200px;
-        background: var(--core-background);
-        color: var(--core-color);
-      }
-      body {
-        min-height: 100%;
-        margin: 0;
-        width: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <Header />
-      <Hero />
-      <FeatureGrid />
-      <Personalization />
-      <AiActions />
-      <Footer />
-    </main>
-  </body>
-</html>
+<Layout title="Homepage">
+  <Header />
+  <Hero />
+  <FeatureGrid />
+  <Personalization />
+  <AiActions />
+  <Footer />
+</Layout>
