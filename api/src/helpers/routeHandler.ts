@@ -35,7 +35,6 @@ export default async function (
     const json = await taskFn({
       notifier,
       db,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       user: req.user! // we know its authenticated at this point
     });
     // We assume that if the taskFn function resolves, then we have a valid 200 response

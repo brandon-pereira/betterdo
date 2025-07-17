@@ -118,6 +118,7 @@ describe("Custom Lists API", () => {
     expect(list.additionalTasks).toBe(1);
     expect(list.completedTasks).toHaveLength(0);
     list = await getLists("highPriority", { includeCompleted: true }, router1);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(list.completedTasks.map((t: any) => t._id.toString())).toContain(task._id.toString());
     expect(list.additionalTasks).toBe(0);
   });

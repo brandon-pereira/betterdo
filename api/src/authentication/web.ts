@@ -55,7 +55,7 @@ export default ({ app, db }: InternalRouter): void => {
           // Existing user
           const hasGoogleAccountUpdated = (Object.keys(googleInfo) as Array<keyof typeof googleInfo>).find(key => {
             if (googleInfo[key] && user) {
-              googleInfo[key] !== user[key];
+              return googleInfo[key] !== user[key];
             }
             return false;
           });

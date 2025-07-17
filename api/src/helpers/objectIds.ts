@@ -4,7 +4,7 @@ import { throwError } from "./errorHandler";
 export function parseObjectID(id: string | ObjectId): ObjectId {
   try {
     return new ObjectId(id);
-  } catch (err) {
+  } catch {
     throwError("Invalid List ID");
   }
 }

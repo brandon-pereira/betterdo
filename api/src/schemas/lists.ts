@@ -123,7 +123,7 @@ ListSchema.statics.getList = async function (user_id: ObjectId, list_id: ObjectI
       } else {
         throwError("Invalid List ID");
       }
-    } catch (err) {
+    } catch {
       return null;
     }
   }

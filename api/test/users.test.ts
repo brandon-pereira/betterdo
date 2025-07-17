@@ -3,6 +3,8 @@ import createRouter from "./helpers/createRouter";
 import { updateUser, getUser, getCurrentUser } from "../src/controllers/users";
 import { createList, updateList } from "../src/controllers/lists";
 import db, { connect, disconnect } from "../src/database";
+import { ListDocument } from "../src/schemas/lists";
+import { Notifier } from "../src/notifier";
 
 const { Users } = db;
 
@@ -98,8 +100,8 @@ describe("Users", () => {
         await updateUser({ pushSubscription: "test1" }, router);
         userCache = await Users.findById(userCache?._id);
         expect(userCache?.pushSubscriptions).toEqual(expect.arrayContaining(["test1", "test2"]));
-        const notifier = router.notifier as any;
-        expect(notifier.send.mock.calls.length).toBe(2);
+        const notifier = router.notifier.send as unknown as jest.Mock<Notifier>;
+        expect(notifier.mock.calls.length).toBe(2);
       });
 
       test("Allows custom lists to be modified", async () => {
@@ -128,7 +130,7 @@ describe("Users", () => {
         const list2 = await createList({ title: "Test 2" }, router);
         const list3 = await createList({ title: "Test 3" }, router);
         let userCache = await Users.findById(user._id);
-        const sanitizeId = (doc: any) => doc._id.toString();
+        const sanitizeId = (doc: ListDocument) => doc._id.toString();
         expect(userCache?.lists.map(sanitizeId)).toMatchObject([list1, list2, list3].map(sanitizeId));
         await updateUser(
           {

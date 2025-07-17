@@ -1,9 +1,16 @@
 {
-  "extends": "@tsconfig/node14/tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "exclude": ["node_modules", "types"],
   "compilerOptions": {
+    "lib": ["es2024", "ESNext.Array", "ESNext.Collection", "ESNext.Iterator"],
+    "module": "nodenext",
+    "target": "es2022",
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node16",
     "outDir": "dist",
-    "typeRoots": ["./types", "./node_modules/@types"],
-    "moduleResolution": "node"
+    "typeRoots": ["./types", "../node_modules/@types"]
   }
 }

@@ -4,6 +4,7 @@ import db, { connect, disconnect } from "../src/database";
 import { getLists, createList, updateList, deleteList } from "../src/controllers/lists";
 import { createTask } from "../src/controllers/tasks";
 import { List } from "../src/schemas/lists";
+import { TaskDocument } from "../src/schemas/tasks";
 
 const { Lists } = db;
 
@@ -161,7 +162,7 @@ describe("Lists", () => {
       const task2 = await createTask(newList._id, { title: "Test 2" }, router);
       const task3 = await createTask(newList._id, { title: "Test 3" }, router);
       let list = await getLists(newList._id, {}, router);
-      const sanitizeId = (task: any) => task._id.toString();
+      const sanitizeId = (task: TaskDocument) => task._id.toString();
       expect(list.tasks.map(sanitizeId)).toMatchObject([task3, task2, task1].map(sanitizeId));
       list = await updateList(
         list._id,

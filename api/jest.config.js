@@ -1,4 +1,6 @@
+/* global module, require */
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { defaults: tsjPreset } = require("ts-jest/presets");
 
 module.exports = {
