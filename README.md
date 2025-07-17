@@ -17,6 +17,14 @@ See original repositories:
 - [betterdo-api](https://github.com/brandon-pereira/betterdo-api)
 - [betterdo-ui](https://github.com/brandon-pereira/betterdo-ui)
 
+## Features
+
+- ⚛️ React Application leveraging Hooks and SWR.
+- 🤓 Uses TypeScript to reduce bugs and improve code satisfaction
+- 👷‍♂️ Leverages a Service Worker for offline support, push notifications, and an installable PWA.
+- 🧱 Uses Vite for blazing fast development and builds
+- 🎼 Leverages GitHub actions for automated production deploys and testing
+
 ## Getting Started
 
 To get started, you'll need to have the following installed:
@@ -44,11 +52,3 @@ If everything was successful, you should be able to access the application at th
 - [http://localhost:4000/](http://localhost:4000/) is the API server
 - [http://localhost:4001/](http://localhost:4001/) is the Web App server
 - [http://localhost:4002/](http://localhost:4002/) is the public website (we recommend starting here)
-
-## Features
-
-- ⚛️ React Application leveraging Hooks and SWR.
-- 🤓 Uses TypeScript to reduce bugs and improve code satisfaction
-- 👷‍♂️ Leverages a Service Worker for offline support, push notifications, and an installable PWA.
-- 🧱 Uses Vite for blazing fast development and builds
-- 🎼 Leverages GitHub actions for automated production deploys and testing
