@@ -6,7 +6,6 @@
   "workspaces": [
     "app",
     "api",
-    "shared",
     "website"
   ],
   "scripts": {
