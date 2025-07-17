@@ -1,23 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { QUERIES } from '../constants';
+import { QUERIES } from "../constants";
 
-import createSharedHook from './internal/createSharedHook';
+import createSharedHook from "./internal/createSharedHook";
 
 function useResponsive() {
-    const initial = getActiveBreakpoints();
-    const [screenSizes, setScreenSizes] = useState(initial);
+  const initial = getActiveBreakpoints();
+  const [screenSizes, setScreenSizes] = useState(initial);
 
-    useEffect(() => {
-        const handler = () => {
-            const current = getActiveBreakpoints();
-            setScreenSizes(current);
-        };
-        window.addEventListener('resize', handler);
-        return () => window.removeEventListener('resize', handler);
-    }, [screenSizes.currentScreen]);
+  useEffect(() => {
+    const handler = () => {
+      const current = getActiveBreakpoints();
+      setScreenSizes(current);
+    };
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, [screenSizes.currentScreen]);
 
-    return screenSizes;
+  return screenSizes;
 }
 
 /**
@@ -30,20 +30,17 @@ function useResponsive() {
  * @returns {Object}
  */
 function getActiveBreakpoints() {
-    const activeScreens = (
-        Object.keys(QUERIES) as unknown as Array<keyof typeof QUERIES>
-    ).filter(
-        query =>
-            window.matchMedia(QUERIES[query].replace('@media ', '')).matches
-    );
+  const activeScreens = (Object.keys(QUERIES) as unknown as Array<keyof typeof QUERIES>).filter(
+    query => window.matchMedia(QUERIES[query].replace("@media ", "")).matches
+  );
 
-    // current screen returns the exact screen size of window
-    const currentScreen = activeScreens[0];
+  // current screen returns the exact screen size of window
+  const currentScreen = activeScreens[0];
 
-    return {
-        currentScreen,
-        activeScreens
-    };
+  return {
+    currentScreen,
+    activeScreens
+  };
 }
 
 const { useConsumer, Provider } = createSharedHook(useResponsive);

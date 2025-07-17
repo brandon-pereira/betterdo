@@ -1,4 +1,4 @@
-import { styled, keyframes } from 'styled-components';
+import { styled, keyframes } from "styled-components";
 
 const rotate = keyframes`
     0% {
@@ -24,40 +24,40 @@ const dashoffset = keyframes`
 `;
 
 export const Loader = styled.div<{
-    $isVisible?: boolean;
-    $size?: string;
-    $color: string | undefined;
+  $isVisible?: boolean;
+  $size?: string;
+  $color: string | undefined;
 }>`
-    height: 0;
-    width: 0;
-    transform: scale(0);
-    opacity: 0;
-    transition: all 0.5s 0.2s;
-    position: relative;
-    svg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        animation: ${rotate} 2s linear infinite;
-    }
+  height: 0;
+  width: 0;
+  transform: scale(0);
+  opacity: 0;
+  transition: all 0.5s 0.2s;
+  position: relative;
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    animation: ${rotate} 2s linear infinite;
+  }
 
-    svg circle {
-        stroke-width: 5px;
-        stroke-dasharray: 184;
-        stroke-dashoffset: 0;
-        transform-origin: center;
-        stroke: ${props => props.$color || '#fff'};
-        animation: ${dashoffset} 2s linear infinite;
-    }
-    ${({ $isVisible, $size }) =>
-        $isVisible &&
-        `
+  svg circle {
+    stroke-width: 5px;
+    stroke-dasharray: 184;
+    stroke-dashoffset: 0;
+    transform-origin: center;
+    stroke: ${props => props.$color || "#fff"};
+    animation: ${dashoffset} 2s linear infinite;
+  }
+  ${({ $isVisible, $size }) =>
+    $isVisible &&
+    `
         transition: all 0s 0s, width 0.2s !important;
         transform: scale(1);
         opacity: 1;
-        height: ${$size || '1rem'};
-        width: ${$size || '1rem'};
+        height: ${$size || "1rem"};
+        width: ${$size || "1rem"};
     `};
 `;

@@ -1,1 +1,1 @@
-export { default, FormatProfilePictureUrl } from './ProfilePic';
+export { default, FormatProfilePictureUrl } from "./ProfilePic";

@@ -12,8 +12,8 @@ export default ({ app }: InternalRouter): void => {
       store: new MongoStore({ mongoUrl: MONGO_CONNECTION_URL }),
       cookie: {
         // sameSite: 'none',
-        maxAge: 1000 * 60 * 60 * 24 * 31 * 6, // ms * sec * mins * hours * days * 6 = ~ 6 months
-      },
-    }),
+        maxAge: 1000 * 60 * 60 * 24 * 31 * 6 // ms * sec * mins * hours * days * 6 = ~ 6 months
+      }
+    })
   );
 };

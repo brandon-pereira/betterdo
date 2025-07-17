@@ -1,21 +1,14 @@
-import {
-    createGlobalStyle,
-    ThemeProvider as _ThemeProvider
-} from 'styled-components';
-import 'simplebar-react/dist/simplebar.min.css';
+import { createGlobalStyle, ThemeProvider as _ThemeProvider } from "styled-components";
+import "simplebar-react/dist/simplebar.min.css";
 
-import { LIGHT_THEME, DARK_THEME } from '../theme';
+import { LIGHT_THEME, DARK_THEME } from "../theme";
 
-import useDarkMode from '@hooks/useDarkMode';
+import useDarkMode from "@hooks/useDarkMode";
 
 export function ThemeProvider({ children }: { children: React.ReactChild }) {
-    const [isDarkMode] = useDarkMode();
+  const [isDarkMode] = useDarkMode();
 
-    return (
-        <_ThemeProvider theme={isDarkMode ? DARK_THEME : LIGHT_THEME}>
-            {children}
-        </_ThemeProvider>
-    );
+  return <_ThemeProvider theme={isDarkMode ? DARK_THEME : LIGHT_THEME}>{children}</_ThemeProvider>;
 }
 
 export const GlobalStyles = createGlobalStyle`    

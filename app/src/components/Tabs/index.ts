@@ -1,2 +1,2 @@
-export { default } from './Tabs';
-export { Tab } from './Tabs';
+export { default } from "./Tabs";
+export { Tab } from "./Tabs";

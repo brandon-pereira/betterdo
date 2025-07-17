@@ -1,20 +1,20 @@
 {
-    "name": "website",
-    "version": "1.0.0",
-    "type": "module",
-    "private": true,
-    "scripts": {
-        "dev": "astro dev",
-        "start": "astro dev",
-        "build": "astro build",
-        "preview": "astro preview",
-        "lint": "eslint . && tsc --noemit"
-    },
-    "devDependencies": {
-        "@eslint/js": "^9.18.0",
-        "astro": "^5.1.7",
-        "eslint": "^9.18.0",
-        "typescript": "^5.7.3",
-        "typescript-eslint": "^8.20.0"
-    }
+  "name": "website",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "eslint . && tsc --noemit"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "astro": "^5.1.7",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0"
+  }
 }

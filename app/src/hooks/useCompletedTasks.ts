@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import createSharedHook from './internal/createSharedHook';
+import createSharedHook from "./internal/createSharedHook";
 
 function useCompletedTasksOnce() {
-    return useState(false);
+  return useState(false);
 }
 
 const {
-    Provider: CompletedTasksProvider,
-    Context: CompletedTasksContext,
-    useConsumer: useCompletedTasks
+  Provider: CompletedTasksProvider,
+  Context: CompletedTasksContext,
+  useConsumer: useCompletedTasks
 } = createSharedHook(useCompletedTasksOnce);
 
 export { CompletedTasksContext, CompletedTasksProvider };

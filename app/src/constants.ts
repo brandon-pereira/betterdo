@@ -3,9 +3,9 @@ export const MEDIUM = 640;
 export const SMALL = 0;
 
 export const QUERIES = {
-    large: `@media (min-width: ${LARGE}px)`,
-    medium: `@media (min-width: ${MEDIUM}px)`,
-    small: `@media (min-width: ${SMALL}px)`
+  large: `@media (min-width: ${LARGE}px)`,
+  medium: `@media (min-width: ${MEDIUM}px)`,
+  small: `@media (min-width: ${SMALL}px)`
 } as const;
 
-export const DEFAULT_LIST_COLOR = '#666666';
+export const DEFAULT_LIST_COLOR = "#666666";
