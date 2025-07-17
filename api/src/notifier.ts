@@ -14,7 +14,7 @@ interface DefaultNotificationFormat {
   };
 }
 type Notifier = WebNotifier<DefaultNotificationFormat>;
-export { Notifier };
+export type { Notifier };
 
 export default ({ db }: InternalRouter) => {
   const getUserPushSubscriptions = async (userId: string) => {
