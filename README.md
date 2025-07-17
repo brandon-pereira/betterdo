@@ -1,8 +1,12 @@
 # BetterDo
 
-This is the monorepo powering [BetterDo](https://betterdo.app), a simple, yet powerful, task management application.
+**Welcome to the monorepo for BetterDo** — a fast, modern task manager designed to help you stay focused and organized.
 
-I use this app daily to manage my tasks and projects, and I hope you find it useful too!
+I built BetterDo to simplify how I track tasks and manage projects — and I use it every day. Whether you're organizing your work, side projects, or personal goals, I hope it helps you as much as it helps me.
+
+This project is powered by a modern tech stack — TypeScript, Node.js, React, Vite, and more — with a strong focus on developer experience. It’s easy to run locally, contribute to, and deploy in production.
+
+[Launch the app](https://betterdo.app) to see it in action!
 
 ## 🚧 Active Migration
 
@@ -12,10 +16,6 @@ See original repositories:
 
 - [betterdo-api](https://github.com/brandon-pereira/betterdo-api)
 - [betterdo-ui](https://github.com/brandon-pereira/betterdo-ui)
-
-## Getting Started
-
-This project is built with a modern stack, including Typescript, Node, React, Vite, and more. It is designed to be easy to set up and run locally, as well as deploy to production.
 
 ## Getting Started
 
