@@ -18,13 +18,15 @@ import useCompletedTasks from '@hooks/useCompletedTasks';
 
 const NotificationBanner = loadable<Record<string, never>>(
     () => import('./NotificationBanner')
-);
+) as React.ComponentType<Record<string, never>>;
 
 const SortableList = loadable<SortableListProps>(
     () => import('./SortableList')
-);
+) as React.ComponentType<SortableListProps>;
 
-const AllCaughtUpBanner = loadable(() => import('./AllCaughtUp'));
+const AllCaughtUpBanner = loadable(
+    () => import('./AllCaughtUp')
+) as React.ComponentType<Record<string, never>>;
 
 function Body() {
     const currentListId = useCurrentListId();
@@ -108,8 +110,7 @@ function Body() {
                     </LayoutGroup>
                 )}
                 <AnimatePresence initial={false}>
-                    {/* AllCaughtUpBanner will manage unmounting internally for animations */}
-                    <AllCaughtUpBanner />
+                    {isAllCaughtUp && <AllCaughtUpBanner />}
                 </AnimatePresence>
                 {error && <ServerErrorBanner />}
             </Scroller>

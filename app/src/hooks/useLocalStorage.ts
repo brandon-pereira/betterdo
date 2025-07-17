@@ -30,7 +30,7 @@ function parseValue<T>(val: string | null): T | null {
     }
     try {
         return JSON.parse(val);
-    } catch (err) {
+    } catch {
         return null;
     }
 }
@@ -41,7 +41,7 @@ function formatValue<T>(val: T | null): string | null {
     }
     try {
         return JSON.stringify(val);
-    } catch (err) {
+    } catch {
         return null;
     }
 }

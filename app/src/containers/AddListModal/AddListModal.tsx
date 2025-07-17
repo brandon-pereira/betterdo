@@ -11,7 +11,7 @@ import useNewListModal from '@hooks/useNewListModal';
 
 const Content = loadable<AddListModalProps>(() => import('./Content'), {
     fallback: <Loader />
-});
+}) as React.ComponentType<AddListModalProps>;
 
 interface Props {
     isOpen: boolean;

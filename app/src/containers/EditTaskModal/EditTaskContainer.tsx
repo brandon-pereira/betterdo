@@ -8,7 +8,7 @@ import useEditTaskModal from '@hooks/useEditTaskModal';
 
 const Content = loadable(() => import('./EditTaskContent'), {
     fallback: <Loader />
-});
+}) as React.ComponentType<{ setUnsavedChanges: (bool: boolean) => void }>;
 
 interface Props {
     isOpen: boolean;

@@ -9,7 +9,7 @@ import useEditListModal from '@hooks/useEditListModal';
 
 const Content = loadable<ContentProps>(() => import('./content'), {
     fallback: <Loader />
-});
+}) as React.ComponentType<ContentProps>;
 
 interface Props {
     isOpen: boolean;

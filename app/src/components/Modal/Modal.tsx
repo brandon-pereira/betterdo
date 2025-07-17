@@ -100,13 +100,11 @@ const Modal = forwardRef<HTMLDivElement, Props>(
                         variants={variants || defaultVariant}
                         $disableHeightAnimation={disableHeightAnimation}
                         onAnimationComplete={() => {
-                            onAnimationComplete && onAnimationComplete();
+                            onAnimationComplete?.();
                             onContainerResize();
                         }}
                         style={style}
-                        className={`${className || ''} ${
-                            visible ? 'visible' : ''
-                        }`}
+                        className={`${className || ''} ${visible ? 'visible' : ''}`}
                         ref={ref}
                         $visible={visible}
                     >

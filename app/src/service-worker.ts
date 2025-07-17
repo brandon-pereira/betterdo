@@ -44,7 +44,7 @@ self.addEventListener('push', event => {
         if (!notification || !notification.title) {
             throw new Error('Missing title or passed string instead of object');
         }
-    } catch (e) {
+    } catch {
         console.error('Expected JSON, got text');
         return;
     }

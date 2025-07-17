@@ -17,7 +17,7 @@ import Scroller from '@components/Scroller';
 
 const SortableList = loadable<SortableListProps>(
     () => import('./SortableList')
-);
+) as React.ComponentType<SortableListProps>;
 
 function Navigation() {
     const [isMobileNavVisible, setMobileNavVisibility] = useHamburgerNav();

@@ -18,7 +18,7 @@ function SWRProvider({ children }: { children: React.ReactChild }) {
                         try {
                             const data = await res.json();
                             error = data.error;
-                        } catch (err) {
+                        } catch {
                             error = 'Internal Error';
                         }
                         console.error('API Request Failed!', url, error);
