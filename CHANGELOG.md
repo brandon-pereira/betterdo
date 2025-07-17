@@ -1,5 +1,9 @@
 # Changelog
 
+## 7.0.0 (alpha)
+
+- Moved to a monorepo structure
+
 ## 6.5.0
 
 - Add support for Safari "Add to Dock" feature
