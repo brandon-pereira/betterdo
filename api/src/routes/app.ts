@@ -21,5 +21,5 @@ export default ({ app }: { app: Application }): void => {
   });
 
   /* Initialize the routes and attach them to the api */
-  app.use("/app/", express.static(process.env.APP_FOLDER || "", {}));
+  app.use("/app/", express.static(process.env.APP_FOLDER ?? "../app/dist/", {}));
 };

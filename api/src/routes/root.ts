@@ -10,5 +10,5 @@ export default ({ app }: { app: Application }): void => {
     }
   });
 
-  app.use("/", express.static(process.env.LANDING_FOLDER || ""));
+  app.use("/", express.static(process.env.LANDING_FOLDER ?? "../website/dist/"));
 };
