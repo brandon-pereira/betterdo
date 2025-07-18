@@ -7,6 +7,8 @@ import svgr from "vite-plugin-svgr";
 import markdown from "vite-plugin-markdown";
 import { VitePWA } from "vite-plugin-pwa";
 
+import rootPackage from "../package.json";
+
 export default defineConfig({
   plugins: [
     svgr({ include: "**/*.svg" }),
@@ -31,7 +33,7 @@ export default defineConfig({
     logOverride: { "this-is-undefined-in-esm": "silent" }
   },
   define: {
-    __VERSION__: `"${process.env.npm_package_version}"`,
+    __VERSION__: `"${rootPackage.version}"`,
     __SERVER_URL__: `"${process.env.NODE_ENV === "production" ? "https://betterdo.app" : "http://localhost:4000"}"`
   },
   base: "./",
