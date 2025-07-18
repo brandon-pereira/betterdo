@@ -6,10 +6,3 @@ This repository contains the static site which is visible pre-authentication as 
 
 - 🚀 Built using [Astro](https://astro.build/) for improved performance and SEO.
 - 🎼 Leverages GitHub actions for automated production deploys
-
-## Running Locally
-
-```bash
-yarn install
-yarn start
-```
