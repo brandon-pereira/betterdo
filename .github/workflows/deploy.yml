@@ -20,10 +20,45 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             cd /home/www/betterdo
+
+            # Always fetch latest
+            git fetch
+            CHANGED=$(git diff --name-only HEAD origin/${{ github.ref_name }})
+
+            # Checkout and pull latest
             git checkout .
             git pull
+
+            # Always install deps
             yarn install --frozen-lockfile
-            yarn build:website
-            # yarn build:app
-            # yarn build:api
+
+            echo "Changed files:"
+            echo "$CHANGED"
+
+            BUILD_WEBSITE=$(echo "$CHANGED" | grep -E '^website/' || true)
+            BUILD_APP=$(echo "$CHANGED" | grep -E '^app/' || true)
+            BUILD_API=$(echo "$CHANGED" | grep -E '^api/' || true)
+
+            if [ -n "$BUILD_WEBSITE" ]; then
+              echo "Building Website..."
+              yarn build:website
+            else
+              echo "No changes in website/"
+            fi
+
+            if [ -n "$BUILD_APP" ]; then
+              echo "Building App..."
+              yarn build:app
+            else
+              echo "No changes in app/"
+            fi
+
+            if [ -n "$BUILD_API" ]; then
+              echo "Building API..."
+              yarn build:api
+            else
+              echo "No changes in api/"
+            fi
+
+            # Restart after any builds
             pm2 restart betterdo
