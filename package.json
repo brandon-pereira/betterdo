@@ -12,7 +12,10 @@
     "start": "concurrently \"yarn workspace  app start\" \"yarn workspace api start\" \"yarn workspace website start\"",
     "start:website": "yarn workspace website start",
     "lint": "yarn workspaces run lint",
-    "test": "yarn workspace api test"
+    "test": "yarn workspace api test",
+    "build:website": "yarn workspace website build",
+    "build:app": "yarn workspace app build",
+    "build:api": "yarn workspace api build"
   },
   "description": "BetterDo is a simple todo list app that helps you organize your tasks.",
   "repository": "https://github.com/brandon-pereira/betterdo",

@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+      - deploy-test
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        # TODO: Contextual Based Building
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.SSH_USERNAME }}
+          script: |
+            cd /home/www/betterdo
+            git checkout .
+            git pull
+            yarn install --frozen-lockfile
+            yarn build:website
+            # yarn build:app
+            # yarn build:api
+            pm2 restart betterdo
