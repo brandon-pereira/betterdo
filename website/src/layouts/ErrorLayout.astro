@@ -103,7 +103,6 @@ const { title } = Astro.props;
       const _ = "transparent";
       const g = "#0f0";
 
-      // prettier-ignore
       const bitmap = [
         [_, _, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, _, _],
         [_, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _],
@@ -137,7 +136,7 @@ const { title } = Astro.props;
         [_, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, g, _],
         [_, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, _],
         [_, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, _]
-    ];
+      ];
 
       bitmap.forEach((row, j) => {
         row.forEach((pixel, i) => {

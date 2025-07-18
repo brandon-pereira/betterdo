@@ -1,14 +1,13 @@
 ---
 interface Props {
   text: string[];
+  delay?: number;
 }
 
 const { text, delay } = Astro.props;
 ---
 
-<span data-scroll-text-delay={delay} data-scroll-text={text.join("|")}
-  >{text.at(0)}</span
->
+<span data-scroll-text-delay={delay} data-scroll-text={text.join("|")}>{text.at(0)}</span>
 
 <style is:global>
   [data-scroll-text] {
@@ -33,7 +32,7 @@ const { text, delay } = Astro.props;
 <script>
   import ScrollText from "../scripts/scroll-text";
 
-  document.querySelectorAll("[data-scroll-text]")!.forEach((el) => {
+  document.querySelectorAll("[data-scroll-text]")!.forEach(el => {
     new ScrollText(el);
   });
 </script>
