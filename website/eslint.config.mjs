@@ -1,4 +1,3 @@
-import globals from "globals";
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import prettier from "eslint-plugin-prettier/recommended";
@@ -12,10 +11,7 @@ export default tseslint.config(
   ...astro.configs.recommended,
   {
     languageOptions: {
-      sourceType: "module",
-      globals: {
-        ...globals.browser
-      }
+      sourceType: "module"
     }
   },
   {

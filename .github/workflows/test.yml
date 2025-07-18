@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    # https://stackoverflow.com/a/79393148
+    runs-on: ubuntu-22.04
+    env:
+      NODE_ENV: testing
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+        id: nvm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+          cache: "yarn"
+      - run: yarn install --frozen-lockfile
+      - run: yarn test
