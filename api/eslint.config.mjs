@@ -20,5 +20,13 @@ export default defineConfig([
     }
   },
 
-  tseslint.configs.recommended
+  tseslint.configs.recommended,
+  {
+    languageOptions: {
+      sourceType: "module",
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname
+      }
+    }
+  }
 ]);

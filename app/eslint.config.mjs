@@ -3,6 +3,9 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(eslint.configs.recommended, tseslint.configs.recommended, {
   languageOptions: {
-    sourceType: "module"
+    sourceType: "module",
+    parserOptions: {
+      tsconfigRootDir: import.meta.dirname
+    }
   }
 });

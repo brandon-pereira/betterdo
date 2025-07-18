@@ -11,7 +11,10 @@ export default tseslint.config(
   ...astro.configs.recommended,
   {
     languageOptions: {
-      sourceType: "module"
+      sourceType: "module",
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname
+      }
     }
   },
   {
