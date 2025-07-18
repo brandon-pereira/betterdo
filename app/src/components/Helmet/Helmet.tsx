@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import { Helmet as CoreHelmet } from "react-helmet-async";
 
 import { DEFAULT_LIST_COLOR } from "../../constants";
 
@@ -7,33 +7,33 @@ import useListDetails from "@hooks/useListDetails";
 import useHamburgerNav from "@hooks/useHamburgerNav";
 import { getAccessibleAccent } from "@utilities/colors";
 
-function _Helmet() {
+function Helmet() {
   const currentListId = useCurrentListId();
   const { list, error } = useListDetails(currentListId);
   const [isNavOpen] = useHamburgerNav();
 
   if (error || !list) {
     return (
-      <Helmet>
+      <CoreHelmet>
         <meta name="theme-color" content={DEFAULT_LIST_COLOR} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-      </Helmet>
+      </CoreHelmet>
     );
   }
 
   const listColor = getAccessibleAccent(list.color!).toHex();
 
   return (
-    <Helmet>
+    <CoreHelmet>
       <title>BetterDo.{list.title ? ` - ${list.title}` : ""}</title>
       <meta name="theme-color" content={!isNavOpen ? listColor : "#080808"} />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />
-    </Helmet>
+    </CoreHelmet>
   );
 }
 
-export default _Helmet;
+export default Helmet;
