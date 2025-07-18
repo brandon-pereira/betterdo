@@ -16,7 +16,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     env:
-      NODE_ENV: linting
+      NODE_ENV: testing
     steps:
       - uses: actions/checkout@v4
       - run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_OUTPUT

@@ -33,6 +33,6 @@ const { text, delay } = Astro.props;
   import ScrollText from "../scripts/scroll-text";
 
   document.querySelectorAll("[data-scroll-text]")!.forEach(el => {
-    new ScrollText(el);
+    new ScrollText(el as HTMLElement);
   });
 </script>
