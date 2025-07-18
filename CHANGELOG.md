@@ -3,6 +3,7 @@
 ## 7.0.0 (alpha)
 
 - Moved to a monorepo structure
+- Bumped ESLint and Prettier to latest versions (including new flat config change)
 
 ## v6.5.1
 
