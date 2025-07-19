@@ -13,52 +13,8 @@ jobs:
     steps:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
-        # TODO: Contextual Based Building
         with:
           host: ${{ secrets.SSH_HOST }}
           key: ${{ secrets.SSH_KEY }}
           username: ${{ secrets.SSH_USERNAME }}
-          script: |
-            cd /home/www/betterdo
-
-            # Always fetch latest
-            git fetch
-            CHANGED=$(git diff --name-only HEAD origin/${{ github.ref_name }})
-
-            # Checkout and pull latest
-            git checkout .
-            git pull
-
-            # Always install deps
-            yarn install --frozen-lockfile
-
-            echo "Changed files:"
-            echo "$CHANGED"
-
-            BUILD_WEBSITE=$(echo "$CHANGED" | grep -E '^website/' || true)
-            BUILD_APP=$(echo "$CHANGED" | grep -E '^app/' || true)
-            BUILD_API=$(echo "$CHANGED" | grep -E '^api/' || true)
-
-            if [ -n "$BUILD_WEBSITE" ]; then
-              echo "Building Website..."
-              yarn build:website
-            else
-              echo "No changes in website/"
-            fi
-
-            if [ -n "$BUILD_APP" ]; then
-              echo "Building App..."
-              yarn build:app
-            else
-              echo "No changes in app/"
-            fi
-
-            if [ -n "$BUILD_API" ]; then
-              echo "Building API..."
-              yarn build:api
-            else
-              echo "No changes in api/"
-            fi
-
-            # Restart after any builds
-            pm2 restart betterdo
+          script_path: .github/workflows/deploy.sh
