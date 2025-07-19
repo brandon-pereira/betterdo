@@ -4,6 +4,8 @@
 
 - Moved to a monorepo structure
 - Bumped ESLint and Prettier to latest versions (including new flat config change)
+- Upgraded to Node 22
+- Upgraded Hosting Infrastructure
 
 ## v6.5.1
 
