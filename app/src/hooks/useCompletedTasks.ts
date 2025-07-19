@@ -6,11 +6,7 @@ function useCompletedTasksOnce() {
   return useState(false);
 }
 
-const {
-  Provider: CompletedTasksProvider,
-  Context: CompletedTasksContext,
-  useConsumer: useCompletedTasks
-} = createSharedHook(useCompletedTasksOnce);
+const { Provider: CompletedTasksProvider, useConsumer: useCompletedTasks } = createSharedHook(useCompletedTasksOnce);
 
-export { CompletedTasksContext, CompletedTasksProvider };
+export { CompletedTasksProvider };
 export default useCompletedTasks;

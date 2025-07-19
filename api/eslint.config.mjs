@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import pluginJest from "eslint-plugin-jest";
+import prettier from "eslint-plugin-prettier/recommended";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
@@ -19,7 +20,7 @@ export default defineConfig([
       "jest/valid-expect": "error"
     }
   },
-
+  prettier,
   tseslint.configs.recommended,
   {
     languageOptions: {

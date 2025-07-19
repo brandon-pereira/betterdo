@@ -57,7 +57,3 @@ export const StyledButton = styled.button.attrs(({ color, theme }) => {
 export const Loader = styled(_Loader)`
   margin-right: 1rem;
 `;
-export const Text = styled.span`
-  position: relative;
-  z-index: 1;
-`;

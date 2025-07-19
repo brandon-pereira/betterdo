@@ -37,11 +37,7 @@ function parseValue(val: string | null): boolean {
   else return true;
 }
 
-const {
-  Provider: DarkModeProvider,
-  Context: DarkModeContext,
-  useConsumer: useDarkMode
-} = createSharedHook(useDarkModeOnce);
+const { Provider: DarkModeProvider, useConsumer: useDarkMode } = createSharedHook(useDarkModeOnce);
 
-export { DarkModeContext, DarkModeProvider };
+export { DarkModeProvider };
 export default useDarkMode;

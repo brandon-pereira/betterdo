@@ -9,8 +9,6 @@ import _Hamburger from "@components/Hamburger";
 
 export const Icon = styled(_Icon)``;
 
-export { Button };
-
 export const Hamburger = styled(_Hamburger)<{ hidden: boolean }>`
   ${({ hidden }) =>
     hidden &&

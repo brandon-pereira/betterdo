@@ -2,7 +2,7 @@ import { model, Schema, Document, PopulatedDoc, Model } from "mongoose";
 import { ObjectId } from "mongodb";
 import { ListDocument } from "./lists";
 
-export interface Subtask {
+interface Subtask {
   title: string;
   isComplete: boolean;
 }

@@ -1,6 +1,6 @@
 import { QUERIES } from "./constants";
 
-export const BASE_THEME = {
+const BASE_THEME = {
   queries: QUERIES
 };
 

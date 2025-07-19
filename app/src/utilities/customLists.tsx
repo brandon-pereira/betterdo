@@ -14,7 +14,7 @@ const ListItemIcon = ({
   icon: React.FunctionComponent<React.SVGAttributes<SVGElement>>;
 }): React.ReactNode => <SvgIcon icon={icon} color="#fff" />;
 
-export interface CustomList {
+interface CustomList {
   id: string;
   title: string;
   icon: React.ReactNode;

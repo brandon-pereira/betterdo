@@ -1,9 +1,5 @@
 import { styled } from "styled-components";
 
-import _Icon from "@components/Icon";
-
-export const Icon = styled(_Icon)``;
-
 export const CustomListsContainer = styled.ol`
   position: relative;
   padding: 0;
@@ -31,7 +27,4 @@ export const IconHolder = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  ${Icon} {
-    filter: drop-shadow(0 1px #000);
-  }
 `;

@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import _Banner from "@components/Banner";
 import _Scroller from "@components/Scroller";
 
-export const Banner = styled(_Banner)``;
+const Banner = styled(_Banner)``;
 
 export const Scroller = styled(_Scroller)`
   margin-bottom: 0.5rem;

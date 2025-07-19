@@ -3,12 +3,15 @@ import tseslint from "typescript-eslint";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import imports from "eslint-plugin-import";
+import prettier from "eslint-plugin-prettier/recommended";
 
 export default tseslint.config(
+  { ignores: ["dist"] },
   eslint.configs.recommended,
   tseslint.configs.recommended,
+  prettier,
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}"],
     extends: [imports.flatConfigs.recommended, imports.flatConfigs.typescript],
     settings: {
       "import/resolver": {
@@ -27,7 +30,7 @@ export default tseslint.config(
     }
   },
   {
-    files: ["**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}"],
+    files: ["src/**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}"],
     ...react.configs.flat.recommended,
     ...react.configs.flat["jsx-runtime"],
     ...reactHooks.configs["recommended-latest"],

@@ -7,6 +7,7 @@
 - Upgraded to Node 22
 - Upgraded Hosting Infrastructure
 - Improved Build Infrastructure
+- Added `knip` to catch and eliminate dead code
 
 ## v6.5.1
 

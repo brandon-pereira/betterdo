@@ -24,7 +24,7 @@ const PRIORITIES = [
   { value: "high", label: "High" }
 ];
 
-export interface Props {
+interface Props {
   setUnsavedChanges: (bool: boolean) => void;
 }
 

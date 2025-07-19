@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    "app": {
+      "entry": ["./src/index.tsx", "./src/service-worker.ts"]
+    },
+    "api": {
+      "entry": ["jest-mongodb-config.js", "./types/**.d.ts"]
+    }
+  },
+  "rules": {
+    "unlisted": "off"
+  },
+  "ignoreDependencies": ["esbuild", "prettier-plugin-astro"]
+}

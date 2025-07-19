@@ -20,7 +20,7 @@ function useListsOnce() {
   };
 }
 
-const { Provider: ListsProvider, Context: ListsContext, useConsumer: useLists } = createSharedHook(useListsOnce);
+const { Provider: ListsProvider, useConsumer: useLists } = createSharedHook(useListsOnce);
 
-export { ListsContext, ListsProvider };
+export { ListsProvider };
 export default useLists;

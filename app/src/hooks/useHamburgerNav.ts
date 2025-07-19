@@ -9,11 +9,7 @@ function useHamburgerNavOnce(): [boolean, (bool: boolean) => void] {
   return [isNavOpen && currentScreen === "small", setNavOpen];
 }
 
-const {
-  Provider: ModalsProvider,
-  Context: ModalsContext,
-  useConsumer: useHamburgerNav
-} = createSharedHook(useHamburgerNavOnce);
+const { Provider: ModalsProvider, useConsumer: useHamburgerNav } = createSharedHook(useHamburgerNavOnce);
 
-export { ModalsContext, ModalsProvider };
+export { ModalsProvider };
 export default useHamburgerNav;
