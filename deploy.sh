@@ -6,7 +6,7 @@ cd /home/www/betterdo
 
 # Fetch and compare changes
 git fetch
-CHANGED=$(git diff --name-only HEAD origin/${{ github.ref_name }})
+CHANGED=$(git diff --name-only HEAD origin/main)
 
 # Debugging
 echo "Changed files:"
@@ -14,7 +14,7 @@ echo "$CHANGED"
 
 # Reset and pull latest
 git checkout .
-git pull origin ${{ github.ref_name }}
+git pull origin main
 
 # Install dependencies
 yarn install --frozen-lockfile
