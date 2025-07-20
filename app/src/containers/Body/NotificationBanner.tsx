@@ -37,7 +37,7 @@ function NotificationBanner() {
     doesListHaveNotifications = isSharedList || doesListHaveDueDates;
   }
 
-  if (true) {
+  if (doesListHaveNotifications && notificationStatus === "UNKNOWN") {
     return (
       <_NotificationBanner
         title="Get notified"
