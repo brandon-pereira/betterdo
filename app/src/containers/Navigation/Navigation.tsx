@@ -5,7 +5,6 @@ import useLists from "@hooks/useLists";
 import useModifyProfile from "@hooks/useModifyProfile";
 import useHamburgerNav from "@hooks/useHamburgerNav";
 import { NewListItem } from "@components/ListItem";
-import Scroller from "@components/Scroller";
 import Loader from "@components/Loader";
 
 const SortableList = lazy(() => import("./SortableList"));
