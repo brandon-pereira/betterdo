@@ -76,7 +76,7 @@ const SortableItem = function ({ id, task }: SortableItemProps) {
   );
 };
 
-export interface SortableListProps {
+interface SortableListProps {
   listId: string;
   tasks: TaskType[];
   onSortEnd: (payload: { oldIndex: number; newIndex: number }) => void;

@@ -14,7 +14,7 @@ const ButtonContainer = styled.div`
   margin-top: 1.5rem;
 `;
 
-export interface AddListModalProps {
+interface AddListModalProps {
   onLoad: () => void;
 }
 

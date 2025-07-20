@@ -47,7 +47,7 @@ const SortableItem = function ({ id, value }: SortableItemProps) {
   );
 };
 
-export interface SortableListProps {
+interface SortableListProps {
   lists: List[];
   onSortEnd: (params: { oldIndex: number; newIndex: number }) => void;
 }

@@ -12,7 +12,7 @@ import useCurrentListId from "@hooks/useCurrentListId";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
 import { checkIfColorGoodContrast } from "@utilities/colors";
 
-export interface Props {
+interface Props {
   setUnsavedChanges: (bool: boolean) => void;
   onRequestClose: () => void;
 }
