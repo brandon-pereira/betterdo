@@ -1,13 +1,9 @@
-import { useCallback } from "react";
+import { lazy, Suspense, useCallback } from "react";
 import { arrayMoveImmutable } from "array-move";
 import { LayoutGroup, AnimatePresence } from "framer-motion";
-import loadable from "@loadable/component";
-
 import { Container, TaskContainer, Scroller } from "./Body.styles";
 import CompletedTasksButton from "./CompletedTasksButton";
 import { ServerErrorBanner } from "./Banners";
-import type { SortableListProps } from "./SortableList";
-
 import customLists from "@utilities/customLists";
 import AddTask from "@components/AddTask";
 import Task from "@components/Task";
@@ -16,15 +12,11 @@ import useCurrentListId from "@hooks/useCurrentListId";
 import useModifyList from "@hooks/useModifyList";
 import useCompletedTasks from "@hooks/useCompletedTasks";
 
-const NotificationBanner = loadable<Record<string, never>>(() => import("./NotificationBanner")) as React.ComponentType<
-  Record<string, never>
->;
+const NotificationBanner = lazy(() => import("./NotificationBanner"));
 
-const SortableList = loadable<SortableListProps>(
-  () => import("./SortableList")
-) as React.ComponentType<SortableListProps>;
+const SortableList = lazy(() => import("./SortableList"));
 
-const AllCaughtUpBanner = loadable(() => import("./AllCaughtUp")) as React.ComponentType<Record<string, never>>;
+const AllCaughtUpBanner = lazy(() => import("./AllCaughtUp"));
 
 function Body() {
   const currentListId = useCurrentListId();
@@ -58,14 +50,18 @@ function Body() {
 
   return (
     <Container>
-      <NotificationBanner />
+      <Suspense>
+        <NotificationBanner />
+      </Suspense>
       <Scroller>
         <AddTask isAbsolute={isAllCaughtUp} isHidden={hideAddTaskInput} />
         {!error && (
           <LayoutGroup>
             <TaskContainer>
               {/* Regular non-complete tasks are loaded and sortable  */}
-              <SortableList listId={list._id || currentListId} tasks={list.tasks || []} onSortEnd={onSortEnd} />
+              <Suspense>
+                <SortableList listId={list._id || currentListId} tasks={list.tasks || []} onSortEnd={onSortEnd} />
+              </Suspense>
               {/* Completed tasks are not sortable and only shown when requested */}
               {isCompletedTasksIncluded &&
                 list?.completedTasks?.map(task => <Task key={task._id} {...task} isCompleted={true} />)}
@@ -80,7 +76,13 @@ function Body() {
             </TaskContainer>
           </LayoutGroup>
         )}
-        <AnimatePresence initial={false}>{isAllCaughtUp && <AllCaughtUpBanner />}</AnimatePresence>
+        <AnimatePresence initial={false}>
+          {isAllCaughtUp && (
+            <Suspense>
+              <AllCaughtUpBanner />
+            </Suspense>
+          )}
+        </AnimatePresence>
         {error && <ServerErrorBanner />}
       </Scroller>
     </Container>

@@ -1,14 +1,9 @@
-import { useRef, useCallback } from "react";
-import loadable from "@loadable/component";
-
+import { useRef, useCallback, lazy, Suspense } from "react";
 import { Modal } from "./EditTask.styles";
 import Loader from "./Loader";
-
 import useEditTaskModal from "@hooks/useEditTaskModal";
 
-const Content = loadable(() => import("./EditTaskContent"), {
-  fallback: <Loader />
-}) as React.ComponentType<{ setUnsavedChanges: (bool: boolean) => void }>;
+const Content = lazy(() => import("./EditTaskContent"));
 
 interface Props {
   isOpen: boolean;
@@ -58,7 +53,11 @@ function EditTaskContainer({ isOpen }: Props) {
       visible={isOpen}
       variants={variants}
     >
-      {isOpen && <Content setUnsavedChanges={setUnsavedChanges} />}
+      {isOpen && (
+        <Suspense fallback={<Loader />}>
+          <Content setUnsavedChanges={setUnsavedChanges} />
+        </Suspense>
+      )}
     </Modal>
   );
 }

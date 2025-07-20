@@ -1,15 +1,9 @@
-import { useCallback, useRef } from "react";
-import loadable from "@loadable/component";
-
-import { Props as ContentProps } from "./content";
+import { lazy, Suspense, useCallback, useRef } from "react";
 import { Modal } from "./EditListModal.styles";
-
 import { Loader } from "@components/Modal";
 import useEditListModal from "@hooks/useEditListModal";
 
-const Content = loadable<ContentProps>(() => import("./content"), {
-  fallback: <Loader />
-}) as React.ComponentType<ContentProps>;
+const Content = lazy(() => import("./content"));
 
 interface Props {
   isOpen: boolean;
@@ -52,7 +46,11 @@ function EditListModalContainer({ isOpen }: Props) {
 
   return (
     <Modal canCloseModal={canCloseModal} onRequestClose={closeModal} visible={isOpen} variants={variants}>
-      {isOpen && <Content setUnsavedChanges={setUnsavedChanges} onRequestClose={onClose} />}
+      {isOpen && (
+        <Suspense fallback={<Loader />}>
+          <Content setUnsavedChanges={setUnsavedChanges} onRequestClose={onClose} />
+        </Suspense>
+      )}
     </Modal>
   );
 }

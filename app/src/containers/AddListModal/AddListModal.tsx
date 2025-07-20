@@ -1,17 +1,10 @@
-import { useCallback, useEffect, useRef, useLayoutEffect } from "react";
-import loadable from "@loadable/component";
-
+import { lazy, useCallback, useEffect, useRef, useLayoutEffect, Suspense } from "react";
 import { MEDIUM } from "../../constants";
-
 import { Modal } from "./AddListModal.styles";
-import { AddListModalProps } from "./Content";
-
 import { Loader } from "@components/Modal";
 import useNewListModal from "@hooks/useNewListModal";
 
-const Content = loadable<AddListModalProps>(() => import("./Content"), {
-  fallback: <Loader />
-}) as React.ComponentType<AddListModalProps>;
+const Content = lazy(() => import("./Content"));
 
 interface Props {
   isOpen: boolean;
@@ -98,7 +91,11 @@ function AddListModalContainer({ isOpen }: Props) {
       onAnimationComplete={calculatePosition}
       variants={variants}
     >
-      {isOpen && <Content onLoad={calculatePosition} />}
+      {isOpen && (
+        <Suspense fallback={<Loader />}>
+          <Content onLoad={calculatePosition} />
+        </Suspense>
+      )}
     </Modal>
   );
 }

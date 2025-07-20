@@ -1,19 +1,14 @@
-import loadable from "@loadable/component";
-import { useCallback } from "react";
+import { lazy, Suspense, useCallback } from "react";
 import { arrayMoveImmutable } from "array-move";
-
-import type { SortableListProps } from "./SortableList";
 import { Container, NavigationModalOverlay, ListsContainer } from "./Navigation.styles";
-
 import useLists from "@hooks/useLists";
 import useModifyProfile from "@hooks/useModifyProfile";
 import useHamburgerNav from "@hooks/useHamburgerNav";
 import { NewListItem } from "@components/ListItem";
 import Scroller from "@components/Scroller";
+import Loader from "@components/Loader";
 
-const SortableList = loadable<SortableListProps>(
-  () => import("./SortableList")
-) as React.ComponentType<SortableListProps>;
+const SortableList = lazy(() => import("./SortableList"));
 
 function Navigation() {
   const [isMobileNavVisible, setMobileNavVisibility] = useHamburgerNav();
@@ -41,7 +36,9 @@ function Navigation() {
     <Container $isMobileNavVisible={isMobileNavVisible}>
       <Scroller>
         <ListsContainer>
-          <SortableList lists={lists} onSortEnd={onSortEnd} />
+          <Suspense fallback={<Loader />}>
+            <SortableList lists={lists} onSortEnd={onSortEnd} />
+          </Suspense>
           <NewListItem />
         </ListsContainer>
       </Scroller>
