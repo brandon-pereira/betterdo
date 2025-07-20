@@ -3,6 +3,7 @@
 ## 7.0.0 (alpha)
 
 - Moved to a monorepo structure
+- Dropped `@loadable/component` in favour of `React.lazy`
 - Bumped ESLint and Prettier to latest versions (including new flat config change)
 - Upgraded to Node 22
 - Upgraded Hosting Infrastructure
