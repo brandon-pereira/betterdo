@@ -8,6 +8,7 @@
 - Upgraded Hosting Infrastructure
 - Improved Build Infrastructure
 - Added `knip` to catch and eliminate dead code
+- Leverage Docker for local development
 
 ## v6.5.1
 
