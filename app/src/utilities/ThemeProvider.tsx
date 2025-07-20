@@ -1,5 +1,4 @@
 import { createGlobalStyle, ThemeProvider as _ThemeProvider } from "styled-components";
-import "simplebar-react/dist/simplebar.min.css";
 
 import { LIGHT_THEME, DARK_THEME } from "../theme";
 

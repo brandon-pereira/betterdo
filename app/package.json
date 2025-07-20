@@ -20,7 +20,6 @@
     "react-focus-lock": "^2.11.0",
     "react-helmet-async": "^2.0.4",
     "react-router-dom": "^6.22.1",
-    "simplebar-react": "^3.2.4",
     "styled-components": "^6.1.8",
     "swr": "^2.2.5",
     "workbox-window": "^7.0.0"

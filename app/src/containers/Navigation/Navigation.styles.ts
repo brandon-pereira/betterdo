@@ -47,8 +47,16 @@ export const Container = styled.nav<{ $isMobileNavVisible?: boolean }>`
 `;
 export const ListsContainer = styled.ul`
   list-style: none;
-  max-height: 100%;
   padding: 0;
   margin: 0;
+  flex: 1;
+`;
+
+export const ListScroller = styled.div`
+  position: relative;
+  margin-bottom: 0.5rem;
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
   flex: 1;
 `;

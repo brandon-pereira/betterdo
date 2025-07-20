@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback } from "react";
 import { arrayMoveImmutable } from "array-move";
-import { Container, NavigationModalOverlay, ListsContainer } from "./Navigation.styles";
+import { Container, ListScroller, NavigationModalOverlay, ListsContainer } from "./Navigation.styles";
 import useLists from "@hooks/useLists";
 import useModifyProfile from "@hooks/useModifyProfile";
 import useHamburgerNav from "@hooks/useHamburgerNav";
@@ -34,14 +34,14 @@ function Navigation() {
 
   return (
     <Container $isMobileNavVisible={isMobileNavVisible}>
-      <Scroller>
+      <ListScroller>
         <ListsContainer>
           <Suspense fallback={<Loader />}>
             <SortableList lists={lists} onSortEnd={onSortEnd} />
           </Suspense>
           <NewListItem />
         </ListsContainer>
-      </Scroller>
+      </ListScroller>
       <NavigationModalOverlay onClick={() => setMobileNavVisibility(false)} />
     </Container>
   );

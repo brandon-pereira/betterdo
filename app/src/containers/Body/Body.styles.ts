@@ -1,24 +1,24 @@
 import { styled } from "styled-components";
-
 import _Banner from "@components/Banner";
-import _Scroller from "@components/Scroller";
 
 const Banner = styled(_Banner)``;
 
-export const Scroller = styled(_Scroller)`
+export const Scroller = styled.div`
+  position: relative;
   margin-bottom: 0.5rem;
-  overflow-x: hidden;
-  .simplebar-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  height: 100%;
 `;
 
 export const Container = styled.div`
   grid-row: 4;
   grid-column: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background: ${({ theme }) => theme.colors.body.background};
   ${({ theme }) => theme.queries.medium} {
     grid-row: 2;
