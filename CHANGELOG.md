@@ -4,6 +4,7 @@
 
 - Moved to a monorepo structure
 - Dropped `@loadable/component` in favour of `React.lazy`
+- Dropped `simplebar-react` in favour of native scrollbars
 - Bumped ESLint and Prettier to latest versions (including new flat config change)
 - Upgraded to Node 22
 - Upgraded Hosting Infrastructure
