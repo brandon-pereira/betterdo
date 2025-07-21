@@ -8,15 +8,6 @@ This project is powered by a modern tech stack — TypeScript, Node.js, React, V
 
 [Launch the app](https://betterdo.app) to see it in action!
 
-## 🚧 Active Migration
-
-This project is currently being migrated from two separate repositories into a monorepo. The goal is to simplify the development process and make it easier to manage dependencies and releases.
-
-See original repositories:
-
-- [betterdo-api](https://github.com/brandon-pereira/betterdo-api)
-- [betterdo-ui](https://github.com/brandon-pereira/betterdo-ui)
-
 ## Features
 
 - ⚛️ React Application leveraging Hooks and SWR.
@@ -38,9 +29,12 @@ Once you have these installed, you can clone the repository and run the followin
 ```bash
 nvm use
 yarn install
+cp api/.env.example api/.env
 ```
 
-Then, you can run the development server:
+After copying the `.env` file, you should edit it to set your environment variables. You can use the `.env.example` file as a reference.
+
+After setting your environment variables, you can run the development server:
 
 ```bash
 docker compose up -d
