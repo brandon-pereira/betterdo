@@ -34,7 +34,8 @@ export default defineConfig({
   },
   define: {
     __VERSION__: `"${rootPackage.version}"`,
-    __SERVER_URL__: `"${process.env.NODE_ENV === "production" ? "https://betterdo.app" : "http://localhost:4000"}"`
+    __SERVER_URL__: `"${process.env.NODE_ENV === "production" ? "https://betterdo.app" : "http://localhost:4000"}"`,
+    __APP_URL__: `"${process.env.NODE_ENV === "production" ? "https://betterdo.app" : "http://localhost:4001"}"`
   },
   base: "./",
   server: {

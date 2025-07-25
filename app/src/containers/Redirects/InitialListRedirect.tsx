@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 
 import useCurrentListId from "@hooks/useCurrentListId";
 import useLists from "@hooks/useLists";
+import GlobalError from "@components/ErrorBoundary/GlobalError";
 
 function InitialListRedirect() {
   const currentListId = useCurrentListId();
   const navigate = useNavigate();
-  const { lists, loading } = useLists();
+  const { lists, error, loading } = useLists();
   useEffect(() => {
     if ((!currentListId || currentListId === "inbox") && !loading) {
       const inbox = lists.find(l => l.type === "inbox");
@@ -20,7 +21,11 @@ function InitialListRedirect() {
       }
     }
   }, [currentListId, navigate, lists, loading]);
-  return null;
+
+  if (error) {
+    return <GlobalError errorMessage={error} />;
+  }
+  return <div>Loading...</div>;
 }
 
 export default InitialListRedirect;

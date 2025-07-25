@@ -6,6 +6,7 @@ import config from "./config.js";
 import * as authSchema from "./schema/auth.js";
 
 export const auth = betterAuth({
+  appName: "BetterDo",
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: authSchema
@@ -19,5 +20,6 @@ export const auth = betterAuth({
       clientSecret: config.GOOGLE_CLIENT_SECRET
     }
   },
+  trustedOrigins: ["http://localhost:4000", "http://localhost:4001"],
   plugins: [passkey()]
 });

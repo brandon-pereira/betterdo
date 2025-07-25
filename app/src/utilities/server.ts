@@ -45,7 +45,7 @@ export class ServerError extends Error {
   formattedMessage: string;
   originalError: unknown;
 
-  constructor(formattedMessage = "An unexpected error ocurred", originalError?: unknown, code = 500) {
+  constructor(formattedMessage = "An unexpected error occurred", originalError?: unknown, code = 500) {
     super(formattedMessage);
     this.name = "ServerError";
     this.code = code;
@@ -53,7 +53,7 @@ export class ServerError extends Error {
     this.formattedMessage = formattedMessage || ServerError.defaultError;
   }
 
-  static defaultError = "An unexpected error ocurred";
+  static defaultError = "An unexpected error occurred";
 }
 
 /**
