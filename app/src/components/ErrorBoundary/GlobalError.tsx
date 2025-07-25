@@ -1,6 +1,5 @@
-import Icon from "@components/Icon";
-import { Container } from "./ErrorBoundary.styles";
 import Button from "@components/Button";
+import { Icon, Container } from "./ErrorBoundary.styles";
 import ServerError from "@components/Icon/svgs/server-error.svg";
 
 export default function GlobalError({ errorMessage }: { errorMessage: string | Error }) {
