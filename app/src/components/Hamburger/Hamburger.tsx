@@ -61,7 +61,7 @@ const Hamburger = ({ open, className, onClick }: Props) => {
   const { lists } = useLists();
   const currentListId = useCurrentListId();
   const switchList = useSwitchList();
-  const currentListIndex = lists.findIndex(l => l._id === currentListId);
+  const currentListIndex = lists.findIndex(l => l.id === currentListId);
   const nextList = currentListIndex + 1 < lists.length ? lists[currentListIndex + 1] : lists[0];
   const prevList = currentListIndex - 1 >= 0 ? lists[currentListIndex - 1] : lists[lists.length - 1];
   const swiper = useSwipe({

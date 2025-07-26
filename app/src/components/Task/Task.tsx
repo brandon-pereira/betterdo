@@ -12,19 +12,19 @@ interface Props extends TaskType {
 }
 
 const Task = forwardRef<HTMLButtonElement, Props>(
-  ({ title, _id, isCompleted, list, isLoading, priority, containerProps, touchEvents }, ref) => {
+  ({ title, id, isCompleted, list, isLoading, priority, containerProps, touchEvents }, ref) => {
     const { openTaskModal } = useEditTaskModal();
     const modifyTask = useModifyTask();
 
     const onEditTask = useCallback(() => {
-      openTaskModal(_id);
-    }, [openTaskModal, _id]);
+      openTaskModal(id);
+    }, [openTaskModal, id]);
 
     const onToggleTaskCompletion = useCallback(() => {
-      modifyTask(_id, list, {
+      modifyTask(id, list, {
         isCompleted: !isCompleted
       });
-    }, [_id, modifyTask, isCompleted, list]);
+    }, [id, modifyTask, isCompleted, list]);
 
     return (
       <Container ref={ref} $isLoading={isLoading} onClick={onEditTask} $priority={priority} {...containerProps}>

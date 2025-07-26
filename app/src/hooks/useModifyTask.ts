@@ -67,7 +67,7 @@ const updateTaskInList = (taskId: string, updatedProps: Partial<Task>) => (list?
     ...list,
     tasks: list
       ? list.tasks.map(task => {
-          if (task._id === taskId) {
+          if (task.id === taskId) {
             return { ...task, ...updatedProps };
           }
           return task;

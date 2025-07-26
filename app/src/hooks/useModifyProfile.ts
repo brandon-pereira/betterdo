@@ -11,7 +11,7 @@ function useModifyProfile() {
     const formattedProps = { ...updatedProps } as _UpdateUserPayload;
     if (updatedProps.lists) {
       await mutate(getListsUrl(), async () => updatedProps.lists, false);
-      formattedProps.lists = updatedProps.lists.filter(t => t.type === "default").map(t => t._id);
+      formattedProps.lists = updatedProps.lists.filter(t => t.type === "default").map(t => t.id);
     }
     await updateUser(formattedProps);
     await mutate(getProfileUrl());

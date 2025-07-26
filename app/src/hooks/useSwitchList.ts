@@ -21,27 +21,27 @@ function useSwitchList() {
 
   const switchList = useCallback(
     async (nextList: DeepOptional<List>) => {
-      if (!nextList._id) {
+      if (!nextList.id) {
         console.warn("Next List ID is required!");
         return;
       }
       if (nextList && nextList.tasks) {
-        nextList.tasks = nextList.tasks.map(_id => {
-          if (typeof _id === "string") {
+        nextList.tasks = nextList.tasks.map(id => {
+          if (typeof id === "string") {
             return {
-              _id: _id,
+              id: id,
               isTemporaryTask: true,
               isLoading: true
             } as Partial<Task>;
           }
-          return _id;
+          return id;
         });
       }
       // close the hamburger nav
       setMobileNavVisibility(false);
       // update the local data immediately, but disable the revalidation.
       await mutate(
-        getListDetailUrl(nextList._id),
+        getListDetailUrl(nextList.id),
         (list?: Partial<List>) =>
           ({
             ...nextList,
@@ -52,9 +52,9 @@ function useSwitchList() {
       // turn off completed tasks view
       setShowCompletedTasks(false);
       // update url
-      navigate(`/${nextList._id}`);
+      navigate(`/${nextList.id}`);
       // Force a network refresh when changing lists
-      await mutate(getListDetailUrl(nextList._id));
+      await mutate(getListDetailUrl(nextList.id));
     },
     [navigate, mutate, setMobileNavVisibility, setShowCompletedTasks]
   );

@@ -20,8 +20,8 @@ interface Props {
 const ListItem = forwardRef<HTMLButtonElement, Props>(({ containerProps, touchEvents, list }, ref) => {
   const switchList = useSwitchList();
   const currentListId = useCurrentListId();
-  const { type, color, _id } = list;
-  const selected = _id === currentListId;
+  const { type, color, id } = list;
+  const selected = id === currentListId;
   const customList = getCustomList(type);
   const Icon = customList?.icon || <DotIcon color={color} />;
   const title = customList?.title || list.title;

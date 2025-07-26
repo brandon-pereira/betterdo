@@ -128,7 +128,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
     }));
   };
 
-  if (loading || !state._id) {
+  if (loading || !state.id) {
     return <Loader />;
   }
 

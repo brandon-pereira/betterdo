@@ -45,7 +45,7 @@ function Body() {
     !error && !loading && list.tasks && list.tasks.length === 0 && !isCompletedTasksIncluded
   );
 
-  const customListConfig = customLists.find(cl => list._id === cl.id);
+  const customListConfig = customLists.find(cl => list.id === cl.id);
   const hideAddTaskInput = error || (customListConfig && customListConfig.disableTaskCreation);
 
   return (
@@ -60,11 +60,11 @@ function Body() {
             <TaskContainer>
               {/* Regular non-complete tasks are loaded and sortable  */}
               <Suspense>
-                <SortableList listId={list._id || currentListId} tasks={list.tasks || []} onSortEnd={onSortEnd} />
+                <SortableList listId={list.id || currentListId} tasks={list.tasks || []} onSortEnd={onSortEnd} />
               </Suspense>
               {/* Completed tasks are not sortable and only shown when requested */}
               {isCompletedTasksIncluded &&
-                list?.completedTasks?.map(task => <Task key={task._id} {...task} isCompleted={true} />)}
+                list?.completedTasks?.map(task => <Task key={task.id} {...task} isCompleted={true} />)}
               {/* If not loaded, show completed tasks button */}
               <CompletedTasksButton
                 isAllCaughtUp={isAllCaughtUp}

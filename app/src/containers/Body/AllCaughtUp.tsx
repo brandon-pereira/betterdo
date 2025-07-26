@@ -32,16 +32,16 @@ export default function AllCaughtUpBanner() {
   const currentListId = useCurrentListId();
   const { error, list } = useListDetails(currentListId);
   const prevTaskLength = useRef(list?.tasks?.length || 0);
-  const prevListId = useRef(list?._id);
+  const prevListId = useRef(list?.id);
   const [triggerFire, setState] = useState(0);
 
   // Essentially, only fire the animation if
   // the list hasn't changed and tasks went from not 0 to 0
   useEffect(() => {
-    if (prevListId.current === list._id && list?.tasks?.length === 0 && prevTaskLength.current !== 0) {
+    if (prevListId.current === list.id && list?.tasks?.length === 0 && prevTaskLength.current !== 0) {
       setState(s => ++s);
     }
-    prevListId.current = list?._id;
+    prevListId.current = list?.id;
     prevTaskLength.current = list?.tasks?.length || 0;
   }, [list]);
 

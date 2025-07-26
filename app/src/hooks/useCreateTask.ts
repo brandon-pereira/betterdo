@@ -24,7 +24,7 @@ function useCreateTask() {
             ...currentList,
             tasks: [
               {
-                _id: tempId,
+                id: tempId,
                 title: taskName,
                 priority: "normal",
                 isLoading: true

@@ -19,7 +19,7 @@ function useCreateList() {
           return [
             ...(lists || []),
             {
-              _id: Math.random(), // temp id
+              id: Math.random(), // temp id
               title,
               color
             }
@@ -28,7 +28,7 @@ function useCreateList() {
         false
       );
       const list = await createList({ title, color });
-      navigate(`/${list._id}`);
+      navigate(`/${list.id}`);
       await mutate(getListsUrl());
     },
     [navigate, mutate]

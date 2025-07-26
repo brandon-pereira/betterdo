@@ -13,11 +13,11 @@ function InitialListRedirect() {
     if ((!currentListId || currentListId === "inbox") && !loading) {
       const inbox = lists.find(l => l.type === "inbox");
       const lastListId = localStorage.getItem("lastViewedList");
-      const lastVisited = lists.find(l => l._id === lastListId);
+      const lastVisited = lists.find(l => l.id === lastListId);
       if (lastVisited) {
-        navigate(`/${lastVisited._id}`);
+        navigate(`/${lastVisited.id}`);
       } else if (inbox) {
-        navigate(`/${inbox._id}`);
+        navigate(`/${inbox.id}`);
       }
     }
   }, [currentListId, navigate, lists, loading]);

@@ -1,11 +1,17 @@
 import List from "./list";
 
 interface User {
-  _id: string;
+  id: string;
   firstName: string;
   lastName?: string;
   email: string;
   profilePicture: string;
+  settings?: UserSettings;
+  lastLogin: Date;
+  creationDate: Date;
+}
+
+interface UserSettings {
   customLists: {
     highPriority?: boolean;
     today?: boolean;
@@ -15,8 +21,6 @@ interface User {
   };
   isBeta: boolean;
   isPushEnabled: boolean;
-  lastLogin: Date;
-  creationDate: Date;
   timeZone: string;
   config: {
     vapidKey: string;

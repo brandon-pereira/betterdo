@@ -2,7 +2,7 @@ import Task from "./task";
 import User from "./user";
 
 interface List {
-  _id: string;
+  id: string;
   title: string;
   tasks: Task[];
   completedTasks?: Task[];

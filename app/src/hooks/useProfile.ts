@@ -1,16 +1,13 @@
-import useSWR from "swr";
 import { useCallback } from "react";
 
 import createSharedHook from "./internal/createSharedHook";
-import { getProfileUrl } from "./internal/urls";
 
 import User from "@customTypes/user";
 import { SERVER_URL } from "@utilities/env";
+import { useSession } from "@utilities/auth";
 
 function useProfileOnce() {
-  const { data, error } = useSWR<User>(getProfileUrl(), {
-    dedupingInterval: 7200000 // 2hr
-  });
+  const { data, error } = useSession();
 
   const logout = useCallback(() => {
     window.location.href = `${SERVER_URL}/auth/logout`;
@@ -20,7 +17,15 @@ function useProfileOnce() {
     logout,
     error,
     loading: Boolean(!data),
-    profile: data
+    profile: {
+      id: data?.user.id || "",
+      firstName: data?.user.name || "",
+      lastName: data?.user.name || "",
+      email: data?.user.email || "",
+      profilePicture: data?.user.image || "",
+      lastLogin: data?.session.updatedAt || new Date(),
+      creationDate: data?.user.createdAt || new Date()
+    } satisfies User
   };
 }
 
