@@ -45,3 +45,11 @@ export async function createList(payload: typeof lists.$inferInsert) {
   });
   return newList[0];
 }
+
+export async function createInboxForUser(userId: string) {
+  await createList({
+    createdById: userId,
+    title: "Inbox",
+    type: "inbox"
+  });
+}

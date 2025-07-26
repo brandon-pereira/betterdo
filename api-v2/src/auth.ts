@@ -4,6 +4,8 @@ import { passkey } from "better-auth/plugins/passkey";
 import { db } from "./db.js";
 import config from "./config.js";
 import * as authSchema from "./schema/auth.js";
+import { lists } from "./schema/list.js";
+import { createInboxForUser } from "./services/lists.js";
 
 export const auth = betterAuth({
   appName: "BetterDo",
@@ -18,6 +20,15 @@ export const auth = betterAuth({
     google: {
       clientId: config.GOOGLE_CLIENT_ID,
       clientSecret: config.GOOGLE_CLIENT_SECRET
+    }
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        after: async user => {
+          await createInboxForUser(user.id);
+        }
+      }
     }
   },
   trustedOrigins: ["http://localhost:4000", "http://localhost:4001"],
