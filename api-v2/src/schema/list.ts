@@ -1,5 +1,5 @@
 // drizzle/schema/list.ts
-import { pgTable, text, uuid, integer, varchar, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, integer, varchar, jsonb, timestamp, primaryKey } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { user } from "./auth.js";
 import { tasks } from "./task.js";
@@ -25,19 +25,33 @@ export const listsRelations = relations(lists, ({ one, many }) => ({
     fields: [lists.createdById],
     references: [user.id]
   }),
-  members: many(user), // Through a join table
-  tasks: many(tasks) // Through a join table
+  members: many(listMembers)
 }));
 
 // You'll need to create join tables for lists ↔ users (members) and lists ↔ tasks
-export const listMembers = pgTable("list_member", {
-  listId: uuid("list_id")
-    .notNull()
-    .references(() => lists.id),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id)
-});
+export const listMembers = pgTable(
+  "list_member",
+  {
+    listId: uuid("list_id")
+      .notNull()
+      .references(() => lists.id),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id)
+  },
+  t => [primaryKey({ columns: [t.userId, t.listId] })]
+);
+
+export const listMembersRelations = relations(listMembers, ({ one }) => ({
+  list: one(lists, {
+    fields: [listMembers.listId],
+    references: [lists.id]
+  }),
+  user: one(user, {
+    fields: [listMembers.userId],
+    references: [user.id]
+  })
+}));
 
 export const listTasks = pgTable("list_tasks", {
   listId: uuid("list_id")
