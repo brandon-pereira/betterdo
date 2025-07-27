@@ -44,12 +44,12 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
 
   const onSaveTask = useCallback(
     async (updatedProps: Partial<Task>) => {
-      if (!state.list) {
+      if (!state.listId) {
         return;
       }
       setSaving(true);
       try {
-        await modifyTask(taskId, state.list, updatedProps);
+        await modifyTask(taskId, state.listId, updatedProps);
       } catch (err) {
         console.error(err);
         if (err instanceof ServerError) {
@@ -62,7 +62,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
       setUnsavedChanges(false);
       setSaving(false);
     },
-    [modifyTask, setUnsavedChanges, state.list, taskId]
+    [modifyTask, setUnsavedChanges, state.listId, taskId]
   );
 
   const onSaveButtonPressed = useCallback(() => {
@@ -75,7 +75,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
         subtasks: state.subtasks,
         // we only mutate list if changed, or else we automatically
         // redirect which isn't ideal (custom lists)
-        ...(state.list !== task.list ? { list: state.list } : {})
+        ...(state.listId !== task.listId ? { listId: state.listId } : {})
       });
     }
   }, [state, task, onSaveTask]);
@@ -176,7 +176,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
         </Block>
         <Block>
           <Label>List</Label>
-          <ListsDropdown onSelect={list => onValueChange({ list })} currentListId={state.list} />
+          <ListsDropdown onSelect={listId => onValueChange({ listId })} currentListId={state.listId} />
         </Block>
         <Block>
           <Label>Due By</Label>

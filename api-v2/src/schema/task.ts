@@ -5,37 +5,25 @@ import { user } from "./auth.js";
 
 export const tasks = pgTable("tasks", {
   id: uuid("id").primaryKey().defaultRandom(),
-
   title: varchar("title", { length: 100 }).notNull(),
-
   listId: uuid("list_id")
     .notNull()
     .references(() => lists.id, {
       onDelete: "cascade"
     }),
-
   createdById: text("created_by_id")
     .notNull()
     .references(() => user.id),
-
   isCompleted: boolean("is_completed").notNull().default(false),
-
   dueDate: timestamp("due_date", { withTimezone: true }),
-
   notes: text("notes"),
-
-  subtasks: jsonb("subtasks").default([]).notNull(), // Array of { title: string; isComplete: boolean }
-
+  subtasks: jsonb("subtasks"),
   priority: text("priority", {
     enum: ["low", "normal", "high"]
-  })
-    .notNull()
-    .default("normal"),
-
-  creationDate: timestamp("creation_date", {
-    withTimezone: true
-  })
-    .notNull()
+  }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
+    .$onUpdate(() => new Date())
     .defaultNow()
 });
 

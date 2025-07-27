@@ -13,7 +13,9 @@ export const lists = pgTable("list", {
     .notNull()
     .default("default"),
   color: varchar("color", { length: 64 }).notNull().default("#666666"),
-  createdById: text("created_by_id").notNull(), // FK to users
+  createdById: text("created_by_id")
+    .notNull()
+    .references(() => user.id),
   createdAt: timestamp("created_at").notNull().defaultNow(), // Unix timestamp
   updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
     .$onUpdate(() => new Date())

@@ -1,53 +1,59 @@
 import { Hono } from "hono";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { db } from "../db.js";
-import { tasks } from "../schema/task.js";
-import getTasks from "../services/tasks.js";
+import { getTasks, createTask, getTaskById, updateTask } from "../services/tasks.js";
+import { createTaskSchema, updateTaskSchema } from "../validators/tasks.js";
+import { zValidator } from "@hono/zod-validator";
+import { isUserAuthorizedToAccessList } from "../services/lists.js";
 
 const tasksApi = new Hono();
 
-tasksApi.get("/", authMiddleware, async c => {
-  const user = c.get("user");
-  console.log("Fetching tasks for user:", user);
-
-  const tasks = await getTasks({ userId: user.id });
-
-  // if (!tasks) {
-  //   return c.json({ error: "No tasks found" }, 404);
-  // }
-  console.log("Tasks fetched:", tasks);
-  return c.json(
-    tasks.map(task => ({
-      ...task,
-      // TODO: Remove this and handle id conversion in the frontend
-      _id: task.id
+tasksApi.get("/:id", authMiddleware, async c => {
+  const taskId = c.req.param("id");
+  const task = await getTaskById(taskId);
+  if (!task) {
+    return c.json({ error: "Task not found" }, 404);
+  }
+  if (
+    !(await isUserAuthorizedToAccessList({
+      userId: c.get("user").id,
+      listId: task.listId
     }))
-  );
+  ) {
+    return c.json({ error: "Unauthorized access to this task" }, 403);
+  }
+  return c.json({
+    ...task
+  });
 });
 
-tasksApi.get("/:id", c => {
-  // GET /book/:id
-  const id = c.req.param("id");
-  return c.text("Get Book: " + id);
-});
-
-tasksApi.put("/", authMiddleware, async c => {
+tasksApi.put("/", authMiddleware, zValidator("json", createTaskSchema), async c => {
   const user = c.get("user");
-  const listData = await c.req.json();
-  console.log("Creating list for user:", user, "with data:", listData);
+  const payload = c.req.valid("json");
+  const newList = await createTask({
+    ...payload,
+    createdById: user.id
+  });
+  return c.json(newList);
+});
 
-  // Here you would typically call a service to create the list
-  // const newList = await createList({ ...listData, createdById: user.id });
-  const newTask = await db
-    .insert(tasks)
-    .values({
-      ...listData,
-      ownerId: user.id
-    })
-    .returning();
-
-  // For now, let's just return the data back
-  return c.json({ ...newTask[0] });
+tasksApi.post("/:taskId", authMiddleware, zValidator("json", updateTaskSchema), async c => {
+  const user = c.get("user");
+  const payload = c.req.valid("json");
+  const task = await getTaskById(c.req.param("taskId"));
+  if (!task) {
+    return c.json({ error: "Task not found" }, 404);
+  }
+  const isAuthorized = await isUserAuthorizedToAccessList({
+    userId: user.id,
+    listId: task.listId
+  });
+  if (!isAuthorized) {
+    return c.json({ error: "Unauthorized access to this task" }, 403);
+  }
+  const newTask = await updateTask(c.req.param("taskId"), {
+    ...payload
+  });
+  return c.json(newTask);
 });
 
 export default tasksApi;

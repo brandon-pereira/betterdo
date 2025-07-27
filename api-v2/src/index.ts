@@ -4,6 +4,7 @@ import { cors } from "hono/cors";
 import { auth } from "./auth.js"; // path to your auth file
 import config from "./config.js";
 import listsApi from "./routes/lists.js";
+import tasksApi from "./routes/tasks.js";
 
 const app = new Hono();
 
@@ -20,6 +21,7 @@ app.use(
 app.on(["POST", "GET"], "/api/auth/**", c => auth.handler(c.req.raw));
 
 app.route("/api/lists", listsApi);
+app.route("/api/tasks", tasksApi);
 
 serve({
   port: config.PORT,

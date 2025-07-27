@@ -48,14 +48,14 @@ function useModifyTask() {
       }
       mutate(getListDetailUrl(currentListId, isCompletedTasksIncluded));
       mutate(getTaskDetailUrl(taskId));
-      if (updatedProps.list && updatedProps.list !== currentListId) {
+      if (updatedProps.listId && updatedProps.listId !== currentListId) {
         navigate(
           generateUrl(`/edit-task/:taskId`, {
-            currentListId: updatedProps.list,
+            currentListId: updatedProps.listId,
             taskId: taskId
           })
         );
-        mutate(getListDetailUrl(updatedProps.list));
+        mutate(getListDetailUrl(updatedProps.listId));
       }
     },
     [currentListId, mutate, isCompletedTasksIncluded, navigate, generateUrl]

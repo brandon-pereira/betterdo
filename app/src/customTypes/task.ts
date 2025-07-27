@@ -10,7 +10,7 @@ export interface Subtask {
 interface Task {
   id: string;
   title: string;
-  list: string;
+  listId: string;
   isCompleted: boolean;
   createdBy: User;
   notes: string;
