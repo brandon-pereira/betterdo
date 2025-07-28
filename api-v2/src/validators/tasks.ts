@@ -9,7 +9,16 @@ export const updateTaskSchema = z.object({
   title: z.string().min(1, "Title is required").optional(),
   isCompleted: z.boolean().optional(),
   priority: z.enum(["low", "normal", "high"]).optional().nullable(),
-  dueDate: z.iso.datetime().optional().nullable(),
+  dueDate: z.iso
+    .datetime()
+    .optional()
+    .nullable()
+    .transform(date => {
+      if (date) {
+        return new Date(date);
+      }
+      return null;
+    }),
   listId: z.uuid("List ID").optional(),
   notes: z.string().optional().nullable(),
   subtasks: z
