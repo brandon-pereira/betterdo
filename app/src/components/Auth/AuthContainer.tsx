@@ -6,6 +6,12 @@ import { Link } from "react-router-dom";
 const AuthContainer = ({ children, title }: { children: React.ReactNode; title: string }) => {
   return (
     <Container>
+      <FormSection>
+        <FormWrapper>
+          <Title>{title}</Title>
+          {children}
+        </FormWrapper>
+      </FormSection>
       <BrandTitle>
         <Link to="/">
           Better<span>Do.</span>
@@ -14,13 +20,6 @@ const AuthContainer = ({ children, title }: { children: React.ReactNode; title: 
       <LogoSection>
         <BetterDoLogo />
       </LogoSection>
-
-      <FormSection>
-        <FormWrapper>
-          <Title>{title}</Title>
-          {children}
-        </FormWrapper>
-      </FormSection>
     </Container>
   );
 };

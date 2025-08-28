@@ -1,6 +1,7 @@
 import { useSession } from "@utilities/auth";
-import Auth from "@components/Auth/Auth";
+import Auth from "@components/Auth/Login";
 import CoreApp from "./pages/CoreApp";
+import AuthPages from "./pages/Auth";
 
 const App = () => {
   const { isPending, data } = useSession();
@@ -9,7 +10,7 @@ const App = () => {
     return <div>Loading...</div>;
   }
   if (!data) {
-    return <Auth />;
+    return <AuthPages />;
   }
   return <CoreApp />;
 };

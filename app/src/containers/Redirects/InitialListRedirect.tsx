@@ -18,6 +18,8 @@ function InitialListRedirect() {
         navigate(`/${lastVisited.id}`);
       } else if (inbox) {
         navigate(`/${inbox.id}`);
+      } else {
+        navigate(`/${lists[0].id}`);
       }
     }
   }, [currentListId, navigate, lists, loading]);
@@ -25,7 +27,7 @@ function InitialListRedirect() {
   if (error) {
     return <GlobalError errorMessage={error} />;
   }
-  return <div>Loading...</div>;
+  return <div>Redirecting...</div>;
 }
 
 export default InitialListRedirect;

@@ -1,30 +1,42 @@
+import Button from "@components/Button";
 import { styled } from "styled-components";
 
 export const Container = styled.div`
   display: grid;
+  grid-template-rows: 1fr;
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr;
   gap: 2rem;
   width: 100%;
   height: 100%;
-  background: #fcfcfc;
-  background: ${({ theme }) => theme.colors.modals.listViewAlternateBackground};
-  ${({ theme }) => theme.queries.medium} {
+  padding-top: 7rem;
+
+  background: ${({ theme }) => theme.colors.body.background};
+  ${({ theme }) => theme.queries.large} {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    gap: 4rem;
+    gap: 2rem;
+    padding-top: 0;
   }
+`;
+
+export const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 export const LogoSection = styled.div`
   display: flex;
+  margin: 2rem 2rem 2rem 0;
+  padding: 2rem;
+  border-radius: 4rem;
+  position: relative;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   box-shadow:
-    inset -5px 0 rgba(0, 0, 0, 0.1),
-    1px 0 0px rgba(0, 0, 0, 1);
+    inset 0 0 0 10px rgba(255, 255, 255, 0.05),
+    0 0 2px rgba(0, 0, 0, 1);
   background: linear-gradient(
     -45deg,
     ${({ theme }) => theme.colors.general.blue},
@@ -39,8 +51,10 @@ export const LogoSection = styled.div`
   }
 
   svg {
-    width: 30rem;
-    height: 30rem;
+    width: 75%;
+    max-width: 30rem;
+    height: auto;
+    aspect-ratio: 1 / 1;
     margin-bottom: 1rem;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
   }
@@ -69,28 +83,54 @@ export const FormSection = styled.div`
   justify-content: center;
 `;
 
-export const FormWrapper = styled.div`
-  background: ${({ theme }) => theme.colors.modals.contentBackground};
+export const AuthButtons = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+`;
 
+export const MainButton = styled(Button)`
+  span {
+    flex: 1;
+  }
+`;
+
+export const AuthProviders = styled.div`
+  display: flex;
+  gap: 1rem;
+  button {
+    flex: 1;
+  }
+`;
+
+export const FormWrapper = styled.div`
+  --background-color: ${({ theme }) => theme.colors.modals.contentBackground};
+  background: var(--background-color);
+  color: ${({ theme }) => theme.colors.body.color};
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
-
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 export const Title = styled.h2`
-  color: ${({ theme }) => theme.colors.body.color};
-  font-size: 1.5rem;
-  font-weight: 400;
-  margin: 0 0 1.5rem 0;
+  font-size: 2rem;
+  font-weight: 500;
   text-align: center;
+  margin: 0 0 1rem;
+`;
+
+export const OtherActionRibbon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
 `;
 
 export const ErrorMessage = styled.div`

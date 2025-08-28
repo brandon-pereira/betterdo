@@ -4,21 +4,21 @@ import _Loader from "@components/Loader";
 
 export const StyledButton = styled.button.attrs(({ color, theme }) => {
   const style = {
-    backgroundColor:
-      theme.colors.general[color as keyof typeof theme.colors.general] || color || theme.colors.general.blue
+    "--color": theme.colors.general[color as keyof typeof theme.colors.general] || color || theme.colors.general.blue
   } as CSSProperties;
   return { style };
-})<{ isLoading?: boolean }>`
+})<{ isLoading?: boolean; $variant?: "primary" | "secondary" }>`
   border: none;
+  background-color: var(--color);
   color: #fff;
   border-radius: 50px;
   padding: 1rem 2rem;
+  text-align: center;
   font: inherit;
   background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
   font-size: 1rem;
   cursor: pointer;
   position: relative;
-  z-index: 0;
   overflow: hidden;
   outline: none;
   display: ${({ hidden }) => (hidden ? "none" : "inline-flex")};
@@ -26,23 +26,19 @@ export const StyledButton = styled.button.attrs(({ color, theme }) => {
   box-shadow:
     0 3px 6px rgba(0, 0, 0, 0.16),
     0 3px 6px rgba(0, 0, 0, 0.23);
-  &:before {
-    content: "";
-    opacity: 0;
-    transition: opacity 0.2s;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-  }
-  &:hover:before {
-    opacity: 1;
+  &:hover {
+    filter: brightness(0.9);
   }
   &:focus-visible {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.general.blue};
   }
+  ${({ $variant, theme }) =>
+    $variant === "secondary" &&
+    `
+    color: var(--color);
+    border: 1px solid var(--color);
+    background: none;
+  `}
   ${props =>
     props.isLoading &&
     `
@@ -52,6 +48,10 @@ export const StyledButton = styled.button.attrs(({ color, theme }) => {
                 background: rgba(255, 255, 255, 0.3);
             }
         `};
+
+  span {
+    flex: 1;
+  }
 `;
 
 export const Loader = styled(_Loader)`
