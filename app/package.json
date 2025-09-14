@@ -14,6 +14,7 @@
     "colord": "^2.9.3",
     "date-fns": "^3.3.1",
     "framer-motion": "^11.0.5",
+    "radash": "^12.1.1",
     "randomcolor": "^0.6.2",
     "react": "18.2.0",
     "react-canvas-confetti": "^1.4.0",

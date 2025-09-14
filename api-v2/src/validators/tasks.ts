@@ -1,4 +1,4 @@
-import z, { uuid, uuidv4 } from "zod";
+import z from "zod";
 
 export const createTaskSchema = z.object({
   listId: z.uuid("List ID"),

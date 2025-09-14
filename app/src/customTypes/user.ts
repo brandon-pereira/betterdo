@@ -5,27 +5,37 @@ interface User {
   firstName: string;
   lastName?: string;
   email: string;
-  profilePicture: string;
-  settings?: UserSettings;
+  profilePicture?: string | null;
   lastLogin: Date;
   creationDate: Date;
+  isBeta?: boolean;
+  isPushEnabled?: boolean | null;
+  timeZone: string;
+  customLists?: CustomLists;
 }
 
-interface UserSettings {
-  customLists: {
-    highPriority?: boolean;
-    today?: boolean;
-    tomorrow?: boolean;
-    overdue?: boolean;
-    week?: boolean;
-  };
-  isBeta: boolean;
-  isPushEnabled: boolean;
-  timeZone: string;
-  config: {
-    vapidKey: string;
-  };
+interface CustomLists {
+  highPriority?: boolean;
+  today?: boolean;
+  tomorrow?: boolean;
+  overdue?: boolean;
+  week?: boolean;
 }
+// interface UserSettings {
+//   customLists: {
+//     highPriority?: boolean;
+//     today?: boolean;
+//     tomorrow?: boolean;
+//     overdue?: boolean;
+//     week?: boolean;
+//   };
+//   isBeta: boolean;
+//   isPushEnabled: boolean;
+//   timeZone: string;
+//   config: {
+//     vapidKey: string;
+//   };
+// }
 
 // This is what should be sent to modifyProfile function
 export interface UpdateUserObject extends Partial<User> {

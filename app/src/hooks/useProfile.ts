@@ -4,6 +4,7 @@ import createSharedHook from "./internal/createSharedHook";
 
 import User from "@customTypes/user";
 import { signOut, useSession } from "@utilities/auth";
+import { pick } from "radash";
 
 function useProfileOnce() {
   const { data, error } = useSession();
@@ -12,18 +13,38 @@ function useProfileOnce() {
     signOut();
   }, []);
 
+  if (error) {
+    return {
+      logout,
+      error: error.message,
+      loading: false,
+      profile: null
+    };
+  }
+
+  if (!data) {
+    return {
+      logout,
+      error,
+      loading: true,
+      profile: null
+    };
+  }
+
   return {
     logout,
     error,
-    loading: Boolean(!data),
+    loading: false,
     profile: {
-      id: data?.user.id || "",
-      firstName: data?.user.name || "",
-      lastName: data?.user.name || "",
-      email: data?.user.email || "",
-      profilePicture: data?.user.image || "",
-      lastLogin: data?.session.updatedAt || new Date(),
-      creationDate: data?.user.createdAt || new Date()
+      ...pick(data.user, ["id", "email", "image", "vapidKey", "isPushEnabled", "isBeta", "timeZone"]),
+      firstName: data.user.name,
+      lastName: data.user.name,
+      // TODO: Remove these compatibility fields
+      profilePicture: data.user.image,
+      lastLogin: data?.session.updatedAt,
+      creationDate: data?.user.createdAt,
+      customLists: {}
+      // settings: data.user.settings || {}
     } satisfies User
   };
 }

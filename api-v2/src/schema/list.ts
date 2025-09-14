@@ -1,5 +1,5 @@
 // drizzle/schema/list.ts
-import { pgTable, text, uuid, integer, varchar, jsonb, timestamp, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, varchar, timestamp, primaryKey } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { user } from "./auth.js";
 import { tasks } from "./task.js";

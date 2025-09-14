@@ -32,7 +32,7 @@ export const StyledButton = styled.button.attrs(({ color, theme }) => {
   &:focus-visible {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.general.blue};
   }
-  ${({ $variant, theme }) =>
+  ${({ $variant }) =>
     $variant === "secondary" &&
     `
     color: var(--color);

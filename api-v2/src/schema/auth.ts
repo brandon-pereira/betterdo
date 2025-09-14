@@ -13,7 +13,10 @@ export const user = pgTable("user", {
     .notNull(),
   updatedAt: timestamp("updated_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull()
+    .notNull(),
+  timeZone: text("time_zone").default("America/New_York"),
+  isBeta: boolean("is_beta"),
+  isPushEnabled: boolean("is_push_enabled")
 });
 
 export const session = pgTable("session", {

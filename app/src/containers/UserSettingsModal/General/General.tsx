@@ -28,7 +28,6 @@ function GeneralSettings() {
       setState(state => ({ ...state, ...newState }));
       try {
         await modifyProfile({
-          ...state,
           ...newState
         });
       } catch (err) {
@@ -40,7 +39,7 @@ function GeneralSettings() {
         return;
       }
     },
-    [state, modifyProfile]
+    [modifyProfile]
   );
 
   if (loading) {

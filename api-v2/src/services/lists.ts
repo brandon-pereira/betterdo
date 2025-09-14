@@ -1,7 +1,6 @@
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "../db.js";
-import { listMembers, listMembers, listMembers, lists } from "../schema/list.js";
-import { user } from "../schema/auth.js";
+import { listMembers, lists } from "../schema/list.js";
 import { tasks } from "../schema/task.js";
 
 export async function getLists({ userId }: { userId: string }) {

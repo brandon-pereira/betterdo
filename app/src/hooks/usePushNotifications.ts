@@ -37,7 +37,7 @@ function usePushNotifications() {
       console.warn("Requesting user notification subscription before ready!");
       return;
     }
-    const subscription = await _requestNotificationAccess(profile?.config.vapidKey);
+    const subscription = await _requestNotificationAccess(profile?.vapidKey);
     if (subscription) {
       console.info("Successfully got user subscription", subscription);
       setStatus("ENABLED");
@@ -81,7 +81,7 @@ const _getNotificationSubscription = async () => {
   }
 };
 
-const _requestNotificationAccess = async (vapidPublicKey?: string) => {
+const _requestNotificationAccess = async (vapidPublicKey?: string | null) => {
   if (navigator.serviceWorker && vapidPublicKey) {
     try {
       const reg = await navigator.serviceWorker.ready;

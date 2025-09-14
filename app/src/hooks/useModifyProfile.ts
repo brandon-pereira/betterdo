@@ -15,7 +15,7 @@ function useModifyProfile() {
     }
     await updateUser(formattedProps);
     await mutate(getProfileUrl());
-    if (updatedProps.lists || updatedProps.customLists) {
+    if (updatedProps.lists || updatedProps?.customLists) {
       await mutate(getListsUrl());
     }
   }, []);

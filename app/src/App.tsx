@@ -1,5 +1,4 @@
 import { useSession } from "@utilities/auth";
-import Auth from "@components/Auth/Login";
 import CoreApp from "./pages/CoreApp";
 import AuthPages from "./pages/Auth";
 

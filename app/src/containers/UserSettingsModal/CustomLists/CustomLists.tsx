@@ -23,6 +23,7 @@ function CustomListSettings() {
       try {
         await modifyProfile({
           customLists: {
+            ...customLists,
             [id]: bool
           }
         });
@@ -31,7 +32,7 @@ function CustomListSettings() {
         return;
       }
     },
-    [modifyProfile]
+    [customLists, modifyProfile]
   );
 
   return (

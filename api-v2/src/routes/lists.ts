@@ -4,7 +4,6 @@ import { lists } from "../schema/list.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { zValidator } from "@hono/zod-validator";
 import { db } from "../db.js";
-import z from "zod";
 import { createListSchema, updateListSchema } from "../validators/lists.js";
 import { eq } from "drizzle-orm";
 

@@ -37,7 +37,7 @@ const Img = styled.img`
 `;
 
 interface Props {
-  user?: User;
+  user?: User | null;
   size?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
@@ -61,7 +61,7 @@ const ProfilePicture = ({ user, onClick, ...props }: Props) => {
   );
 };
 
-export const FormatProfilePictureUrl = (url?: string, sizeInPx?: number) => {
+export const FormatProfilePictureUrl = (url?: string | null, sizeInPx?: number) => {
   if (url && typeof url === "string") {
     return url.replace("sz=50", sizeInPx ? `sz=${sizeInPx}` : "");
   }

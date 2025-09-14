@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { getTasks, createTask, getTaskById, updateTask } from "../services/tasks.js";
+import { createTask, getTaskById, updateTask } from "../services/tasks.js";
 import { createTaskSchema, updateTaskSchema } from "../validators/tasks.js";
 import { zValidator } from "@hono/zod-validator";
 import { isUserAuthorizedToAccessList } from "../services/lists.js";
