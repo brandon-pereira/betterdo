@@ -18,12 +18,6 @@ export const Container = styled.div`
   }
 `;
 
-export const FormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
 export const LogoSection = styled.div`
   display: flex;
   margin: 2rem 2rem 2rem 0;
