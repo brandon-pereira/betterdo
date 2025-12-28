@@ -1,6 +1,10 @@
 # Changelog
 
-## 7.0.0 (alpha)
+## 7.0.1
+
+- Add Monochrome icon to manifest for better PWA support on some platforms
+
+## 7.0.0
 
 - Moved to a monorepo structure
 - Dropped `@loadable/component` in favour of `React.lazy`
