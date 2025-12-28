@@ -15,7 +15,7 @@
       "type": "image/png"
     },
     {
-      "src": "https://betterdo.app/maskable-512x512.png",
+      "src": "https://betterdo.app/monochrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "monochrome"
