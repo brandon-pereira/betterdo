@@ -1,7 +1,7 @@
 {
   "short_name": "BetterDo.",
   "name": "BetterDo.",
-  "start_url": "https://betterdo.app/app/?source=a2hs",
+  "start_url": "https://betterdo.app/app/?source=webmanifest",
   "background_color": "#ffffff",
   "icons": [
     {

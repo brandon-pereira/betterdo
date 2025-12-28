@@ -13,12 +13,6 @@
       "src": "https://betterdo.app/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
-    },
-    {
-      "src": "https://betterdo.app/monochrome-512x512.png?bust=1",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "monochrome"
     }
   ],
   "display": "standalone",
