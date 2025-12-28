@@ -15,7 +15,7 @@
       "type": "image/png"
     },
     {
-      "src": "https://betterdo.app/monochrome-512x512.png",
+      "src": "https://betterdo.app/monochrome-512x512.png?bust=1",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "monochrome"
