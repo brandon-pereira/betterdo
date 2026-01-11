@@ -11,5 +11,5 @@
   "rules": {
     "unlisted": "off"
   },
-  "ignoreDependencies": ["esbuild", "prettier-plugin-astro"]
+  "ignoreDependencies": ["esbuild", "prettier-plugin-astro", "@tiptap/starter-kit"]
 }

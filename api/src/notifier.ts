@@ -43,7 +43,7 @@ export default ({ db }: InternalRouter) => {
       email: process.env.VAPID_EMAIL || ""
     },
     notificationDefaults: {
-      icon: `${process.env.SERVER_URL}/app/android-chrome-192x192.png`,
+      icon: `${process.env.SERVER_URL}/icon-192x192.png`,
       url: `${process.env.SERVER_URL}/app`
     },
     getUserPushSubscriptions,

@@ -50,33 +50,6 @@ const Label = styled.label`
   display: block;
 `;
 
-const TextArea = styled.textarea<{ $invalid?: boolean }>`
-  box-shadow: ${({ theme }) => theme.colors.forms.input.boxShadow};
-  color: ${({ theme }) => theme.colors.forms.input.color};
-  background: ${({ theme }) => theme.colors.forms.input.background};
-  font-family: inherit;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  resize: none;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.8rem 1rem;
-  border: none;
-  border-radius: 3px;
-  outline: none;
-  &:focus {
-    box-shadow: inset 0 0 0 2px ${({ theme }) => theme.colors.general.blue};
-  }
-  &::placeholder {
-    color: #aaa;
-  }
-  ${({ theme, $invalid }) =>
-    $invalid &&
-    `
-    box-shadow: inset 0 0 0 2px ${theme.colors.general.red} !important;
-    `};
-`;
-
 const Form = ({
   children,
   errorMessage,
@@ -102,4 +75,4 @@ const Input = forwardRef<
 ));
 Input.displayName = "Input";
 
-export { Input, Label, Form, Error, TextArea };
+export { Input, Label, Form, Error };
