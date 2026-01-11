@@ -1,8 +1,6 @@
 import { InputRule, markInputRule, markPasteRule, PasteRule } from "@tiptap/core";
 import { Link as TiptapLink } from "@tiptap/extension-link";
 
-import type { LinkOptions } from "@tiptap/extension-link";
-
 // https://github.com/ueberdosis/tiptap/discussions/1865
 /**
  * The input regex for Markdown links with title support, and multiple quotation marks (required
