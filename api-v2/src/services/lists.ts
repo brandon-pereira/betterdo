@@ -57,7 +57,8 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
           columns: {
             id: true,
             name: true,
-            email: true
+            email: true,
+            image: true
           }
         }
       }
@@ -69,7 +70,9 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
     tasks: _tasks,
     members: members.map(member => {
       return {
-        ...member.user,
+        id: member.user.id,
+        email: member.user.email,
+        profilePicture: member.user.image,
         firstName: member.user.name.split(" ")[0],
         lastName: member.user.name.split(" ").slice(1).join(" ")
       };
