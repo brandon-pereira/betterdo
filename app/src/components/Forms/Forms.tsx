@@ -29,6 +29,10 @@ const _Input = styled.input<{ $invalid?: boolean }>`
   &::placeholder {
     color: #aaa;
   }
+  &[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
   ${({ theme, $invalid }) =>
     $invalid &&
     `

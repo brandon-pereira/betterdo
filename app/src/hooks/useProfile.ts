@@ -37,14 +37,13 @@ function useProfileOnce() {
     loading: false,
     profile: {
       ...pick(data.user, ["id", "email", "image", "vapidKey", "isPushEnabled", "isBeta", "timeZone"]),
-      firstName: data.user.name,
-      lastName: data.user.name,
-      // TODO: Remove these compatibility fields
+      firstName: data.user.name.split(" ")[0] || "",
+      lastName: data.user.name.split(" ").slice(1).join(" ") || "",
       profilePicture: data.user.image,
       lastLogin: data?.session.updatedAt,
       creationDate: data?.user.createdAt,
-      customLists: {}
-      // settings: data.user.settings || {}
+      customLists: {},
+      isBeta: !!data.user.isBeta
     } satisfies User
   };
 }
