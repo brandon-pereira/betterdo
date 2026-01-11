@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { LIGHT_THEME } from "../../theme";
 
 import ProfileSettings from "./ProfileSettings";
+import AuthSettings from "./AuthSettings";
 import CustomLists from "./CustomLists";
 import General from "./General";
 import About from "./About";
@@ -12,7 +13,7 @@ import Tabs, { Tab } from "@components/Tabs";
 import { Header } from "@components/Copy";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
 
-const tabs = ["general", "profile", "custom-lists", "about"];
+const tabs = ["general", "profile", "auth", "custom-lists", "about"];
 
 function UserSettingsModalContent() {
   const { section } = useParams();
@@ -33,13 +34,16 @@ function UserSettingsModalContent() {
         }}
         selectedIndex={selectedIndex}
         color={LIGHT_THEME.colors.general.blue}
-        titles={["General", "Profile", "Custom Lists", "About"]}
+        titles={["General", "Profile", "Auth", "Custom Lists", "About"]}
       >
         <Tab>
           <General />
         </Tab>
         <Tab>
           <ProfileSettings />
+        </Tab>
+        <Tab>
+          <AuthSettings />
         </Tab>
         <Tab>
           <CustomLists />
