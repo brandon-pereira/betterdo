@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.1.0
+
+- Migrate rich text editor from basic text area to rich text editor (via TipTap)
+
 ## 7.0.1
 
 - Add Monochrome icon to manifest for better PWA support on some platforms

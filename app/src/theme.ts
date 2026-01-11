@@ -20,7 +20,8 @@ export const LIGHT_THEME = {
       input: {
         color: "#000",
         background: "#FFF",
-        boxShadow: "inset 0 0 0 2px #ccc"
+        boxShadow: "inset 0 0 0 2px #ccc",
+        borderColor: "#ccc"
       },
       label: {
         color: "#666"
@@ -88,7 +89,8 @@ export const DARK_THEME: Theme = {
       input: {
         color: "#fff",
         background: "#1e1e1e",
-        boxShadow: "inset 0 -1px #313131"
+        boxShadow: "inset 0 -1px #313131",
+        borderColor: "#313131"
       },
       label: {
         color: "#a5a5a5"

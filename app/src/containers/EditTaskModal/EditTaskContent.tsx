@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState } from "react";
 
-import { Container, Content, Block, Notes, ButtonContainer } from "./EditTask.styles";
+import { Container, Content, Block, ButtonContainer } from "./EditTask.styles";
 import CreatorBlock from "./CreatorBlock";
 import ListsDropdown from "./ListsDropdown";
 import Loader from "./Loader";
@@ -17,6 +17,7 @@ import useTaskDetails from "@hooks/useTaskDetails";
 import useModifyTask from "@hooks/useModifyTask";
 import useDeleteTask from "@hooks/useDeleteTask";
 import { ServerError } from "@utilities/server";
+import RichTextEditor from "@components/Forms/RichText";
 
 const PRIORITIES = [
   { value: "low", label: "Low" },
@@ -165,11 +166,11 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
         </Block>
         <Block>
           <Label>Notes</Label>
-          <Notes
-            defaultValue={state.notes}
-            onBlur={e => {
+          <RichTextEditor
+            content={state.notes}
+            onChange={v => {
               onValueChange({
-                notes: e.target.value
+                notes: v
               });
             }}
           />

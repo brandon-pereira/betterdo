@@ -1,6 +1,5 @@
 import { styled } from "styled-components";
 
-import { TextArea } from "@components/Forms";
 import _ProfilePic from "@components/ProfilePic";
 import _Modal from "@components/Modal";
 
@@ -84,7 +83,4 @@ export const ButtonContainer = styled.div`
         rgba(0, 0, 0, 0.7)
         );
         `}
-`;
-export const Notes = styled(TextArea)`
-  min-height: 10rem;
 `;
