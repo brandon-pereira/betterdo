@@ -52,7 +52,7 @@ export const auth = betterAuth({
       // },
       isBeta: {
         type: "boolean",
-        required: true,
+        required: false,
         defaultValue: false
       },
       isPushEnabled: {
