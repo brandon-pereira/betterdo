@@ -42,6 +42,7 @@ function useProfileOnce() {
       profilePicture: data.user.image,
       lastLogin: data?.session.updatedAt,
       creationDate: data?.user.createdAt,
+      isPushEnabled: !!data.user.isPushEnabled,
       customLists: {},
       isBeta: !!data.user.isBeta
     } satisfies User

@@ -5,6 +5,7 @@ import { db } from "./db.js";
 import config from "./config.js";
 import * as authSchema from "./schema/auth.js";
 import { createInboxForUser } from "./services/lists.js";
+import { getGravatarUrl } from "./utils/gravatar.js";
 
 export const auth = betterAuth({
   appName: "BetterDo",
@@ -24,8 +25,20 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
+        before: async user => {
+          if (!user.image) {
+            user.image = getGravatarUrl(user.email);
+          }
+        },
         after: async user => {
           await createInboxForUser(user.id);
+        }
+      },
+      update: {
+        before: async newData => {
+          if (newData.email) {
+            newData.image = getGravatarUrl(newData.email);
+          }
         }
       }
     }

@@ -59,7 +59,7 @@ function GeneralSettings() {
           onChange={(e, bool) => {
             onChange({ isPushEnabled: bool });
           }}
-          value={true}
+          value={state.isPushEnabled}
         />
       </OptionGroup>
       <OptionGroup>
@@ -80,13 +80,9 @@ function GeneralSettings() {
       <OptionGroup>
         <div>
           <Label>Beta Program</Label>
-          <Description>
-            Join the beta program to help test exclusive features before anyone else.{" "}
-            <strong>Beta program currently full.</strong>
-          </Description>
+          <Description>Join the beta program to help test exclusive features before anyone else. </Description>
         </div>
         <Toggle
-          disabled
           onChange={(e, bool) => {
             onChange({ isBeta: bool });
           }}

@@ -21,11 +21,11 @@ function useModifyProfile() {
   }, []);
 }
 
-const AUTH_KEYS: (keyof _UpdateUserPayload)[] = ["firstName", "lastName", "timeZone", "isBeta", "profilePicture"];
+const AUTH_KEYS: (keyof _UpdateUserPayload)[] = ["timeZone", "isBeta", "profilePicture", "isPushEnabled"];
 function getAuthPropsFromUpdatePayload(payload: _UpdateUserPayload) {
   const authProps: Record<string, unknown> = {};
   if (payload.firstName && payload.lastName) {
-    authProps.fullName = [payload.firstName, payload.lastName].filter(Boolean).join(" ");
+    authProps.name = [payload.firstName, payload.lastName].filter(Boolean).join(" ");
   }
   for (const key of AUTH_KEYS) {
     if (key in payload) {
