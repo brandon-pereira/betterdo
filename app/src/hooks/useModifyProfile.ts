@@ -21,7 +21,13 @@ function useModifyProfile() {
   }, []);
 }
 
-const AUTH_KEYS: (keyof _UpdateUserPayload)[] = ["timeZone", "isBeta", "profilePicture", "isPushEnabled"];
+const AUTH_KEYS: (keyof _UpdateUserPayload)[] = [
+  "timeZone",
+  "isBeta",
+  "profilePicture",
+  "isPushEnabled",
+  "customLists"
+];
 function getAuthPropsFromUpdatePayload(payload: _UpdateUserPayload) {
   const authProps: Record<string, unknown> = {};
   if (payload.firstName && payload.lastName) {

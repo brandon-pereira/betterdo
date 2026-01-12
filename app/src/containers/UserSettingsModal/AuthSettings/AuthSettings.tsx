@@ -17,12 +17,6 @@ import { Body } from "@components/Copy";
 import { Error, Form, Input, Label } from "@components/Forms";
 import { authClient } from "@utilities/auth";
 
-type PasskeyRecord = {
-  id?: string;
-  name?: string;
-  createdAt?: string;
-};
-
 function AuthSettings() {
   const passkeyList = authClient.useListPasskeys ? authClient.useListPasskeys() : undefined;
 
@@ -38,12 +32,10 @@ function AuthSettings() {
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const passkeys: PasskeyRecord[] = useMemo(() => {
-    const raw = (passkeyList as any)?.data;
+  const passkeys = useMemo(() => {
+    const raw = passkeyList?.data;
     if (!raw) return [];
-    if (Array.isArray(raw)) return raw as PasskeyRecord[];
-    if (Array.isArray(raw?.data)) return raw.data as PasskeyRecord[];
-    if (Array.isArray(raw?.passkeys)) return raw.passkeys as PasskeyRecord[];
+    if (Array.isArray(raw)) return raw;
     return [];
   }, [passkeyList?.data]);
 
@@ -60,8 +52,8 @@ function AuthSettings() {
       name: passkeyName || undefined
     });
     setIsAddingPasskey(false);
-    if ((res as any)?.error) {
-      setPasskeyError((res as any).error.message ?? "Unable to add passkey.");
+    if (res?.error) {
+      setPasskeyError(res.error.message ?? "Unable to add passkey.");
       return;
     }
     setPasskeyMessage("Passkey registered. Follow your device prompts to finish.");
@@ -89,8 +81,8 @@ function AuthSettings() {
       revokeOtherSessions: true
     });
     setIsChangingPassword(false);
-    if ((res as any)?.error) {
-      setPasswordError((res as any).error.message ?? "Unable to change password.");
+    if (res?.error) {
+      setPasswordError(res.error.message ?? "Unable to change password.");
       return;
     }
     setPasswordMessage("Password updated.");

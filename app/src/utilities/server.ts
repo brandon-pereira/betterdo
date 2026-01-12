@@ -32,10 +32,6 @@ export const deleteList = (listId: string): Promise<void> => {
   return _delete(`lists/${listId}`);
 };
 
-export const updateUser = (updatedProps: _UpdateUserPayload): Promise<User> => {
-  return _post<User>(`users`, updatedProps);
-};
-
 export const getUserByEmail = (email: string): Promise<User> => {
   return _get<User>(`users/${email}`);
 };

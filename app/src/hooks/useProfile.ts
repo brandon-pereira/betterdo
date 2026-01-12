@@ -43,7 +43,7 @@ function useProfileOnce() {
       lastLogin: data?.session.updatedAt,
       creationDate: data?.user.createdAt,
       isPushEnabled: !!data.user.isPushEnabled,
-      customLists: {},
+      customLists: data.user.customLists || {},
       isBeta: !!data.user.isBeta
     } satisfies User
   };
