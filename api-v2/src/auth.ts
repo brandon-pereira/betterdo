@@ -52,17 +52,19 @@ export const auth = betterAuth({
         required: true,
         defaultValue: "America/New_York"
       },
-      // customLists: {
-      //   type: "object",
-      //   required: false,
-      //   defaultValue: {
-      //     highPriority: false,
-      //     today: false,
-      //     tomorrow: false,
-      //     overdue: false,
-      //     week: false
-      //   }
-      // },
+      customLists: {
+        type: "json",
+        required: false
+        // TODO: Default value doesn't work for json atm
+        // https://github.com/better-auth/better-auth/issues/7275
+        // defaultValue: () => ({
+        //   highPriority: false,
+        //   today: false,
+        //   tomorrow: false,
+        //   overdue: false,
+        //   week: false
+        // })
+      },
       isBeta: {
         type: "boolean",
         required: false,
