@@ -3,9 +3,9 @@ import CoreApp from "./pages/CoreApp";
 import AuthPages from "./pages/Auth";
 
 const App = () => {
-  const { isPending, data } = useSession();
+  const { isPending, isRefetching, data } = useSession();
 
-  if (isPending) {
+  if (isPending && !isRefetching) {
     return <div>Loading...</div>;
   }
   if (!data) {

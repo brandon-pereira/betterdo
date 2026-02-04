@@ -102,8 +102,13 @@ async function _fetch<T>(url: string, data?: RequestInit): Promise<T> {
     if (response.status === 401) {
       window.location.href = SERVER_URL;
     }
-    const message = (await response.json()).error;
-    throw new ServerError(message, undefined, response.status);
+    try {
+      const json = await response.json();
+      const message = json?.formattedMessage || json?.error || ServerError.defaultError;
+      throw new ServerError(message, response.status);
+    } catch (err) {
+      throw new ServerError(undefined, err, response.status);
+    }
   }
   return await response.json();
 }
