@@ -31,4 +31,5 @@ export const updateTaskSchema = z.object({
       })
     )
     .optional()
+    .nullable()
 });

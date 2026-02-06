@@ -3,7 +3,7 @@ import { db } from "../db.js";
 import { listMembers, lists } from "../schema/list.js";
 import { tasks } from "../schema/task.js";
 
-export async function getLists({ userId }: { userId: string }) {
+export async function getUserLists({ userId }: { userId: string }) {
   const result = await db
     .select({
       id: lists.id,

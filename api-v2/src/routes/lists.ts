@@ -1,5 +1,6 @@
 import { Hono } from "hono";
-import { createList, getListById, getLists } from "../services/lists.js";
+import { createList, getListById, getUserLists } from "../services/lists.js";
+import { getAccountsCustomLists, getCustomListById, isCustomList } from "../services/customLists.js";
 import { lists } from "../schema/list.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { zValidator } from "@hono/zod-validator";
@@ -11,13 +12,38 @@ const listsApi = new Hono();
 
 listsApi.get("/", authMiddleware, async c => {
   const user = c.get("user");
-  const lists = await getLists({ userId: user.id });
-  return c.json(lists);
+
+  const [userLists, customLists] = await Promise.all([
+    getUserLists({ userId: user.id }),
+    getAccountsCustomLists({ user })
+  ]);
+
+  const hydratedUserLists = userLists.map(list => ({
+    ...list,
+    tasks: [],
+    completedTasks: [],
+    additionalTasks: 0,
+    members: [],
+    owner: user.id
+  }));
+
+  return c.json([...hydratedUserLists, ...customLists]);
 });
 
 listsApi.get("/:id", authMiddleware, async c => {
   const user = c.get("user");
-  const list = await getListById({ userId: user.id, listId: c.req.param("id") });
+  const listId = c.req.param("id");
+  const includeCompleted = c.req.query("includeCompleted") === "true";
+
+  if (isCustomList(listId)) {
+    const list = await getCustomListById(listId, includeCompleted, { user });
+    if (!list) {
+      return c.json({ error: "No list found" }, 404);
+    }
+    return c.json(list);
+  }
+
+  const list = await getListById({ userId: user.id, listId });
   if (!list) {
     return c.json({ error: "No list found" }, 404);
   }
