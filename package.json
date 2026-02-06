@@ -14,6 +14,7 @@
     "start:website": "yarn workspace website start",
     "lint": "yarn workspaces run lint && yarn knip",
     "knip": "knip",
+    "migrate": "yarn workspace api-v2 push",
     "test": "yarn workspace api test",
     "build:website": "yarn workspace website build",
     "build:app": "yarn workspace app build",
