@@ -1,5 +1,5 @@
 import * as ReactDOM from "react-dom/client";
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ResponsiveProvider } from "@hooks/useResponsive";
 
@@ -25,9 +25,9 @@ root.render(
         <ErrorBoundary>
           <SWRProvider>
             <ResponsiveProvider>
-              <HashRouter>
+              <BrowserRouter>
                 <App />
-              </HashRouter>
+              </BrowserRouter>
             </ResponsiveProvider>
           </SWRProvider>
         </ErrorBoundary>
