@@ -38,6 +38,7 @@ After setting your environment variables, you can run the development server:
 
 ```bash
 docker compose up -d
+yarn migrate
 yarn start
 ```
 
