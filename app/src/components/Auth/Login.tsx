@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { TextInput, PasswordInput, Divider, Button, Alert, Stack, Group, Text, VisuallyHidden } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
 import { authClient, signIn } from "@utilities/auth";
-import { Error, Input } from "@components/Forms";
-import Button from "@components/Button";
+import { AuthProviders, AuthButtons } from "./Auth.styles";
 import Link from "@components/Link";
-import { AuthProviders, AuthButtons, MainButton, OtherActionRibbon } from "./Auth.styles";
-import Divider from "@components/Divider/Divider";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -52,45 +50,73 @@ const Auth = () => {
     authClient.$store.notify("$sessionSignal");
   };
 
+  useEffect(() => {
+    if (
+      !PublicKeyCredential.isConditionalMediationAvailable ||
+      !PublicKeyCredential.isConditionalMediationAvailable()
+    ) {
+      return;
+    }
+
+    authClient.signIn.passkey({ autoFill: true }).then(res => {
+      if (res?.error) {
+        if ("code" in res.error && res.error.code === "AUTH_CANCELLED") {
+          return;
+        }
+        setError(res.error.message ?? "An error occurred during passkey sign-in");
+      }
+    });
+  }, []);
+
   return (
     <AuthContainer title="Welcome Back!">
       <form onSubmit={handleSubmit}>
-        {error && <Error>{error}</Error>}
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-          required
-        />
+        <Stack gap="md">
+          {error && <Alert color="red">{error}</Alert>}
+          <TextInput
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+            required
+          />
 
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-          required
-        />
+          <PasswordInput
+            placeholder="Password"
+            value={password}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+            required
+          />
 
-        <AuthButtons>
-          <Link to="/auth/forgot-password">Forgot Password?</Link>
-          <MainButton type="submit" disabled={loading}>
-            {loading ? "Logging In..." : "Log In"}
-          </MainButton>
-        </AuthButtons>
+          <AuthButtons>
+            <Link to="/auth/forgot-password">Forgot Password?</Link>
+            <Button type="submit" disabled={loading} loading={loading}>
+              {loading ? "Logging In..." : "Log In"}
+            </Button>
+          </AuthButtons>
+        </Stack>
       </form>
-      <Divider text="Or Login With" textColor="#ccc" />
+      <Divider label="Or Login With" />
       <AuthProviders>
-        <Button variant="secondary" color="#eee" onClick={handleGoogleSignIn} disabled={loading}>
+        <Button variant="default" onClick={handleGoogleSignIn} disabled={loading} fullWidth>
           Google
         </Button>
-        <Button variant="secondary" color="#eee" onClick={handlePasskeySignIn} disabled={loading}>
+        <Button variant="default" onClick={handlePasskeySignIn} disabled={loading} fullWidth>
           Passkey
         </Button>
+        <VisuallyHidden>
+          <label htmlFor="name">Username:</label>
+          <input type="text" name="name" autoComplete="username webauthn" />
+          <label htmlFor="password">Password:</label>
+          <input type="password" name="password" autoComplete="current-password webauthn" />
+        </VisuallyHidden>
       </AuthProviders>
-      <OtherActionRibbon>
-        Don't have an account? <Link to="/auth/signup">Register Here</Link>
-      </OtherActionRibbon>
+      <Group justify="center" gap="xs" mt="sm">
+        <Text size="sm" c="dimmed">
+          Don't have an account?
+        </Text>
+        <Link to="/auth/signup">Register Here</Link>
+      </Group>
     </AuthContainer>
   );
 };

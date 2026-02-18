@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { TextInput, Button, Alert, Stack, Group, Text } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
 import { authClient } from "@utilities/auth";
-import { Error as _Error, Input } from "@components/Forms";
+import { AuthButtons } from "./Auth.styles";
 import Link from "@components/Link";
-import { AuthButtons, MainButton, OtherActionRibbon, SuccessMessage } from "./Auth.styles";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -39,14 +39,14 @@ const ForgotPassword = () => {
   if (submitted) {
     return (
       <AuthContainer title="Check Your Email">
-        <SuccessMessage>
-          If an account with the email <strong>{email}</strong> exists, we'll send a password reset link. Please check
-          your email (and spam folder) to reset your password.
-        </SuccessMessage>
+        <Alert>
+          If an account with the email <strong>{email}</strong> exists, we'll send a password reset link.
+          <br />
+          <br />
+          Please check your email (and spam folder) to reset your password.
+        </Alert>
         <AuthButtons>
-          <MainButton as={Link} to="/">
-            Back to Login
-          </MainButton>
+          <Link to="/">Back to Login</Link>
         </AuthButtons>
       </AuthContainer>
     );
@@ -55,24 +55,33 @@ const ForgotPassword = () => {
   return (
     <AuthContainer title="Forgot Password">
       <form onSubmit={handleSubmit}>
-        {error && <_Error>{error}</_Error>}
-        <Input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-          required
-        />
+        <Stack gap="md">
+          {error && (
+            <Alert color="red" title="Error">
+              {error}
+            </Alert>
+          )}
+          <TextInput
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+            required
+          />
 
-        <AuthButtons>
-          <MainButton type="submit" disabled={loading}>
-            {loading ? "Sending..." : "Send Reset Link"}
-          </MainButton>
-        </AuthButtons>
+          <AuthButtons>
+            <Button type="submit" disabled={loading} loading={loading}>
+              {loading ? "Sending..." : "Send Reset Link"}
+            </Button>
+          </AuthButtons>
+        </Stack>
       </form>
-      <OtherActionRibbon>
-        Remember your password? <Link to="/">Back to Login</Link>
-      </OtherActionRibbon>
+      <Group justify="center" gap="xs" mt="sm">
+        <Text size="sm" c="dimmed">
+          Remember your password?
+        </Text>
+        <Link to="/">Back to Login</Link>
+      </Group>
     </AuthContainer>
   );
 };

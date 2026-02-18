@@ -2,12 +2,15 @@ import * as ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ResponsiveProvider } from "@hooks/useResponsive";
+import "@mantine/core/styles.css";
 
 import { ThemeProvider, GlobalStyles } from "./utilities/ThemeProvider";
 import SWRProvider from "./utilities/SWRProvider";
 import App from "./App";
 
 import { DarkModeProvider } from "@hooks/useDarkMode";
+import { MantineProvider } from "@mantine/core";
+
 import ErrorBoundary from "@components/ErrorBoundary";
 
 import "./utilities/ServiceWorkerRegister";

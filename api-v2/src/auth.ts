@@ -14,7 +14,14 @@ export const auth = betterAuth({
     schema: authSchema
   }),
   emailAndPassword: {
-    enabled: true
+    enabled: true,
+    sendResetPassword: async ({ user, url, token }, request) => {
+      console.log({
+        to: user.email,
+        subject: "Reset your password",
+        text: `Click the link to reset your password: ${url}`
+      });
+    }
   },
   socialProviders: {
     google: {

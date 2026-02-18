@@ -45,6 +45,17 @@ export const PasskeyItem = styled.div`
   color: ${({ theme }) => theme.colors.body.color};
 `;
 
+export const PasskeyDetails = styled.div`
+  display: grid;
+  gap: 0.15rem;
+`;
+
+export const PasskeyActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
 export const Subtle = styled.span`
   color: ${({ theme }) => theme.colors.forms.label.color};
   font-size: 0.9rem;

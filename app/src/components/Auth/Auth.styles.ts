@@ -1,28 +1,29 @@
 import Button from "@components/Button";
+import { QUERIES } from "../../constants";
 import { styled } from "styled-components";
 
 export const Container = styled.div`
   display: grid;
+  overflow: auto;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
   gap: 2rem;
   width: 100%;
   height: 100%;
-  padding-top: 7rem;
 
   background: ${({ theme }) => theme.colors.body.background};
   ${({ theme }) => theme.queries.large} {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
-    padding-top: 0;
   }
 `;
 
 export const LogoSection = styled.div`
   display: flex;
-  margin: 2rem 2rem 2rem 0;
+  margin: 2rem auto;
+  width: 90%;
   padding: 2rem;
-  border-radius: 4rem;
+  border-radius: 2rem;
   position: relative;
   flex-direction: column;
   align-items: center;
@@ -52,10 +53,15 @@ export const LogoSection = styled.div`
     margin-bottom: 1rem;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
   }
+
+  ${QUERIES.large} {
+    width: unset;
+    margin: 2rem 2rem 2rem 0;
+  }
 `;
 
 export const BrandTitle = styled.h1`
-  position: absolute;
+  grid-row: 1;
   top: 1rem;
   left: 1rem;
   color: #fff;
@@ -68,6 +74,10 @@ export const BrandTitle = styled.h1`
   }
   span {
     font-weight: 600;
+  }
+
+  ${QUERIES.large} {
+    position: absolute;
   }
 `;
 
@@ -102,14 +112,17 @@ export const FormWrapper = styled.div`
   --background-color: ${({ theme }) => theme.colors.modals.contentBackground};
   background: var(--background-color);
   color: ${({ theme }) => theme.colors.body.color};
-  border-radius: 1rem;
+  border-radius: 2rem;
   padding: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 90%;
+  max-width: 400px;
+  ${QUERIES.large} {
+    width: 100%;
+  }
 `;
 
 export const Title = styled.h2`
@@ -125,14 +138,4 @@ export const OtherActionRibbon = styled.div`
   justify-content: center;
   gap: 0.5rem;
   margin-top: 1rem;
-`;
-
-export const ErrorMessage = styled.div`
-  background: ${({ theme }) => theme.colors.general.red};
-  color: white;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  text-align: center;
 `;

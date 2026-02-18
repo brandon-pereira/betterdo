@@ -7,6 +7,8 @@ import {
   InlineActions,
   PasskeyList,
   PasskeyItem,
+  PasskeyDetails,
+  PasskeyActions,
   Subtle,
   Success,
   FormRow
@@ -24,6 +26,7 @@ function AuthSettings() {
   const [passkeyError, setPasskeyError] = useState<string | null>(null);
   const [passkeyMessage, setPasskeyMessage] = useState<string | null>(null);
   const [isAddingPasskey, setIsAddingPasskey] = useState(false);
+  const [isDeletingPasskeyId, setIsDeletingPasskeyId] = useState<string | null>(null);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -51,6 +54,7 @@ function AuthSettings() {
     const res = await authClient.passkey.addPasskey({
       name: passkeyName || undefined
     });
+
     setIsAddingPasskey(false);
     if (res?.error) {
       setPasskeyError(res.error.message ?? "Unable to add passkey.");
@@ -91,6 +95,44 @@ function AuthSettings() {
     setConfirmPassword("");
   };
 
+  const handleDeletePasskey = async (passkeyId?: string, passkeyName?: string | null) => {
+    if (!passkeyId) {
+      setPasskeyError("This passkey can't be removed.");
+      return;
+    }
+    if (!authClient.$fetch) {
+      setPasskeyError("Passkey deletion is unavailable.");
+      return;
+    }
+    const confirmed = window.confirm(`Delete passkey${passkeyName ? ` "${passkeyName}"` : ""}? This cannot be undone.`);
+    if (!confirmed) return;
+
+    setIsDeletingPasskeyId(passkeyId);
+    setPasskeyError(null);
+    setPasskeyMessage(null);
+
+    const res = await authClient.$fetch<{ status: boolean }>("/passkey/delete-passkey", {
+      method: "POST",
+      body: {
+        id: passkeyId
+      },
+      throw: false
+    });
+
+    setIsDeletingPasskeyId(null);
+
+    if (res.error) {
+      setPasskeyError(res.error.message ?? "Unable to delete passkey.");
+      return;
+    }
+    if (!res.data?.status) {
+      setPasskeyError("Unable to delete passkey.");
+      return;
+    }
+    setPasskeyMessage("Passkey removed.");
+    passkeyList?.refetch?.();
+  };
+
   return (
     <div>
       <Section>
@@ -125,8 +167,21 @@ function AuthSettings() {
           ) : (
             passkeys.map(passkey => (
               <PasskeyItem key={passkey.id || passkey.name}>
-                <span>{passkey.name || "Unnamed passkey"}</span>
-                {passkey.createdAt && <Subtle>{new Date(passkey.createdAt).toLocaleString()}</Subtle>}
+                <PasskeyDetails>
+                  <span>{passkey.name || "Unnamed passkey"}</span>
+                  {passkey.createdAt && <Subtle>{new Date(passkey.createdAt).toLocaleString()}</Subtle>}
+                </PasskeyDetails>
+                <PasskeyActions>
+                  <Button
+                    variant="secondary"
+                    isLoading={isDeletingPasskeyId === passkey.id}
+                    loadingText="Deleting"
+                    disabled={!passkey.id || !!isDeletingPasskeyId}
+                    onClick={() => handleDeletePasskey(passkey.id, passkey.name)}
+                  >
+                    Delete
+                  </Button>
+                </PasskeyActions>
               </PasskeyItem>
             ))
           )}

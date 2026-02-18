@@ -1,10 +1,8 @@
 import React, { useState } from "react";
+import { TextInput, Divider, PasswordInput, Button, Alert, Stack, Group, Text } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
-import { ErrorMessage, MainButton, AuthButtons, AuthProviders, OtherActionRibbon } from "./Auth.styles";
+import { MainButton, AuthButtons, AuthProviders } from "./Auth.styles";
 import { signIn, signUp } from "@utilities/auth";
-import { Input } from "@components/Forms";
-import Button from "@components/Button";
-import Divider from "@components/Divider/Divider";
 import Link from "@components/Link";
 
 const SignUp = () => {
@@ -57,67 +55,72 @@ const SignUp = () => {
 
   return (
     <AuthContainer title="Create your account">
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-
       <form onSubmit={handleSubmit}>
-        <>
-          <Input
+        <Stack gap="md">
+          {error && (
+            <Alert color="red" title="Error">
+              {error}
+            </Alert>
+          )}
+
+          <TextInput
             type="text"
             placeholder="First Name"
             value={firstName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
             required
           />
-          <Input
+          <TextInput
             type="text"
             placeholder="Last Name"
             value={lastName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastName(e.target.value)}
             required
           />
-        </>
 
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-          required
-        />
+          <TextInput
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+            required
+          />
 
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-          required
-        />
+          <PasswordInput
+            placeholder="Password"
+            value={password}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+            required
+          />
 
-        <Input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
-          required
-        />
+          <PasswordInput
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+            required
+          />
 
-        <AuthButtons>
-          <MainButton type="submit" disabled={loading}>
-            {loading ? "Please wait..." : "Create Account"}
-          </MainButton>
-        </AuthButtons>
+          <AuthButtons>
+            <Button type="submit" disabled={loading} loading={loading}>
+              {loading ? "Please wait..." : "Create Account"}
+            </Button>
+          </AuthButtons>
+        </Stack>
       </form>
 
-      <Divider text="Or Create With" textColor="#ccc" />
+      <Divider label="Or Create With" />
       <AuthProviders>
-        <Button variant="secondary" color="#eee" onClick={handleGoogleSignIn} disabled={loading}>
+        <Button variant="default" onClick={handleGoogleSignIn} disabled={loading} fullWidth>
           Google
         </Button>
       </AuthProviders>
 
-      <OtherActionRibbon>
-        Already have an account? <Link to="/auth/login">Sign in</Link>
-      </OtherActionRibbon>
+      <Group justify="center" gap="xs" mt="sm">
+        <Text size="sm" c="dimmed">
+          Already have an account?
+        </Text>
+        <Link to="/auth/login">Sign in</Link>
+      </Group>
     </AuthContainer>
   );
 };

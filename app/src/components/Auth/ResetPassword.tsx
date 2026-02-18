@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { PasswordInput, Button, Alert, Stack, Group } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
 import { authClient } from "@utilities/auth";
-import { Error as _Error, Input } from "@components/Forms";
+import { AuthButtons } from "./Auth.styles";
 import Link from "@components/Link";
-import { AuthButtons, MainButton, OtherActionRibbon, SuccessMessage } from "./Auth.styles";
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -62,11 +62,11 @@ const ResetPassword = () => {
   if (invalidToken) {
     return (
       <AuthContainer title="Invalid Link">
-        <_Error>This password reset link is invalid or has expired.</_Error>
+        <Alert color="red" title="Error">
+          This password reset link is invalid or has expired.
+        </Alert>
         <AuthButtons>
-          <MainButton as={Link} to="/">
-            Back to Login
-          </MainButton>
+          <Link to="/">Back to Login</Link>
         </AuthButtons>
       </AuthContainer>
     );
@@ -75,13 +75,11 @@ const ResetPassword = () => {
   if (succeeded) {
     return (
       <AuthContainer title="Password Reset">
-        <SuccessMessage>
+        <Alert color="green" title="Success">
           Your password has been reset successfully. You can now log in with your new password.
-        </SuccessMessage>
+        </Alert>
         <AuthButtons>
-          <MainButton as={Link} to="/">
-            Back to Login
-          </MainButton>
+          <Link to="/">Back to Login</Link>
         </AuthButtons>
       </AuthContainer>
     );
@@ -90,34 +88,38 @@ const ResetPassword = () => {
   return (
     <AuthContainer title="Reset Your Password">
       <form onSubmit={handleSubmit}>
-        {error && <_Error>{error}</_Error>}
-        <Input
-          type="password"
-          placeholder="New Password"
-          value={password}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-          required
-          minLength={8}
-        />
+        <Stack gap="md">
+          {error && (
+            <Alert color="red" title="Error">
+              {error}
+            </Alert>
+          )}
+          <PasswordInput
+            placeholder="New Password"
+            value={password}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+            required
+            minLength={8}
+          />
 
-        <Input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
-          required
-          minLength={8}
-        />
+          <PasswordInput
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+            required
+            minLength={8}
+          />
 
-        <AuthButtons>
-          <MainButton type="submit" disabled={loading}>
-            {loading ? "Resetting..." : "Reset Password"}
-          </MainButton>
-        </AuthButtons>
+          <AuthButtons>
+            <Button type="submit" disabled={loading} loading={loading}>
+              {loading ? "Resetting..." : "Reset Password"}
+            </Button>
+          </AuthButtons>
+        </Stack>
       </form>
-      <OtherActionRibbon>
+      <Group justify="center" gap="xs" mt="sm">
         <Link to="/">Back to Login</Link>
-      </OtherActionRibbon>
+      </Group>
     </AuthContainer>
   );
 };

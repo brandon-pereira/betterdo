@@ -1,9 +1,13 @@
-import { Link as RouterLink } from "react-router-dom";
+import React from "react";
+import { Anchor, type AnchorProps } from "@mantine/core";
+import { Link as RouterLink, type LinkProps } from "react-router-dom";
 
-import { StyledLink } from "./Link.styles";
+type Props = AnchorProps & Omit<LinkProps, "to"> & { to: LinkProps["to"] };
 
-const Link = ({ children, ...props }: React.ComponentProps<typeof RouterLink>) => (
-  <StyledLink {...props}>{children}</StyledLink>
-);
+const Link = React.forwardRef<HTMLAnchorElement, Props>(({ to, ...props }, ref) => (
+  <Anchor component={RouterLink} to={to} ref={ref} {...props} fw={600} />
+));
+
+Link.displayName = "Link";
 
 export default Link;
