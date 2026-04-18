@@ -53,7 +53,7 @@ describe("Lists", () => {
       const userRequest2 = await createRouter();
       const list = await createList({ title: "Good List", createdById: userRequest1.user.id });
       const result = await getListById({ userId: userRequest2.user.id, listId: list.id });
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
 
     test("Allows list to be modified", async () => {
@@ -110,7 +110,7 @@ describe("Lists", () => {
       const userRequest2 = await createRouter();
       const list = await createList({ title: "Good List", createdById: userRequest1.user.id });
       const result = await getListById({ userId: userRequest2.user.id, listId: list.id });
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
 
     test("Allows members to be added to list", async () => {

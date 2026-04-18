@@ -37,17 +37,21 @@ describe("Custom Lists API", () => {
   test("Date based list should return newer tasks first", async () => {
     let today = await getCustomListById("today", false, { user: router2.user });
     expect(today!.tasks).toHaveLength(0);
+    const now = new Date();
+    const earlier = new Date(now.getTime() - 1000);
     await createTask({
       listId: validListId2,
       title: "1",
-      dueDate: new Date(),
-      createdById: router2.user.id
+      dueDate: now,
+      createdById: router2.user.id,
+      createdAt: earlier
     });
     await createTask({
       listId: validListId2,
       title: "2",
-      dueDate: new Date(),
-      createdById: router2.user.id
+      dueDate: now,
+      createdById: router2.user.id,
+      createdAt: now
     });
     today = await getCustomListById("today", false, { user: router2.user });
     expect(today!.tasks).toHaveLength(2);
