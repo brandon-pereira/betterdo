@@ -20,7 +20,7 @@ export const tasks = pgTable("tasks", {
   subtasks: jsonb("subtasks"),
   priority: text("priority", {
     enum: ["low", "normal", "high"]
-  }),
+  }).default("normal"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
     .$onUpdate(() => new Date())

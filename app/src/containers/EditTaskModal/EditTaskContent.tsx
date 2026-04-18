@@ -34,13 +34,13 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
   const { task, loading, error } = useTaskDetails(taskId);
   const modifyTask = useModifyTask();
   const deleteTask = useDeleteTask();
-  const [state, _setState] = useState<Partial<Task>>({ ...(task || {}) });
+  const [state, _setState] = useState<Partial<Task>>({ ...(task || {}), priority: task?.priority ?? "normal" });
   const [_error, setError] = useState<string | undefined>();
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    _setState({ ...(task || {}) });
+    _setState({ ...(task || {}), priority: task?.priority ?? "normal" });
   }, [task]);
 
   const onSaveTask = useCallback(
