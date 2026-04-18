@@ -34,7 +34,7 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
     .where(and(eq(lists.id, listId)))
     .innerJoin(listMembers, and(eq(listMembers.userId, userId), eq(listMembers.listId, lists.id)));
 
-  if (result === null) {
+  if (!result) {
     return null;
   }
 
@@ -93,7 +93,7 @@ export async function isUserAuthorizedToAccessList({ userId, listId }: { userId:
   const result = await db.query.listMembers.findFirst({
     where: and(eq(listMembers.userId, userId), eq(listMembers.listId, listId))
   });
-  return result !== null;
+  return !!result;
 }
 
 export async function getUserInbox(userId: string) {
