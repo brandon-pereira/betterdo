@@ -1,12 +1,11 @@
 import { useEffect, useCallback, useState } from "react";
 
-import { Container, Content, Block, ButtonContainer } from "./EditTask.styles";
+import { Container, Content, Block, ButtonContainer, HeaderBar, HeaderTitle } from "./EditTask.styles";
 import CreatorBlock from "./CreatorBlock";
 import ListsDropdown from "./ListsDropdown";
 import Loader from "./Loader";
 
 import Task from "@customTypes/task";
-import { Header } from "@components/Copy";
 import Selector from "@components/Selector";
 import { Label, Input, Error } from "@components/Forms";
 import Button from "@components/Button";
@@ -140,7 +139,9 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
   return (
     <Container>
       <Content>
-        <Header>Edit Task</Header>
+        <HeaderBar>
+          <HeaderTitle>Edit Task</HeaderTitle>
+        </HeaderBar>
         {_error && <Error>{_error}</Error>}
         <Block>
           <Label>Title</Label>

@@ -11,10 +11,17 @@ interface Props {
 
 const variants = {
   hidden: {
-    x: "100%"
+    x: "105%",
+    opacity: 0.8
   },
   visible: {
-    x: 0
+    x: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      damping: 30,
+      stiffness: 350
+    }
   }
 };
 
