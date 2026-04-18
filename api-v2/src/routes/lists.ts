@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { createList, getListById, getUserLists } from "../services/lists.js";
+import { createList, getListById, getUserInbox, getUserLists } from "../services/lists.js";
 import { getAccountsCustomLists, getCustomListById, isCustomList } from "../services/customLists.js";
 import { lists } from "../schema/list.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
@@ -32,7 +32,7 @@ listsApi.get("/", authMiddleware, async c => {
 
 listsApi.get("/:id", authMiddleware, async c => {
   const user = c.get("user");
-  const listId = c.req.param("id");
+  let listId = c.req.param("id");
   const includeCompleted = c.req.query("includeCompleted") === "true";
 
   if (isCustomList(listId)) {
@@ -41,6 +41,15 @@ listsApi.get("/:id", authMiddleware, async c => {
       return c.json({ error: "No list found" }, 404);
     }
     return c.json(list);
+  }
+
+  // Resolve "inbox" to the user's actual inbox list UUID
+  if (listId === "inbox") {
+    const inbox = await getUserInbox(user.id);
+    if (!inbox) {
+      return c.json({ error: "No list found" }, 404);
+    }
+    listId = inbox.id;
   }
 
   const list = await getListById({ userId: user.id, listId });

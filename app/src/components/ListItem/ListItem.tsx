@@ -21,7 +21,7 @@ const ListItem = forwardRef<HTMLButtonElement, Props>(({ containerProps, touchEv
   const switchList = useSwitchList();
   const currentListId = useCurrentListId();
   const { type, color, id } = list;
-  const selected = id === currentListId;
+  const selected = id === currentListId || (type !== "default" && type === currentListId);
   const customList = getCustomList(type);
   const Icon = customList?.icon || <DotIcon color={color} />;
   const title = customList?.title || list.title;

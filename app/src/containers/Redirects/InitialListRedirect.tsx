@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useLists from "@hooks/useLists";
 import GlobalError from "@components/ErrorBoundary/GlobalError";
+import { getListSlug } from "@utilities/customLists";
 
 function InitialListRedirect() {
   const currentListId = useCurrentListId();
@@ -13,13 +14,13 @@ function InitialListRedirect() {
     if ((!currentListId || currentListId === "inbox") && !loading) {
       const inbox = lists.find(l => l.type === "inbox");
       const lastListId = localStorage.getItem("lastViewedList");
-      const lastVisited = lists.find(l => l.id === lastListId);
+      const lastVisited = lists.find(l => l.id === lastListId || getListSlug(l) === lastListId);
       if (lastVisited) {
-        navigate(`/${lastVisited.id}`);
+        navigate(`/${getListSlug(lastVisited)}`);
       } else if (inbox) {
-        navigate(`/${inbox.id}`);
+        navigate(`/${getListSlug(inbox)}`);
       } else {
-        navigate(`/${lists[0].id}`);
+        navigate(`/${getListSlug(lists[0])}`);
       }
     }
   }, [currentListId, navigate, lists, loading]);

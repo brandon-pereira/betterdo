@@ -71,6 +71,18 @@ const lists: CustomList[] = [
 
 export default lists;
 
+/**
+ * Returns the URL-friendly slug for a list.
+ * Custom lists (inbox, today, etc.) use their type as the slug.
+ * Regular user-created lists use their UUID id.
+ */
+export function getListSlug(list: { id: string; type?: string }): string {
+  if (list.type && list.type !== "default" && list.type !== "newList") {
+    return list.type;
+  }
+  return list.id;
+}
+
 export function getCurrentDay() {
   return startOfToday().getDate();
 }

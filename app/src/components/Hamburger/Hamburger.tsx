@@ -4,6 +4,7 @@ import useCurrentListId from "@hooks/useCurrentListId";
 import useLists from "@hooks/useLists";
 import useSwipe from "@hooks/useSwipe";
 import useSwitchList from "@hooks/useSwitchList";
+import { getListSlug } from "@utilities/customLists";
 
 const Bar = styled.div`
   height: 4px;
@@ -61,7 +62,7 @@ const Hamburger = ({ open, className, onClick }: Props) => {
   const { lists } = useLists();
   const currentListId = useCurrentListId();
   const switchList = useSwitchList();
-  const currentListIndex = lists.findIndex(l => l.id === currentListId);
+  const currentListIndex = lists.findIndex(l => l.id === currentListId || getListSlug(l) === currentListId);
   const nextList = currentListIndex + 1 < lists.length ? lists[currentListIndex + 1] : lists[0];
   const prevList = currentListIndex - 1 >= 0 ? lists[currentListIndex - 1] : lists[lists.length - 1];
   const swiper = useSwipe({
