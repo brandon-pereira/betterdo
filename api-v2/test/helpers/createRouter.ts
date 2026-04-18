@@ -1,6 +1,8 @@
+import { vi } from "vitest";
 import { testDb } from "./setup.js";
 import { user } from "../../src/schema/auth.js";
 import { lists, listMembers } from "../../src/schema/list.js";
+import type { Notifier } from "../../src/notifier.js";
 
 interface SessionUser {
   id: string;
@@ -13,7 +15,14 @@ interface SessionUser {
 
 export interface RouterOptions {
   user: SessionUser;
+  notifier: Notifier;
 }
+
+const createMockedNotifier = () =>
+  ({
+    send: vi.fn(),
+    schedule: vi.fn()
+  }) as unknown as Notifier;
 
 const createUser = async (): Promise<SessionUser> => {
   const id = `user_${Date.now()}_${Math.random().toString(36).slice(2)}`;
@@ -60,7 +69,8 @@ const createUser = async (): Promise<SessionUser> => {
 const createRouter = async (): Promise<RouterOptions> => {
   const _user = await createUser();
   return {
-    user: _user
+    user: _user,
+    notifier: createMockedNotifier()
   };
 };
 

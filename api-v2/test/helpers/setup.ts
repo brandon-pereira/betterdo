@@ -106,6 +106,15 @@ beforeAll(async () => {
   `);
 
   await testDb.execute(sql`
+    CREATE TABLE IF NOT EXISTS "push_subscription" (
+      "id" TEXT PRIMARY KEY,
+      "user_id" TEXT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+      "endpoint" TEXT NOT NULL,
+      "created_at" TIMESTAMP DEFAULT NOW() NOT NULL
+    )
+  `);
+
+  await testDb.execute(sql`
     CREATE TABLE IF NOT EXISTS "tasks" (
       "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       "title" VARCHAR(100) NOT NULL,

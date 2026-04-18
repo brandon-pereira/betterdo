@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { db } from "../db.js";
 import { listMembers, lists } from "../schema/list.js";
 import { tasks } from "../schema/task.js";
@@ -10,6 +10,7 @@ export async function getUserLists({ userId }: { userId: string }) {
       title: lists.title,
       type: lists.type,
       color: lists.color,
+      createdById: lists.createdById,
       createdAt: lists.createdAt,
       updatedAt: lists.updatedAt
     })
@@ -25,6 +26,7 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
       title: lists.title,
       type: lists.type,
       color: lists.color,
+      createdById: lists.createdById,
       createdAt: lists.createdAt,
       updatedAt: lists.updatedAt
     })
@@ -66,6 +68,7 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
 
   return {
     ...result,
+    owner: result.createdById,
     tasks: _tasks,
     members: members.map(member => {
       return {
@@ -111,4 +114,79 @@ export async function createInboxForUser(userId: string) {
     title: "Inbox",
     type: "inbox"
   });
+}
+
+export async function updateListMembers(listId: string, memberIds: string[]) {
+  // Get the list to check ownership
+  const list = await db.query.lists.findFirst({
+    where: eq(lists.id, listId)
+  });
+
+  if (!list) {
+    throw new Error("List not found");
+  }
+
+  // Owner must always remain a member
+  if (!memberIds.includes(list.createdById)) {
+    throw new Error("Cannot remove the owner from the list");
+  }
+
+  // Get current members
+  const currentMembers = await db.query.listMembers.findMany({
+    where: eq(listMembers.listId, listId)
+  });
+  const currentMemberIds = currentMembers.map(m => m.userId);
+
+  // Diff: who to add, who to remove
+  const toAdd = memberIds.filter(id => !currentMemberIds.includes(id));
+  const toRemove = currentMemberIds.filter(id => !memberIds.includes(id));
+
+  if (toAdd.length > 0) {
+    await db.insert(listMembers).values(
+      toAdd.map(userId => ({ listId, userId }))
+    );
+  }
+
+  if (toRemove.length > 0) {
+    for (const userId of toRemove) {
+      await db
+        .delete(listMembers)
+        .where(and(eq(listMembers.listId, listId), eq(listMembers.userId, userId)));
+    }
+  }
+}
+
+export async function deleteList(listId: string) {
+  // Delete member entries first (no CASCADE on list_member FK)
+  await db.delete(listMembers).where(eq(listMembers.listId, listId));
+  // Delete tasks associated with this list
+  await db.delete(tasks).where(eq(tasks.listId, listId));
+  // Delete the list itself
+  const [deleted] = await db.delete(lists).where(eq(lists.id, listId)).returning();
+  return deleted;
+}
+
+export async function getListMembers(listId: string) {
+  const members = await db.query.listMembers.findMany({
+    where: eq(listMembers.listId, listId),
+    columns: {},
+    with: {
+      user: {
+        columns: {
+          id: true,
+          name: true,
+          email: true,
+          image: true
+        }
+      }
+    }
+  });
+
+  return members.map(member => ({
+    id: member.user.id,
+    email: member.user.email,
+    profilePicture: member.user.image,
+    firstName: member.user.name.split(" ")[0],
+    lastName: member.user.name.split(" ").slice(1).join(" ")
+  }));
 }

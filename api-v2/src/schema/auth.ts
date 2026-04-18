@@ -98,10 +98,31 @@ export const passkey = pgTable(
   table => [index("passkey_userId_idx").on(table.userId), index("passkey_credentialID_idx").on(table.credentialID)]
 );
 
+export const pushSubscriptions = pgTable(
+  "push_subscription",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull()
+  },
+  table => [index("push_subscription_userId_idx").on(table.userId)]
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
-  passkeys: many(passkey)
+  passkeys: many(passkey),
+  pushSubscriptions: many(pushSubscriptions)
+}));
+
+export const pushSubscriptionRelations = relations(pushSubscriptions, ({ one }) => ({
+  user: one(user, {
+    fields: [pushSubscriptions.userId],
+    references: [user.id]
+  })
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({

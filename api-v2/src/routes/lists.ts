@@ -1,5 +1,13 @@
 import { Hono } from "hono";
-import { createList, getListById, getUserInbox, getUserLists } from "../services/lists.js";
+import {
+  createList,
+  deleteList,
+  getListById,
+  getListMembers,
+  getUserInbox,
+  getUserLists,
+  updateListMembers
+} from "../services/lists.js";
 import { getAccountsCustomLists, getCustomListById, isCustomList } from "../services/customLists.js";
 import { lists } from "../schema/list.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
@@ -18,14 +26,16 @@ listsApi.get("/", authMiddleware, async c => {
     getAccountsCustomLists({ user })
   ]);
 
-  const hydratedUserLists = userLists.map(list => ({
-    ...list,
-    tasks: [],
-    completedTasks: [],
-    additionalTasks: 0,
-    members: [],
-    owner: user.id
-  }));
+  const hydratedUserLists = await Promise.all(
+    userLists.map(async list => ({
+      ...list,
+      tasks: [],
+      completedTasks: [],
+      additionalTasks: 0,
+      members: await getListMembers(list.id),
+      owner: list.createdById
+    }))
+  );
 
   const inbox = hydratedUserLists.find(list => list.type === "inbox");
   const defaultLists = hydratedUserLists.filter(list => list.type !== "inbox");
@@ -79,12 +89,43 @@ listsApi.post("/:id", authMiddleware, zValidator("json", updateListSchema), asyn
   if (!list) {
     return c.json({ error: "No list found" }, 404);
   }
-  const updatedList = await db
-    .update(lists)
-    .set({ ...c.req.valid("json") })
-    .where(eq(lists.id, listId))
-    .returning();
-  return c.json(updatedList[0]);
+
+  const { members, ...listProps } = c.req.valid("json");
+
+  // Update list properties (title, color, etc.) if any were provided
+  if (Object.keys(listProps).length > 0) {
+    await db
+      .update(lists)
+      .set(listProps)
+      .where(eq(lists.id, listId));
+  }
+
+  // Update members if provided
+  if (members) {
+    try {
+      await updateListMembers(listId, members);
+    } catch (err) {
+      if (err instanceof Error && err.message === "Cannot remove the owner from the list") {
+        return c.json({ error: err.message }, 403);
+      }
+      throw err;
+    }
+  }
+
+  // Return the updated list with full details
+  const updatedList = await getListById({ userId: user.id, listId });
+  return c.json(updatedList);
+});
+
+listsApi.delete("/:id", authMiddleware, async c => {
+  const user = c.get("user");
+  const listId = c.req.param("id");
+  const list = await getListById({ userId: user.id, listId });
+  if (!list) {
+    return c.json({ error: "No list found" }, 404);
+  }
+  await deleteList(listId);
+  return c.json({ success: true });
 });
 
 export default listsApi;
