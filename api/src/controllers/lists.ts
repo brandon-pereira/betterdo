@@ -65,8 +65,8 @@ export async function getLists(
   const inbox = db.Lists.getUserInbox(user._id);
   const userLists = db.Users.getLists(user._id);
   const customLists = getAccountsCustomLists({ db, user, notifier });
-  const [_inbox, _userLists, _customLists] = await Promise.all([inbox, customLists, userLists]);
-  const lists: Array<ListDocument> = [_inbox, ..._userLists, ..._customLists];
+  const [_inbox, _customLists, _userLists] = await Promise.all([inbox, customLists, userLists]);
+  const lists: Array<ListDocument> = [_inbox, ..._customLists, ..._userLists];
   return lists.map(list => ({
     type: list.type,
     additionalTasks: list.additionalTasks,
