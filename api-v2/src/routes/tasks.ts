@@ -3,7 +3,8 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { createTask, getTaskById, updateTask } from "../services/tasks.js";
 import { createTaskSchema, updateTaskSchema } from "../validators/tasks.js";
 import { zValidator } from "@hono/zod-validator";
-import { isUserAuthorizedToAccessList } from "../services/lists.js";
+import { getUserInbox, isUserAuthorizedToAccessList } from "../services/lists.js";
+import { isCustomList, modifyTaskForCustomList } from "../services/customLists.js";
 import z from "zod";
 
 const tasksApi = new Hono();
@@ -41,11 +42,32 @@ tasksApi.put(
   async c => {
     const user = c.get("user");
     const payload = c.req.valid("json");
-    const newList = await createTask({
-      ...payload,
+    const { listId: rawListId, ...taskData } = payload;
+    let resolvedListId = rawListId;
+    let extraFields: Record<string, unknown> = {};
+
+    // Handle custom list IDs (e.g. "inbox", "today", "highPriority", "tomorrow")
+    if (isCustomList(resolvedListId)) {
+      extraFields = modifyTaskForCustomList(resolvedListId, {}, { user: user as any });
+      resolvedListId = "inbox";
+    }
+
+    // Resolve "inbox" to the user's actual inbox list UUID
+    if (resolvedListId === "inbox") {
+      const inbox = await getUserInbox(user.id);
+      if (!inbox) {
+        return c.json({ error: "Inbox not found" }, 404);
+      }
+      resolvedListId = inbox.id;
+    }
+
+    const newTask = await createTask({
+      ...taskData,
+      ...extraFields,
+      listId: resolvedListId,
       createdById: user.id
     });
-    return c.json(newList);
+    return c.json(newTask);
   }
 );
 

@@ -96,6 +96,16 @@ export async function isUserAuthorizedToAccessList({ userId, listId }: { userId:
   return result !== null;
 }
 
+export async function getUserInbox(userId: string) {
+  const [result] = await db
+    .select({ id: lists.id })
+    .from(lists)
+    .innerJoin(listMembers, and(eq(listMembers.listId, lists.id), eq(listMembers.userId, userId)))
+    .where(eq(lists.type, "inbox"))
+    .limit(1);
+  return result ?? null;
+}
+
 export async function createInboxForUser(userId: string) {
   await createList({
     createdById: userId,

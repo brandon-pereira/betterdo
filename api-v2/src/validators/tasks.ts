@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const createTaskSchema = z.object({
-  listId: z.uuid("List ID"),
+  listId: z.string().min(1, "List ID is required"),
   title: z.string().min(1, "Title is required")
 });
 
