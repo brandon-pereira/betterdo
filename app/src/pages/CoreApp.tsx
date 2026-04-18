@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
 import Container from "../containers/Container";
@@ -26,6 +26,7 @@ const CoreApp = () => {
     <SharedProviders>
       <Routes>
         <Route path="/" element={<InitialListRedirect />} />
+        <Route path="/auth/*" element={<Navigate to="/" replace />} />
         <Route
           path=":currentListId/*"
           element={

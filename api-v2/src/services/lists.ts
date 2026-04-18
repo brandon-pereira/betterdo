@@ -14,8 +14,7 @@ export async function getUserLists({ userId }: { userId: string }) {
       updatedAt: lists.updatedAt
     })
     .from(lists)
-    .where(eq(listMembers.userId, userId))
-    .innerJoin(listMembers, eq(listMembers.listId, lists.id));
+    .innerJoin(listMembers, and(eq(listMembers.listId, lists.id), eq(listMembers.userId, userId)));
   return result;
 }
 

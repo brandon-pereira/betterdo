@@ -3,6 +3,7 @@ import { TextInput, Divider, PasswordInput, Button, Alert, Stack, Group, Text } 
 import AuthContainer from "./AuthContainer";
 import { MainButton, AuthButtons, AuthProviders } from "./Auth.styles";
 import { signIn, signUp } from "@utilities/auth";
+import { getTimeZone } from "@utilities/timezones";
 import Link from "@components/Link";
 
 const SignUp = () => {
@@ -25,10 +26,12 @@ const SignUp = () => {
         setLoading(false);
         return;
       }
+      const localTimeZone = getTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone).name;
       const { error } = await signUp.email({
         email,
         password,
-        name: `${firstName} ${lastName}`.trim()
+        name: `${firstName} ${lastName}`.trim(),
+        timeZone: localTimeZone
       });
       if (error) {
         setError(error.message ?? "An error occurred");
