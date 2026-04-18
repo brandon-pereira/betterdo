@@ -27,7 +27,10 @@ listsApi.get("/", authMiddleware, async c => {
     owner: user.id
   }));
 
-  return c.json([...hydratedUserLists, ...customLists]);
+  const inbox = hydratedUserLists.find(list => list.type === "inbox");
+  const defaultLists = hydratedUserLists.filter(list => list.type !== "inbox");
+
+  return c.json([...(inbox ? [inbox] : []), ...customLists, ...defaultLists]);
 });
 
 listsApi.get("/:id", authMiddleware, async c => {
