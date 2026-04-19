@@ -1,5 +1,5 @@
 // drizzle/schema/list.ts
-import { pgTable, text, uuid, varchar, timestamp, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, varchar, timestamp, primaryKey, integer } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { user } from "./auth.js";
 import { tasks } from "./task.js";
@@ -39,7 +39,8 @@ export const listMembers = pgTable(
       .references(() => lists.id),
     userId: text("user_id")
       .notNull()
-      .references(() => user.id)
+      .references(() => user.id),
+    position: integer("position").notNull().default(0)
   },
   t => [primaryKey({ columns: [t.userId, t.listId] })]
 );

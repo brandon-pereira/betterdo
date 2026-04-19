@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { db } from "../db.js";
 import { tasks } from "../schema/task.js";
 import { notifyAboutSharedList } from "../helpers/notify.js";
@@ -15,8 +15,39 @@ export function updateTask(taskId: string, updates: Partial<typeof tasks.$inferI
   return db.update(tasks).set(updates).where(eq(tasks.id, taskId)).returning();
 }
 
-export function createTask(payload: typeof tasks.$inferInsert) {
-  return db.insert(tasks).values(payload).returning();
+export async function createTask(payload: typeof tasks.$inferInsert) {
+  // Auto-assign next position within the list
+  const [{ value: taskCount }] = await db
+    .select({ value: count() })
+    .from(tasks)
+    .where(eq(tasks.listId, payload.listId));
+
+  return db
+    .insert(tasks)
+    .values({ ...payload, position: taskCount })
+    .returning();
+}
+
+export async function reorderTasks(listId: string, taskIds: string[]) {
+  // Get all current task IDs for the list
+  const currentTasks = await db.query.tasks.findMany({
+    where: eq(tasks.listId, listId),
+    columns: { id: true }
+  });
+  const currentTaskIds = currentTasks.map(t => t.id);
+
+  // Validate: same length and same IDs (no injection or removal)
+  if (taskIds.length !== currentTaskIds.length || taskIds.some(id => !currentTaskIds.includes(id))) {
+    throw new Error("Invalid modification of tasks");
+  }
+
+  // Update positions
+  for (let i = 0; i < taskIds.length; i++) {
+    await db
+      .update(tasks)
+      .set({ position: i })
+      .where(and(eq(tasks.id, taskIds[i]), eq(tasks.listId, listId)));
+  }
 }
 
 export function getTaskById(taskId: string) {

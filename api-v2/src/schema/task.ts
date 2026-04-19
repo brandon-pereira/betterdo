@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, boolean, jsonb, timestamp, text } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, boolean, jsonb, timestamp, text, integer } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { lists } from "./list.js";
 import { user } from "./auth.js";
@@ -21,6 +21,7 @@ export const tasks = pgTable("tasks", {
   priority: text("priority", {
     enum: ["low", "normal", "high"]
   }).default("normal"),
+  position: integer("position").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
     .$onUpdate(() => new Date())

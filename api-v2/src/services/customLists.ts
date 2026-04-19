@@ -1,4 +1,4 @@
-import { SQL, and, desc, eq, gte, lt } from "drizzle-orm";
+import { SQL, and, asc, desc, eq, gte, lt } from "drizzle-orm";
 import { addDays, endOfDay, endOfWeek, startOfDay, startOfWeek } from "date-fns";
 import { db as defaultDb } from "../db.js";
 import { listMembers } from "../schema/list.js";
@@ -201,7 +201,7 @@ async function fetchTasksByPredicate(whereClause: SQL<unknown>, router: RouterOp
     .innerJoin(listMembers, and(eq(listMembers.listId, tasks.listId), eq(listMembers.userId, router.user.id)))
     .innerJoin(userTable, eq(userTable.id, tasks.createdById))
     .where(whereClause)
-    .orderBy(desc(tasks.createdAt));
+    .orderBy(asc(tasks.position));
 
   return sortTasks(
     rows.map(row => ({

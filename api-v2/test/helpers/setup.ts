@@ -123,6 +123,7 @@ beforeAll(async () => {
       "notes" TEXT,
       "subtasks" JSONB,
       "priority" TEXT DEFAULT 'normal',
+      "position" INTEGER NOT NULL DEFAULT 0,
       "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
       "updated_at" TIMESTAMP(3) DEFAULT NOW()
     )
@@ -144,6 +145,7 @@ beforeAll(async () => {
     CREATE TABLE IF NOT EXISTS "list_member" (
       "list_id" UUID NOT NULL REFERENCES "list"("id"),
       "user_id" TEXT NOT NULL REFERENCES "user"("id"),
+      "position" INTEGER NOT NULL DEFAULT 0,
       PRIMARY KEY ("user_id", "list_id")
     )
   `);

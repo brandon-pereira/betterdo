@@ -1,6 +1,7 @@
 import { describe, test, expect } from "vitest";
 import createRouter from "./helpers/createRouter.js";
 import { getUserLists, getListById, createList, isUserAuthorizedToAccessList } from "../src/services/lists.js";
+import { createTask, reorderTasks } from "../src/services/tasks.js";
 import { testDb } from "./helpers/setup.js";
 import { lists, listMembers } from "../src/schema/list.js";
 import { eq } from "drizzle-orm";
@@ -138,6 +139,19 @@ describe("Lists", () => {
         userId: userRequest2.user.id
       });
       expect(await isUserAuthorizedToAccessList({ userId: userRequest2.user.id, listId: list.id })).toBe(true);
+    });
+
+    test("Allows tasks within a list to be reordered", async () => {
+      const router = await createRouter();
+      const list = await createList({ title: "Reorder Test", createdById: router.user.id });
+      const [task1] = await createTask({ listId: list.id, title: "Task 1", createdById: router.user.id });
+      const [task2] = await createTask({ listId: list.id, title: "Task 2", createdById: router.user.id });
+      const [task3] = await createTask({ listId: list.id, title: "Task 3", createdById: router.user.id });
+      let fetched = await getListById({ userId: router.user.id, listId: list.id });
+      expect(fetched!.tasks.map(t => t.id)).toEqual([task1.id, task2.id, task3.id]);
+      await reorderTasks(list.id, [task3.id, task1.id, task2.id]);
+      fetched = await getListById({ userId: router.user.id, listId: list.id });
+      expect(fetched!.tasks.map(t => t.id)).toEqual([task3.id, task1.id, task2.id]);
     });
 
     test("Requires that the colour be a valid hex code", async () => {

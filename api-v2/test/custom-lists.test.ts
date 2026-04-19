@@ -1,8 +1,8 @@
 import { describe, test, expect, beforeAll } from "vitest";
 import createRouter, { type RouterOptions } from "./helpers/createRouter.js";
 import { createList } from "../src/services/lists.js";
-import { createTask } from "../src/services/tasks.js";
-import { getCustomListById, modifyTaskForCustomList } from "../src/services/customLists.js";
+import { createTask, reorderTasks } from "../src/services/tasks.js";
+import { getCustomListById, isCustomList, modifyTaskForCustomList } from "../src/services/customLists.js";
 
 let router1: RouterOptions;
 let router2: RouterOptions;
@@ -126,6 +126,16 @@ describe("Custom Lists API", () => {
     expect(taskObj.dueDate!.getDate()).toBe(expectedDay.getDate());
     expect(taskObj.dueDate!.getHours()).toBe(0);
     expect(taskObj.dueDate!.getMinutes()).toBe(0);
+  });
+
+  test("Prevents reordering tasks on custom lists", () => {
+    const customListIds = ["highPriority", "today", "tomorrow", "overdue", "week"];
+    for (const id of customListIds) {
+      expect(isCustomList(id)).toBe(true);
+    }
+    // Non-custom list IDs should not be flagged
+    expect(isCustomList("some-uuid")).toBe(false);
+    expect(isCustomList("inbox")).toBe(false);
   });
 
   test("Should allow returning additional tasks (completed count)", async () => {

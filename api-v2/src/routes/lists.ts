@@ -8,6 +8,7 @@ import {
   getUserLists,
   updateListMembers
 } from "../services/lists.js";
+import { reorderTasks } from "../services/tasks.js";
 import { getAccountsCustomLists, getCustomListById, isCustomList } from "../services/customLists.js";
 import { lists } from "../schema/list.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
@@ -84,17 +85,37 @@ listsApi.put("/", authMiddleware, zValidator("json", createListSchema), async c 
 
 listsApi.post("/:id", authMiddleware, zValidator("json", updateListSchema), async c => {
   const user = c.get("user");
-  const listId = c.req.param("id");
+  let listId = c.req.param("id");
+
+  // Custom lists are virtual and cannot be modified
+  if (isCustomList(listId)) {
+    return c.json({ error: "Custom lists cannot be modified" }, 400);
+  }
+
+  // Resolve "inbox" to the user's actual inbox list UUID
+  if (listId === "inbox") {
+    const inbox = await getUserInbox(user.id);
+    if (!inbox) {
+      return c.json({ error: "No list found" }, 404);
+    }
+    listId = inbox.id;
+  }
+
   const list = await getListById({ userId: user.id, listId });
   if (!list) {
     return c.json({ error: "No list found" }, 404);
   }
 
-  const { members, ...listProps } = c.req.valid("json");
+  const { members, tasks: taskOrder, ...listProps } = c.req.valid("json");
 
   // Update list properties (title, color, etc.) if any were provided
   if (Object.keys(listProps).length > 0) {
     await db.update(lists).set(listProps).where(eq(lists.id, listId));
+  }
+
+  // Reorder tasks if provided
+  if (taskOrder) {
+    await reorderTasks(listId, taskOrder);
   }
 
   // Update members if provided
@@ -116,7 +137,22 @@ listsApi.post("/:id", authMiddleware, zValidator("json", updateListSchema), asyn
 
 listsApi.delete("/:id", authMiddleware, async c => {
   const user = c.get("user");
-  const listId = c.req.param("id");
+  let listId = c.req.param("id");
+
+  // Custom lists are virtual and cannot be deleted
+  if (isCustomList(listId)) {
+    return c.json({ error: "Custom lists cannot be deleted" }, 400);
+  }
+
+  // Resolve "inbox" to the user's actual inbox list UUID
+  if (listId === "inbox") {
+    const inbox = await getUserInbox(user.id);
+    if (!inbox) {
+      return c.json({ error: "No list found" }, 404);
+    }
+    listId = inbox.id;
+  }
+
   const list = await getListById({ userId: user.id, listId });
   if (!list) {
     return c.json({ error: "No list found" }, 404);

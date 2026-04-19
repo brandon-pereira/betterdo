@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, count, desc, eq } from "drizzle-orm";
 import { db } from "../db.js";
 import { listMembers, lists } from "../schema/list.js";
 import { tasks } from "../schema/task.js";
@@ -15,7 +15,8 @@ export async function getUserLists({ userId }: { userId: string }) {
       updatedAt: lists.updatedAt
     })
     .from(lists)
-    .innerJoin(listMembers, and(eq(listMembers.listId, lists.id), eq(listMembers.userId, userId)));
+    .innerJoin(listMembers, and(eq(listMembers.listId, lists.id), eq(listMembers.userId, userId)))
+    .orderBy(asc(listMembers.position));
   return result;
 }
 
@@ -42,7 +43,7 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
   const [_tasks, members] = await Promise.all([
     db.query.tasks.findMany({
       where: eq(tasks.listId, result.id),
-      orderBy: desc(tasks.createdAt),
+      orderBy: asc(tasks.position),
       columns: {
         id: true,
         title: true,
@@ -84,9 +85,17 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
 
 export async function createList(payload: typeof lists.$inferInsert) {
   const newList = await db.insert(lists).values(payload).returning();
+
+  // Get the current max position for this user's lists
+  const [{ value: listCount }] = await db
+    .select({ value: count() })
+    .from(listMembers)
+    .where(eq(listMembers.userId, payload.createdById));
+
   await db.insert(listMembers).values({
     listId: newList[0].id,
-    userId: payload.createdById
+    userId: payload.createdById,
+    position: listCount
   });
   return newList[0];
 }

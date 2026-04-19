@@ -25,7 +25,7 @@ export default ({ db, notifier, app }: { app: Application; db: Database; notifie
   api.get(["/lists", "/lists/:listId"], (req, res) =>
     routeHandler("getting lists", { req, res, db, notifier }, config =>
       getLists(
-        req.params.listId,
+        req.params.listId as string | undefined,
         {
           includeCompleted: Boolean(req.query.includeCompleted === "true")
         },

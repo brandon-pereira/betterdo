@@ -3,6 +3,7 @@ import createRouter, { RouterOptions } from "./helpers/createRouter.js";
 import { testDb } from "./helpers/setup.js";
 import { user, pushSubscriptions } from "../src/schema/auth.js";
 import { getUserByEmail, updateUser } from "../src/services/users.js";
+import { createList, getUserLists } from "../src/services/lists.js";
 import { eq } from "drizzle-orm";
 import type { Notifier } from "../src/notifier.js";
 
@@ -120,10 +121,72 @@ describe("Users", () => {
         expect(notifier.mock.calls.length).toBe(2);
       });
 
-      test.todo("Allows custom lists to be modified");
-      test.todo("Allows users lists to be reordered");
-      test.todo("Prevents lists from being injected during reorder");
-      test.todo("Prevents lists from being removed during reorder");
+      test("Allows custom lists to be modified", async () => {
+        const router = await createRouter();
+        await updateUser(
+          {
+            customLists: {
+              tomorrow: true
+            }
+          },
+          router
+        );
+        const userCache = await testDb.query.user.findFirst({
+          where: eq(user.id, router.user.id)
+        });
+        expect(userCache?.customLists).toMatchObject({
+          highPriority: false,
+          today: false,
+          tomorrow: true
+        });
+      });
+
+      test("Allows users lists to be reordered", async () => {
+        const router = await createRouter();
+        const list1 = await createList({ title: "Test 1", createdById: router.user.id });
+        const list2 = await createList({ title: "Test 2", createdById: router.user.id });
+        const list3 = await createList({ title: "Test 3", createdById: router.user.id });
+        const userLists = await getUserLists({ userId: router.user.id });
+        const defaultLists = userLists.map(l => l.id);
+        expect(defaultLists).toContain(list1.id);
+        expect(defaultLists).toContain(list2.id);
+        expect(defaultLists).toContain(list3.id);
+        await updateUser(
+          {
+            lists: [list3.id, list2.id, list1.id]
+          },
+          router
+        );
+        const reorderedLists = await getUserLists({ userId: router.user.id });
+        const nonInbox = reorderedLists.filter(l => l.type !== "inbox");
+        expect(nonInbox.map(l => l.id)).toEqual([list3.id, list2.id, list1.id]);
+      });
+
+      test("Prevents lists from being injected during reorder", async () => {
+        const userRequest1 = await createRouter();
+        const userRequest2 = await createRouter();
+        const list1 = await createList({ title: "Good", createdById: userRequest1.user.id });
+        const list2 = await createList({ title: "Good", createdById: userRequest1.user.id });
+        const list3 = await createList({ title: "BAD!", createdById: userRequest2.user.id });
+        await expect(
+          updateUser({ lists: [list1.id, list3.id] }, userRequest1)
+        ).rejects.toThrow("Invalid modification of lists");
+        const userLists = await getUserLists({ userId: userRequest1.user.id });
+        const nonInbox = userLists.filter(l => l.type !== "inbox");
+        expect(nonInbox).toHaveLength(2);
+      });
+
+      test("Prevents lists from being removed during reorder", async () => {
+        const router = await createRouter();
+        const list1 = await createList({ title: "Good", createdById: router.user.id });
+        const list2 = await createList({ title: "Good", createdById: router.user.id });
+        await expect(
+          updateUser({ lists: [list2.id] }, router)
+        ).rejects.toThrow("Invalid modification of lists");
+        const userLists = await getUserLists({ userId: router.user.id });
+        const nonInbox = userLists.filter(l => l.type !== "inbox");
+        expect(nonInbox).toHaveLength(2);
+      });
     });
   });
 });
