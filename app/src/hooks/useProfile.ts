@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useSWRConfig } from "swr";
 
 import createSharedHook from "./internal/createSharedHook";
 
@@ -8,10 +9,14 @@ import { pick } from "radash";
 
 function useProfileOnce() {
   const { data, error } = useSession();
+  const { cache } = useSWRConfig();
 
   const logout = useCallback(() => {
+    if (cache instanceof Map) {
+      cache.clear();
+    }
     signOut();
-  }, []);
+  }, [cache]);
 
   if (error) {
     return {
