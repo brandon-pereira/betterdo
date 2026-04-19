@@ -9,7 +9,6 @@ import SWRProvider from "./utilities/SWRProvider";
 import App from "./App";
 
 import { DarkModeProvider } from "@hooks/useDarkMode";
-import { MantineProvider } from "@mantine/core";
 
 import ErrorBoundary from "@components/ErrorBoundary";
 

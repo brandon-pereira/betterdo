@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TextInput, Divider, PasswordInput, Button, Alert, Stack, Group, Text } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
-import { MainButton, AuthButtons, AuthProviders } from "./Auth.styles";
+import { AuthButtons, AuthProviders } from "./Auth.styles";
 import { signIn, signUp } from "@utilities/auth";
 import { getTimeZone } from "@utilities/timezones";
 import Link from "@components/Link";

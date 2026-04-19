@@ -1,7 +1,6 @@
 import { describe, test, expect } from "vitest";
 import createRouter from "./helpers/createRouter.js";
 import { getUserLists, getListById, createList, isUserAuthorizedToAccessList } from "../src/services/lists.js";
-import { createTask } from "../src/services/tasks.js";
 import { testDb } from "./helpers/setup.js";
 import { lists, listMembers } from "../src/schema/list.js";
 import { eq } from "drizzle-orm";

@@ -1,9 +1,15 @@
-import WebNotifier from "web-notifier";
-import InMemoryAdapter from "web-notifier/dist/adapters/InMemoryAdapter.js";
+import { createRequire } from "module";
 import { eq, and } from "drizzle-orm";
 import { db } from "./db.js";
 import { user, pushSubscriptions } from "./schema/auth.js";
 import config from "./config.js";
+
+const require = createRequire(import.meta.url);
+const WebNotifier = require("web-notifier").default as typeof import("web-notifier").default;
+
+// web-notifier doesn't export subpaths for nodenext resolution; adapter is an internal detail
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const InMemoryAdapter = require("web-notifier/dist/adapters/InMemoryAdapter").default as new () => any;
 
 interface NotificationPayload {
   title: string;
@@ -17,7 +23,7 @@ interface NotificationPayload {
   };
 }
 
-type Notifier = WebNotifier<NotificationPayload>;
+type Notifier = InstanceType<typeof WebNotifier<NotificationPayload>>;
 export type { Notifier, NotificationPayload };
 
 export default function createNotifier(): Notifier {

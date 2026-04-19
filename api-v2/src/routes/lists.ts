@@ -94,10 +94,7 @@ listsApi.post("/:id", authMiddleware, zValidator("json", updateListSchema), asyn
 
   // Update list properties (title, color, etc.) if any were provided
   if (Object.keys(listProps).length > 0) {
-    await db
-      .update(lists)
-      .set(listProps)
-      .where(eq(lists.id, listId));
+    await db.update(lists).set(listProps).where(eq(lists.id, listId));
   }
 
   // Update members if provided

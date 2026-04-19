@@ -1,12 +1,10 @@
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import { sql } from "drizzle-orm";
-import { vi, beforeAll, afterAll, afterEach } from "vitest";
+import { vi, beforeAll, afterAll } from "vitest";
 import * as authSchema from "../../src/schema/auth.js";
 import * as taskSchema from "../../src/schema/task.js";
 import * as listSchema from "../../src/schema/list.js";
-
-let client: PGlite;
 
 const schema = {
   ...authSchema,
@@ -15,7 +13,7 @@ const schema = {
 };
 
 // Create PGlite client and drizzle instance
-client = new PGlite();
+const client = new PGlite();
 const testDb = drizzle({ client, schema });
 
 // Mock the db module so all service imports use our PGlite-backed db

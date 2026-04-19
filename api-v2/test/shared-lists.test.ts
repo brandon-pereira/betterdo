@@ -26,9 +26,7 @@ describe("Shared Lists", () => {
 
       const fetched = await getListById({ userId: owner.user.id, listId: list.id });
       expect(fetched!.members).toHaveLength(2);
-      expect(fetched!.members.map(m => m.id)).toEqual(
-        expect.arrayContaining([owner.user.id, member.user.id])
-      );
+      expect(fetched!.members.map(m => m.id)).toEqual(expect.arrayContaining([owner.user.id, member.user.id]));
     });
 
     test("Added member gains access to the list", async () => {

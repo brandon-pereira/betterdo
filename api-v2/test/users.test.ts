@@ -124,7 +124,6 @@ describe("Users", () => {
       test.todo("Allows users lists to be reordered");
       test.todo("Prevents lists from being injected during reorder");
       test.todo("Prevents lists from being removed during reorder");
-      // Shared list membership tests are in shared-lists.test.ts
     });
   });
 });

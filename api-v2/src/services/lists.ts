@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "../db.js";
 import { listMembers, lists } from "../schema/list.js";
 import { tasks } from "../schema/task.js";
@@ -142,16 +142,12 @@ export async function updateListMembers(listId: string, memberIds: string[]) {
   const toRemove = currentMemberIds.filter(id => !memberIds.includes(id));
 
   if (toAdd.length > 0) {
-    await db.insert(listMembers).values(
-      toAdd.map(userId => ({ listId, userId }))
-    );
+    await db.insert(listMembers).values(toAdd.map(userId => ({ listId, userId })));
   }
 
   if (toRemove.length > 0) {
     for (const userId of toRemove) {
-      await db
-        .delete(listMembers)
-        .where(and(eq(listMembers.listId, listId), eq(listMembers.userId, userId)));
+      await db.delete(listMembers).where(and(eq(listMembers.listId, listId), eq(listMembers.userId, userId)));
     }
   }
 }

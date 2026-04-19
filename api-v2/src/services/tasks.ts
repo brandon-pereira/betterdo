@@ -36,18 +36,11 @@ interface NotifyContext {
   user: { id: string; name: string };
 }
 
-export async function createTaskWithNotification(
-  payload: typeof tasks.$inferInsert,
-  context: NotifyContext
-) {
+export async function createTaskWithNotification(payload: typeof tasks.$inferInsert, context: NotifyContext) {
   const [task] = await createTask(payload);
   const list = await getListById({ userId: context.user.id, listId: payload.listId });
   if (list) {
-    notifyAboutSharedList(
-      `${context.user.name} added ${task.title} to ${list.title}.`,
-      list,
-      context
-    );
+    notifyAboutSharedList(`${context.user.name} added ${task.title} to ${list.title}.`, list, context);
   }
   return task;
 }
@@ -69,11 +62,7 @@ export async function updateTaskWithNotification(
   if (updates.isCompleted !== undefined && existingTask.isCompleted !== updates.isCompleted) {
     if (updates.isCompleted) {
       notificationSent = true;
-      notifyAboutSharedList(
-        `${context.user.name} completed ${existingTask.title} in ${list.title}.`,
-        list,
-        context
-      );
+      notifyAboutSharedList(`${context.user.name} completed ${existingTask.title} in ${list.title}.`, list, context);
     }
   }
 
@@ -81,20 +70,13 @@ export async function updateTaskWithNotification(
 
   // Notify about shared list update (if not already notified about completion)
   if (!notificationSent) {
-    notifyAboutSharedList(
-      `${context.user.name} updated ${updatedTask.title} in ${list.title}.`,
-      list,
-      context
-    );
+    notifyAboutSharedList(`${context.user.name} updated ${updatedTask.title} in ${list.title}.`, list, context);
   }
 
   return updatedTask;
 }
 
-export async function deleteTaskWithNotification(
-  taskId: string,
-  context: NotifyContext
-) {
+export async function deleteTaskWithNotification(taskId: string, context: NotifyContext) {
   const existingTask = await getTaskById(taskId);
   if (!existingTask) throw new Error("Invalid Task ID");
 
@@ -103,11 +85,7 @@ export async function deleteTaskWithNotification(
 
   const [deletedTask] = await deleteTask(taskId);
 
-  notifyAboutSharedList(
-    `${context.user.name} deleted ${deletedTask.title} from ${list.title}.`,
-    list,
-    context
-  );
+  notifyAboutSharedList(`${context.user.name} deleted ${deletedTask.title} from ${list.title}.`, list, context);
 
   return { success: true };
 }

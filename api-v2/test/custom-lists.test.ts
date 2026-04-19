@@ -111,7 +111,6 @@ describe("Custom Lists API", () => {
   test("modifyTaskForCustomList sets dueDate to start of today for today list", () => {
     const taskObj = modifyTaskForCustomList("today", { title: "title" }, { user: router1.user });
     expect(taskObj.dueDate).toBeDefined();
-    const now = new Date();
     // The due date should be the start of today
     expect(taskObj.dueDate!.getHours()).toBe(0);
     expect(taskObj.dueDate!.getMinutes()).toBe(0);

@@ -6,7 +6,7 @@ import imports from "eslint-plugin-import";
 import prettier from "eslint-plugin-prettier/recommended";
 
 export default tseslint.config(
-  { ignores: ["dist"] },
+  { ignores: ["dist", "postcss.config.cjs"] },
   eslint.configs.recommended,
   tseslint.configs.recommended,
   prettier,

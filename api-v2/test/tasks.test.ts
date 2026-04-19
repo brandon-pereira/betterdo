@@ -86,7 +86,7 @@ describe("Tasks API", () => {
 
   test("Protects against non-member access", async () => {
     const badGuy = await createRouter();
-    const [task] = await createTask({ listId: validListId, title: "Good Task", createdById: router.user.id });
+    await createTask({ listId: validListId, title: "Good Task", createdById: router.user.id });
     // Good user can access
     expect(await isUserAuthorizedToAccessList({ userId: router.user.id, listId: validListId })).toBe(true);
     // Bad user cannot access

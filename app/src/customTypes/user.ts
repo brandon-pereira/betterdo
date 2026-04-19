@@ -38,10 +38,9 @@ interface CustomLists {
 // }
 
 // This is what should be sent to modifyProfile function
-export interface UpdateUserObject
-  extends Partial<
-    Pick<User, "firstName" | "lastName" | "profilePicture" | "isBeta" | "isPushEnabled" | "timeZone" | "customLists">
-  > {
+export interface UpdateUserObject extends Partial<
+  Pick<User, "firstName" | "lastName" | "profilePicture" | "isBeta" | "isPushEnabled" | "timeZone" | "customLists">
+> {
   lists?: List[];
   pushSubscription?: string;
 }
