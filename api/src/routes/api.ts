@@ -23,15 +23,13 @@ export default ({ db, notifier, app }: { app: Application; db: Database; notifie
    * Lists
    */
   api.get(["/lists", "/lists/:listId"], (req, res) =>
-    routeHandler("getting lists", { req, res, db, notifier }, config =>
-      getLists(
-        req.params.listId as string | undefined,
-        {
-          includeCompleted: Boolean(req.query.includeCompleted === "true")
-        },
-        config
-      )
-    )
+    routeHandler("getting lists", { req, res, db, notifier }, config => {
+      const listId = req.params.listId as string | undefined;
+      if (listId) {
+        return getLists(listId, { includeCompleted: Boolean(req.query.includeCompleted === "true") }, config);
+      }
+      return getLists(undefined, { includeCompleted: Boolean(req.query.includeCompleted === "true") }, config);
+    })
   );
 
   api.put("/lists", (req, res) =>

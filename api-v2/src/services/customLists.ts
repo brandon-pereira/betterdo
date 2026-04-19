@@ -1,4 +1,4 @@
-import { SQL, and, asc, desc, eq, gte, lt } from "drizzle-orm";
+import { SQL, and, asc, eq, gte, lt } from "drizzle-orm";
 import { addDays, endOfDay, endOfWeek, startOfDay, startOfWeek } from "date-fns";
 import { db as defaultDb } from "../db.js";
 import { listMembers } from "../schema/list.js";
@@ -24,7 +24,7 @@ interface SessionUser {
   name?: string | null;
   image?: string | null;
   timeZone: string;
-  customLists?: CustomListConfig | null;
+  customLists?: Record<string, unknown> | null;
 }
 
 interface RouterOptions {
@@ -149,7 +149,7 @@ async function fetchHighPriorityTasks(router: RouterOptions): Promise<SortedTask
 
 async function fetchOverdueTasks(router: RouterOptions): Promise<SortedTasks> {
   const startOfToday = startOfDay(timezone(new Date(), router.user.timeZone));
-  return fetchTasksByPredicate(and(eq(tasks.isCompleted, false), lt(tasks.dueDate, startOfToday)), router);
+  return fetchTasksByPredicate(and(eq(tasks.isCompleted, false), lt(tasks.dueDate, startOfToday))!, router);
 }
 
 async function fetchTomorrowTasks(router: RouterOptions): Promise<SortedTasks> {
@@ -175,7 +175,7 @@ function fetchTodayTasks(router: RouterOptions): Promise<SortedTasks> {
 }
 
 async function fetchTasksWithinDates(lowest: Date, highest: Date, router: RouterOptions): Promise<SortedTasks> {
-  return fetchTasksByPredicate(and(gte(tasks.dueDate, lowest), lt(tasks.dueDate, highest)), router);
+  return fetchTasksByPredicate(and(gte(tasks.dueDate, lowest), lt(tasks.dueDate, highest))!, router);
 }
 
 async function fetchTasksByPredicate(whereClause: SQL<unknown>, router: RouterOptions): Promise<SortedTasks> {

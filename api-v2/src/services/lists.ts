@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq } from "drizzle-orm";
+import { and, asc, count, eq } from "drizzle-orm";
 import { db } from "../db.js";
 import { listMembers, lists } from "../schema/list.js";
 import { tasks } from "../schema/task.js";

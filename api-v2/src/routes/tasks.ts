@@ -48,7 +48,7 @@ tasksApi.put(
 
     // Handle custom list IDs (e.g. "inbox", "today", "highPriority", "tomorrow")
     if (isCustomList(resolvedListId)) {
-      extraFields = modifyTaskForCustomList(resolvedListId, {}, { user: user as Record<string, unknown> });
+      extraFields = modifyTaskForCustomList(resolvedListId, {}, { user });
       resolvedListId = "inbox";
     }
 
