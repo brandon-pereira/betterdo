@@ -79,9 +79,10 @@ const SortableItem = function ({ id, task }: SortableItemProps) {
 interface SortableListProps {
   listId: string;
   tasks: TaskType[];
-  onSortEnd: (payload: { oldIndex: number; newIndex: number }) => void;
+  onSortEnd?: (payload: { oldIndex: number; newIndex: number }) => void;
 }
 function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
+  const isSortable = typeof onSortEnd === "function";
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -116,7 +117,7 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
 
   return (
     <DndContext
-      sensors={sensors}
+      sensors={isSortable ? sensors : []}
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}
       modifiers={[restrictToWindowEdges]}

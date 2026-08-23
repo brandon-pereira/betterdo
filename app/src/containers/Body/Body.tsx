@@ -58,9 +58,8 @@ function Body() {
         {!error && (
           <LayoutGroup>
             <TaskContainer>
-              {/* Regular non-complete tasks are loaded and sortable  */}
               <Suspense>
-                <SortableList listId={list.id || currentListId} tasks={list.tasks || []} onSortEnd={onSortEnd} />
+                <SortableList listId={list.id || currentListId} tasks={list.tasks || []} onSortEnd={customListConfig ? undefined : onSortEnd} />
               </Suspense>
               {/* Completed tasks are not sortable and only shown when requested */}
               {isCompletedTasksIncluded &&
