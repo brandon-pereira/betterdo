@@ -1,5 +1,4 @@
 import { pgTable, uuid, varchar, boolean, jsonb, timestamp, text, integer } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 import { lists } from "./list.js";
 import { user } from "./auth.js";
 
@@ -27,14 +26,3 @@ export const tasks = pgTable("tasks", {
     .$onUpdate(() => new Date())
     .defaultNow()
 });
-
-export const tasksRelations = relations(tasks, ({ one }) => ({
-  list: one(lists, {
-    fields: [tasks.listId],
-    references: [lists.id]
-  }),
-  createdBy: one(user, {
-    fields: [tasks.createdById],
-    references: [user.id]
-  })
-}));

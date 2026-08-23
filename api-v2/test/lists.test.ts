@@ -13,7 +13,7 @@ describe("Lists", () => {
       const list = await createList({ title: "Test", createdById: router.user.id });
       expect(list.title).toBe("Test");
       const members = await testDb.query.listMembers.findMany({
-        where: eq(listMembers.listId, list.id)
+        where: { listId: list.id }
       });
       expect(members[0].userId).toBe(router.user.id);
     });
@@ -90,7 +90,7 @@ describe("Lists", () => {
       await testDb.delete(lists).where(eq(lists.id, list.id));
       // Ensure member entries are gone for both users
       const members1 = await testDb.query.listMembers.findMany({
-        where: eq(listMembers.listId, list.id)
+        where: { listId: list.id }
       });
       expect(members1).toHaveLength(0);
     });

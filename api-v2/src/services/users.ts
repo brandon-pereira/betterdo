@@ -14,7 +14,7 @@ export interface SanitizedUser {
 
 export async function getUserByEmail(email: string): Promise<SanitizedUser | null> {
   const result = await db.query.user.findFirst({
-    where: eq(user.email, email)
+    where: { email }
   });
 
   if (!result) {
@@ -53,7 +53,7 @@ export async function updateUser(props: UpdateUserProps, { user: sessionUser, no
   if (props.pushSubscription && typeof props.pushSubscription === "string") {
     // Check if subscription already exists
     const existing = await db.query.pushSubscriptions.findFirst({
-      where: and(eq(pushSubscriptions.userId, sessionUser.id), eq(pushSubscriptions.endpoint, props.pushSubscription))
+      where: { userId: sessionUser.id, endpoint: props.pushSubscription }
     });
     if (!existing) {
       didUpdatePushSubscription = true;
@@ -68,7 +68,7 @@ export async function updateUser(props: UpdateUserProps, { user: sessionUser, no
   // Handle isPushEnabled toggle
   if (typeof props.isPushEnabled === "boolean") {
     const currentUser = await db.query.user.findFirst({
-      where: eq(user.id, sessionUser.id)
+      where: { id: sessionUser.id }
     });
     if (currentUser && props.isPushEnabled !== currentUser.isPushEnabled) {
       didUpdatePushSubscription = true;
@@ -110,7 +110,7 @@ export async function updateUser(props: UpdateUserProps, { user: sessionUser, no
   const updates: Record<string, unknown> = {};
   if (props.firstName || props.lastName) {
     const currentUser = await db.query.user.findFirst({
-      where: eq(user.id, sessionUser.id)
+      where: { id: sessionUser.id }
     });
     if (currentUser) {
       const firstName = props.firstName || currentUser.name.split(" ")[0];
@@ -122,7 +122,7 @@ export async function updateUser(props: UpdateUserProps, { user: sessionUser, no
   if (props.timeZone) updates.timeZone = props.timeZone;
   if (props.customLists) {
     const currentUser = await db.query.user.findFirst({
-      where: eq(user.id, sessionUser.id)
+      where: { id: sessionUser.id }
     });
     const existingCustomLists = (currentUser?.customLists as Record<string, boolean>) ?? {};
     updates.customLists = { ...existingCustomLists, ...props.customLists };
@@ -142,7 +142,7 @@ export async function updateUser(props: UpdateUserProps, { user: sessionUser, no
 
   // Return the updated user
   const updatedUser = await db.query.user.findFirst({
-    where: eq(user.id, sessionUser.id)
+    where: { id: sessionUser.id }
   });
 
   return updatedUser!;

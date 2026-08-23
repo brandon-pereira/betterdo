@@ -1,6 +1,5 @@
 // drizzle/schema/list.ts
 import { pgTable, text, uuid, varchar, timestamp, primaryKey, integer } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 import { user } from "./auth.js";
 import { tasks } from "./task.js";
 
@@ -22,14 +21,6 @@ export const lists = pgTable("list", {
     .defaultNow()
 });
 
-export const listsRelations = relations(lists, ({ one, many }) => ({
-  createdBy: one(user, {
-    fields: [lists.createdById],
-    references: [user.id]
-  }),
-  members: many(listMembers)
-}));
-
 // You'll need to create join tables for lists ↔ users (members) and lists ↔ tasks
 export const listMembers = pgTable(
   "list_member",
@@ -44,17 +35,6 @@ export const listMembers = pgTable(
   },
   t => [primaryKey({ columns: [t.userId, t.listId] })]
 );
-
-export const listMembersRelations = relations(listMembers, ({ one }) => ({
-  list: one(lists, {
-    fields: [listMembers.listId],
-    references: [lists.id]
-  }),
-  user: one(user, {
-    fields: [listMembers.userId],
-    references: [user.id]
-  })
-}));
 
 export const listTasks = pgTable("list_tasks", {
   listId: uuid("list_id")

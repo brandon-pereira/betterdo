@@ -11,9 +11,6 @@ import {
 } from "../src/services/lists.js";
 import { createTask } from "../src/services/tasks.js";
 import { testDb } from "./helpers/setup.js";
-import { lists, listMembers } from "../src/schema/list.js";
-import { tasks } from "../src/schema/task.js";
-import { eq } from "drizzle-orm";
 
 describe("Shared Lists", () => {
   describe("Adding members", () => {
@@ -223,12 +220,12 @@ describe("Shared Lists", () => {
       await deleteList(list.id);
 
       const fetchedList = await testDb.query.lists.findFirst({
-        where: eq(lists.id, list.id)
+        where: { id: list.id }
       });
       expect(fetchedList).toBeUndefined();
 
       const members = await testDb.query.listMembers.findMany({
-        where: eq(listMembers.listId, list.id)
+        where: { listId: list.id }
       });
       expect(members).toHaveLength(0);
     });
@@ -246,7 +243,7 @@ describe("Shared Lists", () => {
       await deleteList(list.id);
 
       const fetchedTask = await testDb.query.tasks.findFirst({
-        where: eq(tasks.id, task.id)
+        where: { id: task.id }
       });
       expect(fetchedTask).toBeUndefined();
     });

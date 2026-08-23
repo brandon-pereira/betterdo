@@ -7,7 +7,7 @@ import type { Notifier } from "../notifier.js";
 
 export function getTasks({ listId }: { listId: string }) {
   return db.query.tasks.findMany({
-    where: eq(tasks.listId, listId)
+    where: { listId }
   });
 }
 
@@ -31,7 +31,7 @@ export async function createTask(payload: typeof tasks.$inferInsert) {
 export async function reorderTasks(listId: string, taskIds: string[]) {
   // Get all current task IDs for the list
   const currentTasks = await db.query.tasks.findMany({
-    where: eq(tasks.listId, listId),
+    where: { listId },
     columns: { id: true }
   });
   const currentTaskIds = currentTasks.map(t => t.id);
@@ -52,7 +52,7 @@ export async function reorderTasks(listId: string, taskIds: string[]) {
 
 export function getTaskById(taskId: string) {
   return db.query.tasks.findFirst({
-    where: eq(tasks.id, taskId)
+    where: { id: taskId }
   });
 }
 

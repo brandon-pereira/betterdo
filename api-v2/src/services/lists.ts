@@ -42,8 +42,8 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
 
   const [_tasks, members] = await Promise.all([
     db.query.tasks.findMany({
-      where: eq(tasks.listId, result.id),
-      orderBy: asc(tasks.position),
+      where: { listId: result.id },
+      orderBy: { position: "asc" },
       columns: {
         id: true,
         title: true,
@@ -52,7 +52,7 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
       }
     }),
     db.query.listMembers.findMany({
-      where: eq(listMembers.listId, result.id),
+      where: { listId: result.id },
       columns: {},
       with: {
         user: {
@@ -102,7 +102,7 @@ export async function createList(payload: typeof lists.$inferInsert) {
 
 export async function isUserAuthorizedToAccessList({ userId, listId }: { userId: string; listId: string }) {
   const result = await db.query.listMembers.findFirst({
-    where: and(eq(listMembers.userId, userId), eq(listMembers.listId, listId))
+    where: { userId, listId }
   });
   return !!result;
 }
@@ -128,7 +128,7 @@ export async function createInboxForUser(userId: string) {
 export async function updateListMembers(listId: string, memberIds: string[]) {
   // Get the list to check ownership
   const list = await db.query.lists.findFirst({
-    where: eq(lists.id, listId)
+    where: { id: listId }
   });
 
   if (!list) {
@@ -142,7 +142,7 @@ export async function updateListMembers(listId: string, memberIds: string[]) {
 
   // Get current members
   const currentMembers = await db.query.listMembers.findMany({
-    where: eq(listMembers.listId, listId)
+    where: { listId }
   });
   const currentMemberIds = currentMembers.map(m => m.userId);
 
@@ -173,7 +173,7 @@ export async function deleteList(listId: string) {
 
 export async function getListMembers(listId: string) {
   const members = await db.query.listMembers.findMany({
-    where: eq(listMembers.listId, listId),
+    where: { listId },
     columns: {},
     with: {
       user: {

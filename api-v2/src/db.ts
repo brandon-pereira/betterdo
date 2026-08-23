@@ -1,9 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import config from "./config.js";
-import * as authSchema from "./schema/auth.js";
-import * as taskSchema from "./schema/task.js";
-import * as listSchema from "./schema/list.js";
+import { relations } from "./schema/relations.js";
 
 const pool = new Pool({ connectionString: config.DATABASE_URL });
 
@@ -15,12 +13,6 @@ pool.on("error", err => {
   console.error("[db] idle client error:", err.message);
 });
 
-const db = drizzle(pool, {
-  schema: {
-    ...authSchema,
-    ...taskSchema,
-    ...listSchema
-  }
-});
+const db = drizzle({ client: pool, relations });
 
 export { db, pool };

@@ -21,7 +21,7 @@
     "@types/pg": "^8.23.1",
     "better-auth": "^1.7.1",
     "dotenv": "^17.4.2",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "1.0.0-rc.5-ab785fc",
     "hono": "^4.13.3",
     "pg": "^8.23.0",
     "resend": "^6.22.0",
@@ -35,7 +35,7 @@
     "@better-auth/cli": "^1.4.21",
     "@electric-sql/pglite": "^0.5.7",
     "@types/pg": "^8.23.1",
-    "drizzle-kit": "^0.31.8",
+    "drizzle-kit": "1.0.0-rc.5-ab785fc",
     "vitest": "^4.1.11"
   }
 }

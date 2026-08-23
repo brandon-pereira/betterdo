@@ -1,4 +1,3 @@
-import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, integer, jsonb, index } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -110,38 +109,3 @@ export const pushSubscriptions = pgTable(
   },
   table => [index("push_subscription_userId_idx").on(table.userId)]
 );
-
-export const userRelations = relations(user, ({ many }) => ({
-  sessions: many(session),
-  accounts: many(account),
-  passkeys: many(passkey),
-  pushSubscriptions: many(pushSubscriptions)
-}));
-
-export const pushSubscriptionRelations = relations(pushSubscriptions, ({ one }) => ({
-  user: one(user, {
-    fields: [pushSubscriptions.userId],
-    references: [user.id]
-  })
-}));
-
-export const sessionRelations = relations(session, ({ one }) => ({
-  user: one(user, {
-    fields: [session.userId],
-    references: [user.id]
-  })
-}));
-
-export const accountRelations = relations(account, ({ one }) => ({
-  user: one(user, {
-    fields: [account.userId],
-    references: [user.id]
-  })
-}));
-
-export const passkeyRelations = relations(passkey, ({ one }) => ({
-  user: one(user, {
-    fields: [passkey.userId],
-    references: [user.id]
-  })
-}));

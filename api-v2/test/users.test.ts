@@ -1,10 +1,9 @@
 import { describe, test, expect, beforeAll, type Mock } from "vitest";
 import createRouter, { RouterOptions } from "./helpers/createRouter.js";
 import { testDb } from "./helpers/setup.js";
-import { user, pushSubscriptions } from "../src/schema/auth.js";
+import { user } from "../src/schema/auth.js";
 import { getUserByEmail, updateUser } from "../src/services/users.js";
 import { createList, getUserLists } from "../src/services/lists.js";
-import { eq } from "drizzle-orm";
 import type { Notifier } from "../src/notifier.js";
 
 describe("Users", () => {
@@ -12,7 +11,7 @@ describe("Users", () => {
     test("Creates a user", async () => {
       const router = await createRouter();
       const result = await testDb.query.user.findFirst({
-        where: (u, { eq }) => eq(u.id, router.user.id)
+        where: { id: router.user.id }
       });
       expect(result).toBeDefined();
       expect(result!.email).toBe(router.user.email);
@@ -82,7 +81,7 @@ describe("Users", () => {
         const router = await createRouter();
         await updateUser({ firstName: "John" }, router);
         const userCache = await testDb.query.user.findFirst({
-          where: eq(user.id, router.user.id)
+          where: { id: router.user.id }
         });
         expect(userCache?.name).toBe("John");
       });
@@ -90,12 +89,12 @@ describe("Users", () => {
       test("Allows global push subscription to be toggled", async () => {
         const router = await createRouter();
         let userCache = await testDb.query.user.findFirst({
-          where: eq(user.id, router.user.id)
+          where: { id: router.user.id }
         });
         expect(userCache?.isPushEnabled).toBe(true);
         await updateUser({ isPushEnabled: false }, router);
         userCache = await testDb.query.user.findFirst({
-          where: eq(user.id, router.user.id)
+          where: { id: router.user.id }
         });
         expect(userCache?.isPushEnabled).toBe(false);
       });
@@ -103,18 +102,18 @@ describe("Users", () => {
       test("Allows push subscriptions to be added", async () => {
         const router = await createRouter();
         let subs = await testDb.query.pushSubscriptions.findMany({
-          where: eq(pushSubscriptions.userId, router.user.id)
+          where: { userId: router.user.id }
         });
         expect(subs).toHaveLength(0);
         await updateUser({ pushSubscription: "test1" }, router);
         subs = await testDb.query.pushSubscriptions.findMany({
-          where: eq(pushSubscriptions.userId, router.user.id)
+          where: { userId: router.user.id }
         });
         expect(subs.map(s => s.endpoint)).toEqual(expect.arrayContaining(["test1"]));
         await updateUser({ pushSubscription: "test2" }, router);
         await updateUser({ pushSubscription: "test1" }, router); // duplicate, should not add
         subs = await testDb.query.pushSubscriptions.findMany({
-          where: eq(pushSubscriptions.userId, router.user.id)
+          where: { userId: router.user.id }
         });
         expect(subs.map(s => s.endpoint)).toEqual(expect.arrayContaining(["test1", "test2"]));
         const notifier = router.notifier.send as Mock<Notifier["send"]>;
@@ -132,7 +131,7 @@ describe("Users", () => {
           router
         );
         const userCache = await testDb.query.user.findFirst({
-          where: eq(user.id, router.user.id)
+          where: { id: router.user.id }
         });
         expect(userCache?.customLists).toMatchObject({
           highPriority: false,

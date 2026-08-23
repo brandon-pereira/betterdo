@@ -1,7 +1,7 @@
 import { createRequire } from "module";
 import { eq, and } from "drizzle-orm";
 import { db } from "./db.js";
-import { user, pushSubscriptions } from "./schema/auth.js";
+import { pushSubscriptions } from "./schema/auth.js";
 import config from "./config.js";
 
 const require = createRequire(import.meta.url);
@@ -29,13 +29,13 @@ export type { Notifier, NotificationPayload };
 export default function createNotifier(): Notifier {
   const getUserPushSubscriptions = async (userId: string): Promise<string[]> => {
     const result = await db.query.user.findFirst({
-      where: eq(user.id, userId)
+      where: { id: userId }
     });
     if (!result || !result.isPushEnabled) {
       return [];
     }
     const subs = await db.query.pushSubscriptions.findMany({
-      where: eq(pushSubscriptions.userId, userId)
+      where: { userId }
     });
     return subs.map(s => s.endpoint);
   };
