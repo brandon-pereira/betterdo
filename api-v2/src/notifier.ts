@@ -3,13 +3,10 @@ import { eq, and } from "drizzle-orm";
 import { db } from "./db.js";
 import { pushSubscriptions } from "./schema/auth.js";
 import config from "./config.js";
+import DrizzleNotificationAdapter from "./helpers/drizzleNotificationAdapter.js";
 
 const require = createRequire(import.meta.url);
 const WebNotifier = require("web-notifier").default as typeof import("web-notifier").default;
-
-// web-notifier doesn't export subpaths for nodenext resolution; adapter is an internal detail
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const InMemoryAdapter = require("web-notifier/dist/adapters/InMemoryAdapter").default as new () => any;
 
 interface NotificationPayload {
   title: string;
@@ -58,8 +55,19 @@ export default function createNotifier(): Notifier {
     },
     getUserPushSubscriptions,
     removeUserPushSubscription,
-    adapter: new InMemoryAdapter()
+    adapter: new DrizzleNotificationAdapter<NotificationPayload>()
   });
 
   return notifier;
+}
+
+// Shared singleton so routes/services can import the notifier directly without
+// threading it through Hono context. Created lazily on first access.
+let notifierInstance: Notifier | null = null;
+
+export function getNotifier(): Notifier {
+  if (!notifierInstance) {
+    notifierInstance = createNotifier();
+  }
+  return notifierInstance;
 }

@@ -105,6 +105,16 @@ beforeAll(async () => {
   `);
 
   await testDb.execute(sql`
+    CREATE TABLE IF NOT EXISTS "scheduled_notification" (
+      "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      "user_id" TEXT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+      "date" TIMESTAMP WITH TIME ZONE NOT NULL,
+      "payload" JSONB NOT NULL,
+      "created_at" TIMESTAMP DEFAULT NOW() NOT NULL
+    )
+  `);
+
+  await testDb.execute(sql`
     CREATE TABLE IF NOT EXISTS "tasks" (
       "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       "title" VARCHAR(100) NOT NULL,

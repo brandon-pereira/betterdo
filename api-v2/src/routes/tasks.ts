@@ -1,6 +1,12 @@
 import { Hono } from "hono";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { createTask, deleteTask, getTaskById, updateTask } from "../services/tasks.js";
+import {
+  createTaskWithNotification,
+  deleteTaskWithNotification,
+  getTaskById,
+  updateTaskWithNotification
+} from "../services/tasks.js";
+import { getNotifier } from "../notifier.js";
 import { createTaskSchema, updateTaskSchema } from "../validators/tasks.js";
 import { zValidator } from "@hono/zod-validator";
 import { getUserInbox, isUserAuthorizedToAccessList } from "../services/lists.js";
@@ -61,12 +67,15 @@ tasksApi.put(
       resolvedListId = inbox.id;
     }
 
-    const newTask = await createTask({
-      ...taskData,
-      ...extraFields,
-      listId: resolvedListId,
-      createdById: user.id
-    });
+    const newTask = await createTaskWithNotification(
+      {
+        ...taskData,
+        ...extraFields,
+        listId: resolvedListId,
+        createdById: user.id
+      },
+      { notifier: getNotifier(), user: { id: user.id, name: user.name } }
+    );
     return c.json(newTask);
   }
 );
@@ -99,14 +108,17 @@ tasksApi.post(
     if (!isAuthorized) {
       return c.json({ error: "Unauthorized access to this task" }, 403);
     }
-    const newTask = await updateTask(c.req.param("taskId"), {
-      ...payload
-    });
+    const newTask = await updateTaskWithNotification(
+      c.req.param("taskId"),
+      { ...payload },
+      { notifier: getNotifier(), user: { id: user.id, name: user.name } }
+    );
     return c.json(newTask);
   }
 );
 
 tasksApi.delete("/:id", authMiddleware, async c => {
+  const user = c.get("user");
   const taskId = c.req.param("id");
   const task = await getTaskById(taskId);
   if (!task) {
@@ -114,14 +126,17 @@ tasksApi.delete("/:id", authMiddleware, async c => {
   }
   if (
     !(await isUserAuthorizedToAccessList({
-      userId: c.get("user").id,
+      userId: user.id,
       listId: task.listId
     }))
   ) {
     return c.json({ error: "Unauthorized access to this task" }, 403);
   }
-  await deleteTask(taskId);
-  return c.json({ success: true });
+  const result = await deleteTaskWithNotification(taskId, {
+    notifier: getNotifier(),
+    user: { id: user.id, name: user.name }
+  });
+  return c.json(result);
 });
 
 export default tasksApi;

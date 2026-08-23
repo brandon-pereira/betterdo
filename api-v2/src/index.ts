@@ -6,6 +6,11 @@ import config from "./config.js";
 import listsApi from "./routes/lists.js";
 import tasksApi from "./routes/tasks.js";
 import usersApi from "./routes/users.js";
+import { getNotifier } from "./notifier.js";
+
+// Instantiate the push notifier once at startup so config issues surface early
+// and the singleton is warm before the first request.
+getNotifier();
 
 const app = new Hono();
 

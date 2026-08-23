@@ -2,11 +2,13 @@ import { defineRelations } from "drizzle-orm";
 import * as authSchema from "./auth.js";
 import * as taskSchema from "./task.js";
 import * as listSchema from "./list.js";
+import * as notificationSchema from "./notification.js";
 
 const schema = {
   ...authSchema,
   ...taskSchema,
-  ...listSchema
+  ...listSchema,
+  ...notificationSchema
 };
 
 export const relations = defineRelations(schema, r => ({
@@ -14,7 +16,8 @@ export const relations = defineRelations(schema, r => ({
     sessions: r.many.session(),
     accounts: r.many.account(),
     passkeys: r.many.passkey(),
-    pushSubscriptions: r.many.pushSubscriptions()
+    pushSubscriptions: r.many.pushSubscriptions(),
+    scheduledNotifications: r.many.scheduledNotifications()
   },
   session: {
     user: r.one.user({
@@ -37,6 +40,12 @@ export const relations = defineRelations(schema, r => ({
   pushSubscriptions: {
     user: r.one.user({
       from: r.pushSubscriptions.userId,
+      to: r.user.id
+    })
+  },
+  scheduledNotifications: {
+    user: r.one.user({
+      from: r.scheduledNotifications.userId,
       to: r.user.id
     })
   },
