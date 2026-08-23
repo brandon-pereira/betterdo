@@ -13,25 +13,29 @@
     "generate-auth": "npx @better-auth/cli generate --output ./src/schema/auth.ts && npx prettier --write ./src/schema/auth.ts"
   },
   "dependencies": {
-    "@better-auth/passkey": "^1.4.18",
-    "@hono/node-server": "^1.19.9",
-    "@hono/zod-validator": "^0.7.6",
-    "better-auth": "^1.4.18",
-    "dotenv": "^17.2.4",
+    "@better-auth/cli": "^1.4.21",
+    "@better-auth/passkey": "^1.7.1",
+    "@electric-sql/pglite": "^0.5.7",
+    "@hono/node-server": "^2.1.1",
+    "@hono/zod-validator": "^0.9.0",
+    "@types/pg": "^8.23.1",
+    "better-auth": "^1.7.1",
+    "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.1",
-    "hono": "^4.11.8",
-    "pg": "^8.18.0",
+    "hono": "^4.13.3",
+    "pg": "^8.23.0",
     "resend": "^6.22.0",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11",
     "web-notifier": "^2.0.3",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@better-auth/cli": "^1.4.18",
-    "@electric-sql/pglite": "^0.4.4",
-    "@types/pg": "^8.16.0",
+    "@better-auth/cli": "^1.4.21",
+    "@electric-sql/pglite": "^0.5.7",
+    "@types/pg": "^8.23.1",
     "drizzle-kit": "^0.31.8",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.11"
   }
 }
