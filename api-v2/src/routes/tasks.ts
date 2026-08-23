@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { createTask, getTaskById, updateTask } from "../services/tasks.js";
+import { createTask, deleteTask, getTaskById, updateTask } from "../services/tasks.js";
 import { createTaskSchema, updateTaskSchema } from "../validators/tasks.js";
 import { zValidator } from "@hono/zod-validator";
 import { getUserInbox, isUserAuthorizedToAccessList } from "../services/lists.js";
@@ -105,5 +105,23 @@ tasksApi.post(
     return c.json(newTask);
   }
 );
+
+tasksApi.delete("/:id", authMiddleware, async c => {
+  const taskId = c.req.param("id");
+  const task = await getTaskById(taskId);
+  if (!task) {
+    return c.json({ error: "Task not found" }, 404);
+  }
+  if (
+    !(await isUserAuthorizedToAccessList({
+      userId: c.get("user").id,
+      listId: task.listId
+    }))
+  ) {
+    return c.json({ error: "Unauthorized access to this task" }, 403);
+  }
+  await deleteTask(taskId);
+  return c.json({ success: true });
+});
 
 export default tasksApi;
