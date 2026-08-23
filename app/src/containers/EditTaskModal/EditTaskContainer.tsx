@@ -16,13 +16,15 @@ const variants = {
   },
   visible: {
     x: 0,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      damping: 30,
-      stiffness: 350
-    }
+    opacity: 1
   }
+};
+
+const transition = {
+  type: "spring" as const,
+  damping: 30,
+  stiffness: 350
+  // mass: 0.5
 };
 
 function EditTaskContainer({ isOpen }: Props) {
@@ -59,6 +61,7 @@ function EditTaskContainer({ isOpen }: Props) {
       onRequestClose={closeModal}
       visible={isOpen}
       variants={variants}
+      transition={transition}
     >
       {isOpen && (
         <Suspense fallback={<Loader />}>
