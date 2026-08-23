@@ -19,6 +19,14 @@ app.use(
     credentials: true
   })
 );
+
+// Any error thrown from a route (including DB failures) lands here instead of
+// crashing or hanging the request.
+app.onError((err, c) => {
+  console.error("[api]", err);
+  return c.json({ error: "Internal server error" }, 500);
+});
+
 app.on(["POST", "GET"], "/api/auth/**", c => auth.handler(c.req.raw));
 
 app.route("/api/lists", listsApi);

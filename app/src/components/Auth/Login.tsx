@@ -58,12 +58,12 @@ const Auth = () => {
       return;
     }
 
+    // Passkey autofill (conditional UI) runs passively in the background; the
+    // user hasn't attempted to sign in. Never surface its errors as a
+    // user-facing sign-in failure — just log them for debugging.
     authClient.signIn.passkey({ autoFill: true }).then(res => {
       if (res?.error) {
-        if ("code" in res.error && res.error.code === "AUTH_CANCELLED") {
-          return;
-        }
-        setError(res.error.message ?? "An error occurred during passkey sign-in");
+        console.debug("Passkey autofill unavailable:", res.error);
       }
     });
   }, []);

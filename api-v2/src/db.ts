@@ -1,10 +1,21 @@
 import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import config from "./config.js";
 import * as authSchema from "./schema/auth.js";
 import * as taskSchema from "./schema/task.js";
 import * as listSchema from "./schema/list.js";
 
-const db = drizzle(config.DATABASE_URL, {
+const pool = new Pool({ connectionString: config.DATABASE_URL });
+
+// `pg` requires an 'error' listener on the pool. Idle clients can error out
+// asynchronously (e.g. the DB restarts); without this listener Node treats it
+// as an unhandled 'error' event and crashes the process. The pool reconnects
+// on the next query.
+pool.on("error", err => {
+  console.error("[db] idle client error:", err.message);
+});
+
+const db = drizzle(pool, {
   schema: {
     ...authSchema,
     ...taskSchema,
@@ -12,4 +23,4 @@ const db = drizzle(config.DATABASE_URL, {
   }
 });
 
-export { db };
+export { db, pool };
