@@ -10,7 +10,7 @@
     "website"
   ],
   "scripts": {
-    "start": "concurrently \"yarn workspace  app start\" \"yarn workspace api-v2 start\" \"yarn workspace website start\"",
+    "start": "docker compose up -d && concurrently \"yarn workspace  app start\" \"yarn workspace api-v2 start\" \"yarn workspace website start\" && docker compose down",
     "start:website": "yarn workspace website start",
     "lint": "yarn workspaces run lint && yarn knip",
     "knip": "knip",
