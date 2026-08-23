@@ -5,6 +5,7 @@ import { db } from "./db.js";
 import config from "./config.js";
 import * as authSchema from "./schema/auth.js";
 import { createInboxForUser } from "./services/lists.js";
+import { sendEmail } from "./services/email.js";
 import { getGravatarUrl } from "./utils/gravatar.js";
 
 export const auth = betterAuth({
@@ -16,10 +17,10 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, url }) => {
-      console.log({
+      await sendEmail({
         to: user.email,
         subject: "Reset your password",
-        text: `Click the link to reset your password: ${url}`
+        html: `<p>Click the link below to reset your password:</p><p><a href="${url}">${url}</a></p>`
       });
     }
   },

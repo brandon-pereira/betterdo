@@ -8,7 +8,12 @@ const validator = z.object({
   VAPID_PUBLIC_KEY: z.string().optional().describe("VAPID public key for Web Push notifications."),
   VAPID_PRIVATE_KEY: z.string().optional().describe("VAPID private key for Web Push notifications."),
   VAPID_EMAIL: z.string().optional().describe("VAPID email for Web Push notifications."),
-  SERVER_URL: z.string().optional().describe("Public server URL used for notification icons and links.")
+  SERVER_URL: z.string().optional().describe("Public server URL used for notification icons and links."),
+  RESEND_API_KEY: z.string().optional().describe("Resend API key for sending transactional emails."),
+  EMAIL_FROM: z
+    .string()
+    .default("BetterDo <onboarding@betterdo.app>")
+    .describe("The 'from' address used for outbound emails.")
 });
 
 const config = validator.parse(process.env);
