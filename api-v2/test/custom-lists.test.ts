@@ -34,29 +34,27 @@ describe("Custom Lists API", () => {
     expect(today!.tasks[0].title).toBe(title);
   });
 
-  test("Date based list should return newer tasks first", async () => {
+  test("Date based list should respect task position order", async () => {
     let today = await getCustomListById("today", false, { user: router2.user });
     expect(today!.tasks).toHaveLength(0);
     const now = new Date();
-    const earlier = new Date(now.getTime() - 1000);
     await createTask({
       listId: validListId2,
       title: "1",
       dueDate: now,
-      createdById: router2.user.id,
-      createdAt: earlier
+      createdById: router2.user.id
     });
     await createTask({
       listId: validListId2,
       title: "2",
       dueDate: now,
-      createdById: router2.user.id,
-      createdAt: now
+      createdById: router2.user.id
     });
     today = await getCustomListById("today", false, { user: router2.user });
     expect(today!.tasks).toHaveLength(2);
-    expect(today!.tasks[0].title).toBe("2");
-    expect(today!.tasks[1].title).toBe("1");
+    // Position order: task1 (pos 0) before task2 (pos 1)
+    expect(today!.tasks[0].title).toBe("1");
+    expect(today!.tasks[1].title).toBe("2");
   });
 
   test("Tomorrow list should only return valid tasks", async () => {
@@ -101,6 +99,36 @@ describe("Custom Lists API", () => {
     const user1lists = await getCustomListById("highPriority", false, { user: router1.user });
     expect(user1lists!.tasks).toHaveLength(1);
     expect(user1lists!.tasks[0].title).toBe(title);
+  });
+
+  test("High priority list should respect task position order", async () => {
+    const router = await createRouter();
+    const list = await createList({ title: "HP Order Test", createdById: router.user.id });
+    const [task1] = await createTask({
+      listId: list.id,
+      title: "HP First",
+      priority: "high",
+      createdById: router.user.id
+    });
+    const [task2] = await createTask({
+      listId: list.id,
+      title: "HP Second",
+      priority: "high",
+      createdById: router.user.id
+    });
+    const [task3] = await createTask({
+      listId: list.id,
+      title: "HP Third",
+      priority: "high",
+      createdById: router.user.id
+    });
+    let hp = await getCustomListById("highPriority", false, { user: router.user });
+    expect(hp!.tasks).toHaveLength(3);
+    expect(hp!.tasks.map(t => t.title)).toEqual(["HP First", "HP Second", "HP Third"]);
+    // Reorder: reverse the tasks
+    await reorderTasks(list.id, [task3.id, task2.id, task1.id]);
+    hp = await getCustomListById("highPriority", false, { user: router.user });
+    expect(hp!.tasks.map(t => t.title)).toEqual(["HP Third", "HP Second", "HP First"]);
   });
 
   test("modifyTaskForCustomList sets high priority for highPriority list", () => {

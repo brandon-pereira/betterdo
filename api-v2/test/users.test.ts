@@ -23,7 +23,7 @@ describe("Users", () => {
       await expect(
         testDb.insert(user).values({
           id: "missing-fields",
-          name: undefined,
+          name: undefined as unknown as string,
           email: "missing@test.com"
         })
       ).rejects.toThrow();
@@ -166,11 +166,11 @@ describe("Users", () => {
         const userRequest1 = await createRouter();
         const userRequest2 = await createRouter();
         const list1 = await createList({ title: "Good", createdById: userRequest1.user.id });
-        const list2 = await createList({ title: "Good", createdById: userRequest1.user.id });
+        await createList({ title: "Good", createdById: userRequest1.user.id });
         const list3 = await createList({ title: "BAD!", createdById: userRequest2.user.id });
-        await expect(
-          updateUser({ lists: [list1.id, list3.id] }, userRequest1)
-        ).rejects.toThrow("Invalid modification of lists");
+        await expect(updateUser({ lists: [list1.id, list3.id] }, userRequest1)).rejects.toThrow(
+          "Invalid modification of lists"
+        );
         const userLists = await getUserLists({ userId: userRequest1.user.id });
         const nonInbox = userLists.filter(l => l.type !== "inbox");
         expect(nonInbox).toHaveLength(2);
@@ -178,11 +178,9 @@ describe("Users", () => {
 
       test("Prevents lists from being removed during reorder", async () => {
         const router = await createRouter();
-        const list1 = await createList({ title: "Good", createdById: router.user.id });
+        await createList({ title: "Good", createdById: router.user.id });
         const list2 = await createList({ title: "Good", createdById: router.user.id });
-        await expect(
-          updateUser({ lists: [list2.id] }, router)
-        ).rejects.toThrow("Invalid modification of lists");
+        await expect(updateUser({ lists: [list2.id] }, router)).rejects.toThrow("Invalid modification of lists");
         const userLists = await getUserLists({ userId: router.user.id });
         const nonInbox = userLists.filter(l => l.type !== "inbox");
         expect(nonInbox).toHaveLength(2);
