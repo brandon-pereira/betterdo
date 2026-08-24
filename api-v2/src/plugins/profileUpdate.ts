@@ -27,6 +27,10 @@ const updateProfileBodySchema = z.object({
   lists: z.array(z.string()).optional()
 });
 
+// Shared type for the update-profile body. Import this on the client so the
+// frontend payload type stays in sync with the backend Zod schema.
+export type UpdateProfilePayload = z.infer<typeof updateProfileBodySchema>;
+
 export function profileUpdatePlugin() {
   return {
     id: "profile-update",
