@@ -7,6 +7,7 @@ import * as authSchema from "./schema/auth.js";
 import { createInboxForUser } from "./services/lists.js";
 import { sendEmail } from "./services/email.js";
 import { getGravatarUrl } from "./utils/gravatar.js";
+import { profileUpdatePlugin } from "./plugins/profileUpdate.js";
 
 export const auth = betterAuth({
   appName: "BetterDo",
@@ -14,8 +15,23 @@ export const auth = betterAuth({
     provider: "pg",
     schema: authSchema
   }),
+  //   emailVerification: {
+  //   sendVerificationEmail: async ({ user, url }) => {
+  //     void sendEmail({
+  //       to: user.email,
+  //       subject: "Verify your email address",
+  //       text: `Click the link to verify your email: ${url}`,
+  //     });
+  //   },
+  //   sendOnSignIn: true,
+  // },
+  // emailAndPassword: {
+  // },
   emailAndPassword: {
     enabled: true,
+    //  autoSignInAfterVerification: true,
+    // requireEmailVerification: true,
+
     sendResetPassword: async ({ user, url }) => {
       await sendEmail({
         to: user.email,
@@ -52,7 +68,7 @@ export const auth = betterAuth({
     }
   },
   trustedOrigins: ["http://localhost:4000", "http://localhost:4001"],
-  plugins: [passkey()],
+  plugins: [passkey(), profileUpdatePlugin()],
   user: {
     additionalFields: {
       timeZone: {
@@ -82,10 +98,6 @@ export const auth = betterAuth({
         type: "boolean",
         required: false,
         defaultValue: false
-      },
-      vapidKey: {
-        type: "string",
-        required: false
       }
     }
   }

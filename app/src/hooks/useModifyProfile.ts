@@ -30,6 +30,7 @@ const PROFILE_KEYS: (keyof UpdateProfilePayload)[] = [
   "email",
   "timeZone",
   "customLists",
+  "isBeta",
   "isPushEnabled",
   "pushSubscription",
   "lists"

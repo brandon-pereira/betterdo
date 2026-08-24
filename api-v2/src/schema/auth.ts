@@ -14,8 +14,7 @@ export const user = pgTable("user", {
   timeZone: text("time_zone").default("America/New_York").notNull(),
   customLists: jsonb("custom_lists"),
   isBeta: boolean("is_beta").default(false),
-  isPushEnabled: boolean("is_push_enabled").default(false),
-  vapidKey: text("vapid_key")
+  isPushEnabled: boolean("is_push_enabled").default(false)
 });
 
 export const session = pgTable(

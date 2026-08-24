@@ -6,6 +6,7 @@ import config from "./config.js";
 import listsApi from "./routes/lists.js";
 import tasksApi from "./routes/tasks.js";
 import usersApi from "./routes/users.js";
+import configApi from "./routes/config.js";
 import { getNotifier } from "./notifier.js";
 
 // Instantiate the push notifier once at startup so config issues surface early
@@ -37,6 +38,7 @@ app.on(["POST", "GET"], "/api/auth/**", c => auth.handler(c.req.raw));
 app.route("/api/lists", listsApi);
 app.route("/api/tasks", tasksApi);
 app.route("/api/users", usersApi);
+app.route("/api/config", configApi);
 
 serve({
   port: config.PORT,

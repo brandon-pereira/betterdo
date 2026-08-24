@@ -18,7 +18,12 @@ export default defineConfig({
       strategies: "injectManifest",
       srcDir: "src",
       filename: "service-worker.ts",
-      registerType: "autoUpdate"
+      registerType: "autoUpdate",
+      devOptions: {
+        enabled: false,
+        type: "module",
+        navigateFallback: "index.html"
+      }
     })
   ],
   resolve: {

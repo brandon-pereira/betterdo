@@ -44,7 +44,7 @@ function useProfileOnce() {
     error,
     loading: false,
     profile: {
-      ...pick(data.user, ["id", "email", "image", "vapidKey", "isPushEnabled", "isBeta", "timeZone"]),
+      ...pick(data.user, ["id", "email", "image", "isPushEnabled", "isBeta", "timeZone"]),
       firstName: data.user.name.split(" ")[0] || "",
       lastName: data.user.name.split(" ").slice(1).join(" ") || "",
       profilePicture: data.user.image,

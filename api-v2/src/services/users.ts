@@ -32,6 +32,7 @@ export async function getUserByEmail(email: string): Promise<SanitizedUser | nul
 
 interface UpdateUserProps {
   isPushEnabled?: boolean;
+  isBeta?: boolean;
   pushSubscription?: string;
   firstName?: string;
   lastName?: string;
@@ -120,6 +121,7 @@ export async function updateUser(props: UpdateUserProps, { user: sessionUser, no
   }
   if (props.email) updates.email = props.email;
   if (props.timeZone) updates.timeZone = props.timeZone;
+  if (typeof props.isBeta === "boolean") updates.isBeta = props.isBeta;
   if (props.customLists) {
     const currentUser = await db.query.user.findFirst({
       where: { id: sessionUser.id }

@@ -59,7 +59,11 @@ function Body() {
           <LayoutGroup>
             <TaskContainer>
               <Suspense>
-                <SortableList listId={list.id || currentListId} tasks={list.tasks || []} onSortEnd={customListConfig ? undefined : onSortEnd} />
+                <SortableList
+                  listId={list.id || currentListId}
+                  tasks={list.tasks || []}
+                  onSortEnd={customListConfig ? undefined : onSortEnd}
+                />
               </Suspense>
               {/* Completed tasks are not sortable and only shown when requested */}
               {isCompletedTasksIncluded &&

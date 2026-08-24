@@ -98,7 +98,7 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
   const onDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
-      if (active && over && active.id !== over.id) {
+      if (onSortEnd && active && over && active.id !== over.id) {
         const oldIndex = tasks.findIndex(task => task.id === active.id);
         const newIndex = tasks.findIndex(task => task.id === over.id);
         return onSortEnd({ oldIndex, newIndex });

@@ -1242,14 +1242,6 @@
     yocto-spinner "^0.2.3"
     zod "^4.3.5"
 
-"@better-auth/core@1.4.18":
-  version "1.4.18"
-  resolved "https://registry.yarnpkg.com/@better-auth/core/-/core-1.4.18.tgz#d424ccbf2e7754b7a7581c841dd64811b2700dd4"
-  integrity sha512-q+awYgC7nkLEBdx2sW0iJjkzgSHlIxGnOpsN1r/O1+a4m7osJNHtfK2mKJSL1I+GfNyIlxJF8WvD/NLuYMpmcg==
-  dependencies:
-    "@standard-schema/spec" "^1.0.0"
-    zod "^4.3.5"
-
 "@better-auth/core@1.4.21":
   version "1.4.21"
   resolved "https://registry.yarnpkg.com/@better-auth/core/-/core-1.4.21.tgz#428c965d56021c3cad969d7d78dfbaff6428a30e"
@@ -1300,14 +1292,6 @@
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@better-auth/prisma-adapter/-/prisma-adapter-1.7.1.tgz#a763cff3a3f67b3b2cd4bbef43d982b9ff748a0f"
   integrity sha512-ZiUcafQ85InAofcUjyGgCPjKLfQjXr9SvDmMjuFUW8oEbreA6C6GaFAEA77VuV2doZUQlzvQQ4gCoTmS28W92A==
-
-"@better-auth/telemetry@1.4.18":
-  version "1.4.18"
-  resolved "https://registry.yarnpkg.com/@better-auth/telemetry/-/telemetry-1.4.18.tgz#9290df1b20c5376cb6820ae6704f682d7c676a4e"
-  integrity sha512-e5rDF8S4j3Um/0LIVATL2in9dL4lfO2fr2v1Wio4qTMRbfxqnUDTa+6SZtwdeJrbc4O+a3c+IyIpjG9Q/6GpfQ==
-  dependencies:
-    "@better-auth/utils" "0.3.0"
-    "@better-fetch/fetch" "1.1.21"
 
 "@better-auth/telemetry@1.4.21":
   version "1.4.21"
@@ -4915,24 +4899,6 @@ better-auth@1.4.21:
   dependencies:
     "@better-auth/core" "1.4.21"
     "@better-auth/telemetry" "1.4.21"
-    "@better-auth/utils" "0.3.0"
-    "@better-fetch/fetch" "1.1.21"
-    "@noble/ciphers" "^2.0.0"
-    "@noble/hashes" "^2.0.0"
-    better-call "1.1.8"
-    defu "^6.1.4"
-    jose "^6.1.0"
-    kysely "^0.28.5"
-    nanostores "^1.0.1"
-    zod "^4.3.5"
-
-better-auth@^1.4.10:
-  version "1.4.18"
-  resolved "https://registry.yarnpkg.com/better-auth/-/better-auth-1.4.18.tgz#460cfa3f71d2da9ffcbfc1ad4d87977a4d51b5d5"
-  integrity sha512-bnyifLWBPcYVltH3RhS7CM62MoelEqC6Q+GnZwfiDWNfepXoQZBjEvn4urcERC7NTKgKq5zNBM8rvPvRBa6xcg==
-  dependencies:
-    "@better-auth/core" "1.4.18"
-    "@better-auth/telemetry" "1.4.18"
     "@better-auth/utils" "0.3.0"
     "@better-fetch/fetch" "1.1.21"
     "@noble/ciphers" "^2.0.0"

@@ -32,8 +32,7 @@ beforeAll(async () => {
       "time_zone" TEXT NOT NULL DEFAULT 'America/New_York',
       "custom_lists" JSONB,
       "is_beta" BOOLEAN DEFAULT false,
-      "is_push_enabled" BOOLEAN DEFAULT false,
-      "vapid_key" TEXT
+      "is_push_enabled" BOOLEAN DEFAULT false
     )
   `);
 
