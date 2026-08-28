@@ -30,9 +30,6 @@ listsApi.get("/", authMiddleware, async c => {
   const hydratedUserLists = await Promise.all(
     userLists.map(async list => ({
       ...list,
-      tasks: [],
-      completedTasks: [],
-      additionalTasks: 0,
       members: await getListMembers(list.id),
       owner: list.createdById
     }))
@@ -66,7 +63,7 @@ listsApi.get("/:id", authMiddleware, async c => {
     listId = inbox.id;
   }
 
-  const list = await getListById({ userId: user.id, listId });
+  const list = await getListById({ userId: user.id, listId, includeCompleted });
   if (!list) {
     return c.json({ error: "No list found" }, 404);
   }

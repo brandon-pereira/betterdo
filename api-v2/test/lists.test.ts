@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
 import createRouter from "./helpers/createRouter.js";
 import { getUserLists, getListById, createList, isUserAuthorizedToAccessList } from "../src/services/lists.js";
-import { createTask, reorderTasks } from "../src/services/tasks.js";
+import { createTask, reorderTasks, updateTask } from "../src/services/tasks.js";
 import { testDb } from "./helpers/setup.js";
 import { lists, listMembers } from "../src/schema/list.js";
 import { eq } from "drizzle-orm";
@@ -152,6 +152,25 @@ describe("Lists", () => {
       await reorderTasks(list.id, [task3.id, task1.id, task2.id]);
       fetched = await getListById({ userId: router.user.id, listId: list.id });
       expect(fetched!.tasks.map(t => t.id)).toEqual([task3.id, task1.id, task2.id]);
+    });
+
+    test("Overview hydrates incomplete tasks and completed count per list", async () => {
+      const router = await createRouter();
+      const list = await createList({ title: "Overview Test", createdById: router.user.id });
+      await createTask({ listId: list.id, title: "Active 1", createdById: router.user.id });
+      await createTask({ listId: list.id, title: "Active 2", createdById: router.user.id });
+      const [done] = await createTask({ listId: list.id, title: "Done", createdById: router.user.id });
+      await updateTask(done.id, { isCompleted: true });
+
+      const overview = await getUserLists({ userId: router.user.id });
+      const fetched = overview.find(l => l.id === list.id);
+      expect(fetched).toBeDefined();
+      // Only incomplete tasks are returned in the `tasks` array
+      expect(fetched!.tasks.map(t => t.title)).toEqual(["Active 1", "Active 2"]);
+      expect(fetched!.tasks.every(t => !t.isCompleted)).toBe(true);
+      // completedTasks is empty in the overview, additionalTasks is the completed count
+      expect(fetched!.completedTasks).toHaveLength(0);
+      expect(fetched!.additionalTasks).toBe(1);
     });
 
     test("Requires that the colour be a valid hex code", async () => {

@@ -1,4 +1,4 @@
-import { and, asc, count, eq } from "drizzle-orm";
+import { and, asc, count, eq, inArray } from "drizzle-orm";
 import { db } from "../db.js";
 import { listMembers, lists } from "../schema/list.js";
 import { tasks } from "../schema/task.js";
@@ -17,10 +17,68 @@ export async function getUserLists({ userId }: { userId: string }) {
     .from(lists)
     .innerJoin(listMembers, and(eq(listMembers.listId, lists.id), eq(listMembers.userId, userId)))
     .orderBy(asc(listMembers.position));
-  return result;
+
+  if (result.length === 0) {
+    return [];
+  }
+
+  const listIds = result.map(list => list.id);
+
+  // Fetch incomplete tasks and completed-task counts for all lists in one pass
+  const [incompleteTasks, completedCounts] = await Promise.all([
+    db
+      .select({
+        id: tasks.id,
+        title: tasks.title,
+        listId: tasks.listId,
+        isCompleted: tasks.isCompleted,
+        priority: tasks.priority
+      })
+      .from(tasks)
+      .where(and(inArray(tasks.listId, listIds), eq(tasks.isCompleted, false)))
+      .orderBy(asc(tasks.position)),
+    db
+      .select({
+        listId: tasks.listId,
+        value: count()
+      })
+      .from(tasks)
+      .where(and(inArray(tasks.listId, listIds), eq(tasks.isCompleted, true)))
+      .groupBy(tasks.listId)
+  ]);
+
+  const tasksByList = new Map<string, typeof incompleteTasks>();
+  for (const task of incompleteTasks) {
+    const existing = tasksByList.get(task.listId);
+    if (existing) {
+      existing.push(task);
+    } else {
+      tasksByList.set(task.listId, [task]);
+    }
+  }
+
+  const completedCountByList = new Map<string, number>();
+  for (const row of completedCounts) {
+    completedCountByList.set(row.listId, row.value);
+  }
+
+  return result.map(list => ({
+    ...list,
+    tasks: tasksByList.get(list.id) ?? [],
+    completedTasks: [],
+    additionalTasks: completedCountByList.get(list.id) ?? 0
+  }));
 }
 
-export async function getListById({ userId, listId }: { userId: string; listId: string }) {
+export async function getListById({
+  userId,
+  listId,
+  includeCompleted = false
+}: {
+  userId: string;
+  listId: string;
+  includeCompleted?: boolean;
+}) {
   const [result] = await db
     .select({
       id: lists.id,
@@ -67,10 +125,18 @@ export async function getListById({ userId, listId }: { userId: string; listId: 
     })
   ]);
 
+  // Split completed tasks out of the main `tasks` array (matches v1 behavior)
+  const activeTasks = _tasks.filter(task => !task.isCompleted);
+  const completedTasks = _tasks.filter(task => task.isCompleted);
+
   return {
     ...result,
     owner: result.createdById,
-    tasks: _tasks,
+    tasks: activeTasks,
+    // Completed tasks are only hydrated when explicitly requested; otherwise
+    // the count is surfaced via `additionalTasks`.
+    completedTasks: includeCompleted ? completedTasks : [],
+    additionalTasks: includeCompleted ? 0 : completedTasks.length,
     members: members.map(member => {
       return {
         id: member.user.id,
@@ -114,7 +180,12 @@ export async function getUserInbox(userId: string) {
     .innerJoin(listMembers, and(eq(listMembers.listId, lists.id), eq(listMembers.userId, userId)))
     .where(eq(lists.type, "inbox"))
     .limit(1);
-  return result ?? null;
+  if (result) return result;
+
+  // Self-heal: if the post-signup hook failed to create the inbox, create it
+  // lazily on first access instead of leaving the user in a broken state.
+  const inbox = await createList({ createdById: userId, title: "Inbox", type: "inbox" });
+  return { id: inbox.id };
 }
 
 export async function createInboxForUser(userId: string) {

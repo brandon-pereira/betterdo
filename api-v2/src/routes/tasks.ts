@@ -11,6 +11,9 @@ import { createTaskSchema, updateTaskSchema } from "../validators/tasks.js";
 import { zValidator } from "@hono/zod-validator";
 import { getUserInbox, isUserAuthorizedToAccessList } from "../services/lists.js";
 import { isCustomList, modifyTaskForCustomList } from "../services/customLists.js";
+import { timezone } from "../utils/timezone.js";
+import { startOfDay } from "date-fns";
+import type { tasks } from "../schema/task.js";
 import z from "zod";
 
 const tasksApi = new Hono();
@@ -48,9 +51,17 @@ tasksApi.put(
   async c => {
     const user = c.get("user");
     const payload = c.req.valid("json");
-    const { listId: rawListId, ...taskData } = payload;
+    const { listId: rawListId, dueDate, ...taskData } = payload;
     let resolvedListId = rawListId;
     let extraFields: Record<string, unknown> = {};
+
+    // Normalize a client-supplied dueDate to the user's timezone at start of day,
+    // matching v1 (controllers/tasks.ts:35). This is applied before the custom-list
+    // path so that a custom list's own dueDate (today/tomorrow) takes precedence.
+    const normalizedFields: Record<string, unknown> = {};
+    if (dueDate && typeof dueDate === "string") {
+      normalizedFields.dueDate = startOfDay(timezone(new Date(dueDate), user.timeZone));
+    }
 
     // Handle custom list IDs (e.g. "inbox", "today", "highPriority", "tomorrow")
     if (isCustomList(resolvedListId)) {
@@ -70,6 +81,7 @@ tasksApi.put(
     const newTask = await createTaskWithNotification(
       {
         ...taskData,
+        ...normalizedFields,
         ...extraFields,
         listId: resolvedListId,
         createdById: user.id
@@ -108,11 +120,21 @@ tasksApi.post(
     if (!isAuthorized) {
       return c.json({ error: "Unauthorized access to this task" }, 403);
     }
-    const newTask = await updateTaskWithNotification(
-      c.req.param("taskId"),
-      { ...payload },
-      { notifier: getNotifier(), user: { id: user.id, name: user.name } }
-    );
+
+    const { dueDate, ...rest } = payload;
+    const updates: Partial<typeof tasks.$inferInsert> = { ...rest };
+    // Convert a client-supplied dueDate to the user's timezone, matching v1
+    // (controllers/tasks.ts:111). Explicit null clears the dueDate.
+    if (dueDate === null) {
+      updates.dueDate = null;
+    } else if (dueDate && typeof dueDate === "string") {
+      updates.dueDate = timezone(new Date(dueDate), user.timeZone);
+    }
+
+    const newTask = await updateTaskWithNotification(c.req.param("taskId"), updates, {
+      notifier: getNotifier(),
+      user: { id: user.id, name: user.name }
+    });
     return c.json(newTask);
   }
 );

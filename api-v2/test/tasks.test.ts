@@ -76,12 +76,20 @@ describe("Tasks API", () => {
     let fetchedList = await getListById({ userId: router.user.id, listId: list.id });
     expect(fetchedList!.tasks).toHaveLength(1);
     await updateTask(task.id, { isCompleted: true });
+
+    // Without includeCompleted: completed tasks are excluded from `tasks` and
+    // only surfaced as a count via `additionalTasks`.
     fetchedList = await getListById({ userId: router.user.id, listId: list.id });
-    // getListById returns all tasks (completed and not) - filtering is done at route level
-    const completedTasks = fetchedList!.tasks.filter(t => t.isCompleted);
-    const activeTasks = fetchedList!.tasks.filter(t => !t.isCompleted);
-    expect(completedTasks).toHaveLength(1);
-    expect(activeTasks).toHaveLength(0);
+    expect(fetchedList!.tasks).toHaveLength(0);
+    expect(fetchedList!.completedTasks).toHaveLength(0);
+    expect(fetchedList!.additionalTasks).toBe(1);
+
+    // With includeCompleted: completed tasks are hydrated and additionalTasks resets to 0.
+    fetchedList = await getListById({ userId: router.user.id, listId: list.id, includeCompleted: true });
+    expect(fetchedList!.tasks).toHaveLength(0);
+    expect(fetchedList!.completedTasks).toHaveLength(1);
+    expect(fetchedList!.completedTasks[0].title).toBe("Test");
+    expect(fetchedList!.additionalTasks).toBe(0);
   });
 
   test("Protects against non-member access", async () => {
