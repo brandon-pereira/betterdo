@@ -9,6 +9,11 @@ const validator = z.object({
   VAPID_PRIVATE_KEY: z.string().optional().describe("VAPID private key for Web Push notifications."),
   VAPID_EMAIL: z.string().optional().describe("VAPID email for Web Push notifications."),
   SERVER_URL: z.string().optional().describe("Public server URL used for notification icons and links."),
+  APP_URL: z
+    .string()
+    .default("http://localhost:4001")
+    .describe("Public URL of the frontend app, used for post-verification redirects."),
+  WEBSITE_URL: z.string().default("http://localhost:4002").describe("Public URL of the marketing website."),
   RESEND_API_KEY: z.string().optional().describe("Resend API key for sending transactional emails."),
   EMAIL_FROM: z
     .string()
