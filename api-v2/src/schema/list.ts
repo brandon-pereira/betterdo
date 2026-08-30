@@ -12,9 +12,7 @@ export const lists = pgTable("list", {
     .notNull()
     .default("default"),
   color: varchar("color", { length: 64 }).notNull().default("#666666"),
-  createdById: text("created_by_id")
-    .notNull()
-    .references(() => user.id),
+  createdById: text("created_by_id").references(() => user.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").notNull().defaultNow(), // Unix timestamp
   updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
     .$onUpdate(() => new Date())
@@ -30,7 +28,7 @@ export const listMembers = pgTable(
       .references(() => lists.id),
     userId: text("user_id")
       .notNull()
-      .references(() => user.id),
+      .references(() => user.id, { onDelete: "cascade" }),
     position: integer("position").notNull().default(0)
   },
   t => [primaryKey({ columns: [t.userId, t.listId] })]

@@ -12,7 +12,7 @@ export const tasks = pgTable("tasks", {
     }),
   createdById: text("created_by_id")
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: "cascade" }),
   isCompleted: boolean("is_completed").notNull().default(false),
   dueDate: timestamp("due_date", { withTimezone: true }),
   notes: text("notes"),

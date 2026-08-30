@@ -149,7 +149,7 @@ export async function getListById({
   };
 }
 
-export async function createList(payload: typeof lists.$inferInsert) {
+export async function createList(payload: typeof lists.$inferInsert & { createdById: string }) {
   const newList = await db.insert(lists).values(payload).returning();
 
   // Get the current max position for this user's lists
@@ -206,8 +206,9 @@ export async function updateListMembers(listId: string, memberIds: string[]) {
     throw new Error("List not found");
   }
 
-  // Owner must always remain a member
-  if (!memberIds.includes(list.createdById)) {
+  // Owner must always remain a member (skip if the list has been orphaned by
+  // owner deletion — createdById is null in that case).
+  if (list.createdById && !memberIds.includes(list.createdById)) {
     throw new Error("Cannot remove the owner from the list");
   }
 

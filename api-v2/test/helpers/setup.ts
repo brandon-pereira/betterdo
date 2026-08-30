@@ -118,7 +118,7 @@ beforeAll(async () => {
       "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       "title" VARCHAR(100) NOT NULL,
       "list_id" UUID NOT NULL,
-      "created_by_id" TEXT NOT NULL REFERENCES "user"("id"),
+      "created_by_id" TEXT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
       "is_completed" BOOLEAN NOT NULL DEFAULT false,
       "due_date" TIMESTAMP WITH TIME ZONE,
       "notes" TEXT,
@@ -136,7 +136,7 @@ beforeAll(async () => {
       "title" VARCHAR(255) NOT NULL,
       "type" TEXT NOT NULL DEFAULT 'default',
       "color" VARCHAR(64) NOT NULL DEFAULT '#666666',
-      "created_by_id" TEXT NOT NULL REFERENCES "user"("id"),
+      "created_by_id" TEXT REFERENCES "user"("id") ON DELETE SET NULL,
       "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
       "updated_at" TIMESTAMP(3) DEFAULT NOW()
     )
@@ -145,7 +145,7 @@ beforeAll(async () => {
   await testDb.execute(sql`
     CREATE TABLE IF NOT EXISTS "list_member" (
       "list_id" UUID NOT NULL REFERENCES "list"("id"),
-      "user_id" TEXT NOT NULL REFERENCES "user"("id"),
+      "user_id" TEXT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
       "position" INTEGER NOT NULL DEFAULT 0,
       PRIMARY KEY ("user_id", "list_id")
     )
