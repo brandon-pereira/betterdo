@@ -11,7 +11,7 @@ export const authClient = createAuthClient({
   plugins: [passkeyClient(), inferAdditionalFields<typeof auth>()]
 });
 
-export const { signIn, signUp, signOut, updateUser, useSession } = authClient;
+export const { signIn, signUp, signOut, useSession } = authClient;
 
 // Payload accepted by the custom POST /api/auth/update-profile endpoint.
 // The type is inferred from the backend Zod schema (see

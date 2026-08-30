@@ -9,7 +9,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "nodenext",
     "outDir": "dist",
     "isolatedModules": true,
     "typeRoots": ["./types", "../node_modules/@types"]

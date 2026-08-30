@@ -15,10 +15,8 @@
   "dependencies": {
     "@better-auth/drizzle-adapter": "^1.7.2",
     "@better-auth/passkey": "^1.7.2",
-    "@electric-sql/pglite": "^0.5.7",
     "@hono/node-server": "^2.1.1",
     "@hono/zod-validator": "^0.9.0",
-    "@types/pg": "^8.23.1",
     "better-auth": "^1.7.2",
     "dotenv": "^17.4.2",
     "drizzle-orm": "1.0.0-rc.5-ab785fc",
@@ -27,7 +25,6 @@
     "resend": "^6.22.0",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.11",
     "web-notifier": "^2.0.3",
     "zod": "^4.4.3"
   },
@@ -36,6 +33,8 @@
     "@types/pg": "^8.23.1",
     "auth": "^1.7.2",
     "drizzle-kit": "1.0.0-rc.5-ab785fc",
+    "eslint": "^9.31.0",
+    "prettier": "^3.6.2",
     "vitest": "^4.1.11"
   }
 }

@@ -13,7 +13,7 @@ interface QueuedNotification<NotificationFormat> {
   payload: NotificationFormat;
 }
 
-export interface NotificationAdapter<NotificationFormat> {
+interface NotificationAdapter<NotificationFormat> {
   scheduleNotification(date: Date, userId: string, payload: NotificationFormat): Promise<void>;
   fetchNotifications(date: Date): Promise<QueuedNotification<NotificationFormat>[]>;
   clearNotification(id: string): Promise<boolean>;

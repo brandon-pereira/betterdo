@@ -15,4 +15,4 @@ pool.on("error", err => {
 
 const db = drizzle({ client: pool, relations });
 
-export { db, pool };
+export { db };

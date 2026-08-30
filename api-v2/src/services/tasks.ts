@@ -56,7 +56,7 @@ export function getTaskById(taskId: string) {
   });
 }
 
-export function deleteTask(taskId: string) {
+function deleteTask(taskId: string) {
   return db.delete(tasks).where(eq(tasks.id, taskId)).returning();
 }
 

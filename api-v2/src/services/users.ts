@@ -5,7 +5,7 @@ import { pushSubscriptions } from "../schema/notification.js";
 import { listMembers, lists } from "../schema/list.js";
 import type { Notifier } from "../notifier.js";
 
-export interface SanitizedUser {
+interface SanitizedUser {
   id: string;
   firstName: string;
   lastName?: string;

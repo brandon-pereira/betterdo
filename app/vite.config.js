@@ -4,7 +4,7 @@ import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
-import markdown from "vite-plugin-markdown";
+import { plugin as markdown, Mode } from "vite-plugin-markdown";
 import { VitePWA } from "vite-plugin-pwa";
 
 import rootPackage from "../package.json";
@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [
     svgr({ include: "**/*.svg" }),
     react(),
-    markdown.plugin({ mode: markdown.Mode.HTML }),
+    markdown({ mode: [Mode.HTML] }),
     VitePWA({
       strategies: "injectManifest",
       srcDir: "src",

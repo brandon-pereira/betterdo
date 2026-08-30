@@ -21,9 +21,9 @@ interface NotificationPayload {
 }
 
 type Notifier = InstanceType<typeof WebNotifier<NotificationPayload>>;
-export type { Notifier, NotificationPayload };
+export type { Notifier };
 
-export default function createNotifier(): Notifier {
+function createNotifier(): Notifier {
   const getUserPushSubscriptions = async (userId: string): Promise<string[]> => {
     const result = await db.query.user.findFirst({
       where: { id: userId }
