@@ -8,7 +8,10 @@ const validator = z.object({
   VAPID_PUBLIC_KEY: z.string().optional().describe("VAPID public key for Web Push notifications."),
   VAPID_PRIVATE_KEY: z.string().optional().describe("VAPID private key for Web Push notifications."),
   VAPID_EMAIL: z.string().optional().describe("VAPID email for Web Push notifications."),
-  SERVER_URL: z.string().optional().describe("Public server URL used for notification icons and links."),
+  SERVER_URL: z
+    .string()
+    .default("http://localhost:4000")
+    .describe("Public URL of this API server. Used for notification icons/links and as the BetterAuth base URL."),
   APP_URL: z
     .string()
     .default("http://localhost:4001")
@@ -22,5 +25,11 @@ const validator = z.object({
 });
 
 const config = validator.parse(process.env);
+
+// BetterAuth reads process.env.BETTER_AUTH_URL to build its base URL (and the
+// Google OAuth redirect_uri: `${BETTER_AUTH_URL}/api/auth/callback/google`).
+// Default it to SERVER_URL so the API only needs one canonical URL, while still
+// letting an explicit BETTER_AUTH_URL override it.
+process.env.BETTER_AUTH_URL ||= config.SERVER_URL;
 
 export default config;
