@@ -4,6 +4,7 @@ import SignUp from "@components/Auth/SignUp";
 import Login from "@components/Auth/Login";
 import ForgotPassword from "@components/Auth/ForgotPassword";
 import ResetPassword from "@components/Auth/ResetPassword";
+import VerifyEmail from "@components/Auth/VerifyEmail";
 
 const AuthPages = () => {
   return (
@@ -12,6 +13,7 @@ const AuthPages = () => {
       <Route path="/auth/signup" element={<SignUp />} />
       <Route path="/auth/forgot-password" element={<ForgotPassword />} />
       <Route path="/auth/reset-password" element={<ResetPassword />} />
+      <Route path="/auth/verify-email" element={<VerifyEmail />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

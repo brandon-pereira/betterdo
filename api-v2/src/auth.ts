@@ -6,6 +6,7 @@ import config from "./config.js";
 import * as authSchema from "./schema/auth.js";
 import { createInboxForUser } from "./services/lists.js";
 import { sendEmail } from "./services/email.js";
+import { verifyEmailTemplate, resetPasswordTemplate } from "./emails/index.js";
 import { getGravatarUrl } from "./utils/gravatar.js";
 import { profileUpdatePlugin } from "./plugins/profileUpdate.js";
 
@@ -15,22 +16,21 @@ export const auth = betterAuth({
     provider: "pg",
     schema: authSchema
   }),
-  //   emailVerification: {
-  //   sendVerificationEmail: async ({ user, url }) => {
-  //     void sendEmail({
-  //       to: user.email,
-  //       subject: "Verify your email address",
-  //       text: `Click the link to verify your email: ${url}`,
-  //     });
-  //   },
-  //   sendOnSignIn: true,
-  // },
-  // emailAndPassword: {
-  // },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, token }) => {
+      const verifyUrl = new URL("/auth/verify-email", config.APP_URL);
+      verifyUrl.searchParams.set("token", token);
+      await sendEmail({
+        to: user.email,
+        ...verifyEmailTemplate({ url: verifyUrl.toString(), name: user.name })
+      });
+    },
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true
+  },
   emailAndPassword: {
     enabled: true,
-    //  autoSignInAfterVerification: true,
-    // requireEmailVerification: true,
+    requireEmailVerification: true,
 
     sendResetPassword: async ({ user, url }) => {
       await sendEmail({ to: user.email, ...resetPasswordTemplate({ url, name: user.name }) });

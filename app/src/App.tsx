@@ -1,15 +1,21 @@
+import { useRef } from "react";
 import { useSession } from "@utilities/auth";
 import CoreApp from "./pages/CoreApp";
 import AuthPages from "./pages/Auth";
 import FullScreenLoader from "@components/FullScreenLoader";
 
 const App = () => {
-  const { isPending, isRefetching, data } = useSession();
+  const { isPending, data } = useSession();
 
-  // Show the loader whenever a session request is in flight (initial load OR a
-  // post-login refetch). Without checking isRefetching here, the brief window
-  // where a refetch is running with data still null would flash the login form.
-  if ((isPending || isRefetching) && !data) {
+  // Only show the loader on the initial session resolution. Blocking on later
+  // background refetches would unmount the current view mid-flow, flashing the
+  // login form and wiping in-progress state (e.g. the post-signup screen).
+  const hasResolved = useRef(false);
+  if (!isPending) {
+    hasResolved.current = true;
+  }
+
+  if (isPending && !hasResolved.current) {
     return <FullScreenLoader />;
   }
   if (!data) {

@@ -1,10 +1,24 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import { TextInput, Divider, PasswordInput, Button, Alert, Stack, Group, Text } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
 import { AuthButtons, AuthProviders } from "./Auth.styles";
-import { signIn, signUp } from "@utilities/auth";
+import { authClient, signIn, signUp } from "@utilities/auth";
 import { getTimeZone } from "@utilities/timezones";
 import Link from "@components/Link";
+
+// The signup flow is a small step machine: fill out the form, then (once an
+// account exists and a verification email has been sent) show the "check your
+// inbox" screen. The verified email is carried in the "verify-email" state.
+type OnboardingState = { step: "sign-up" } | { step: "verify-email"; email: string };
+
+type OnboardingAction = { type: "emailSubmitted"; email: string };
+
+const onboardingReducer = (_state: OnboardingState, action: OnboardingAction): OnboardingState => {
+  switch (action.type) {
+    case "emailSubmitted":
+      return { step: "verify-email", email: action.email };
+  }
+};
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +28,7 @@ const SignUp = () => {
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [onboarding, dispatch] = useReducer(onboardingReducer, { step: "sign-up" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,10 +50,25 @@ const SignUp = () => {
       });
       if (error) {
         setError(error.message ?? "An error occurred");
+      } else {
+        dispatch({ type: "emailSubmitted", email });
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "An error occurred";
       setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (onboarding.step !== "verify-email") return;
+    setError("");
+    setLoading(true);
+    try {
+      await authClient.sendVerificationEmail({ email: onboarding.email });
+    } catch {
+      // Non-fatal; the user can try again.
     } finally {
       setLoading(false);
     }
@@ -55,6 +85,30 @@ const SignUp = () => {
       setError(error.message ?? "An error occurred");
     }
   };
+
+  if (onboarding.step === "verify-email") {
+    return (
+      <AuthContainer title="Check your inbox">
+        <Stack gap="md">
+          <Alert color="green" title="Account created">
+            We&apos;ve sent a verification link to <strong>{onboarding.email}</strong>. Click it to verify your email
+            and finish signing in.
+          </Alert>
+          <Text size="sm" c="dimmed" ta="center">
+            Didn&apos;t get it? Check your spam folder, or resend the email below.
+          </Text>
+          <AuthButtons>
+            <Button variant="default" onClick={handleResend} disabled={loading} loading={loading} fullWidth>
+              Resend verification email
+            </Button>
+          </AuthButtons>
+        </Stack>
+        <Group justify="center" gap="xs" mt="sm">
+          <Link to="/">Back to Login</Link>
+        </Group>
+      </AuthContainer>
+    );
+  }
 
   return (
     <AuthContainer title="Create your account">
@@ -122,7 +176,7 @@ const SignUp = () => {
         <Text size="sm" c="dimmed">
           Already have an account?
         </Text>
-        <Link to="/auth/login">Sign in</Link>
+        <Link to="/">Sign in</Link>
       </Group>
     </AuthContainer>
   );
