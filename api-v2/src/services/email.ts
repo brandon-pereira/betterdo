@@ -4,11 +4,14 @@ import config from "../config.js";
 // ── Provider abstraction ────────────────────────────────────────────
 // Swap the implementation here if you ever move away from Resend.
 
-interface SendEmailOptions {
+export interface SendEmailOptions {
   to: string;
   subject: string;
   html: string;
 }
+
+/** The rendered parts of an email — everything `sendEmail` needs except `to`. */
+export type EmailContent = Omit<SendEmailOptions, "to">;
 
 interface EmailProvider {
   send(options: SendEmailOptions): Promise<void>;
