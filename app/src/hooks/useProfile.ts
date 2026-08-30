@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { useSWRConfig } from "swr";
 
 import createSharedHook from "./internal/createSharedHook";
 
@@ -9,17 +8,13 @@ import { pick } from "radash";
 
 function useProfileOnce() {
   const { data, error } = useSession();
-  const { mutate } = useSWRConfig();
 
   const logout = useCallback(async () => {
     await signOut();
-    // Reset every SWR key through SWR's own API so its internal revalidation
-    // state (revalidators + dedupe registry) is reset too. A direct
-    // cache.clear() only empties the data Map and leaves that internal state
-    // intact, which strands keys so they never re-fetch after a subsequent
-    // login (the app would then hang loading lists/details until a full reload).
-    await mutate(() => true, undefined, { revalidate: false });
-  }, [mutate]);
+    // Clear per-user state, then hard reload to wipe all in-memory state.
+    localStorage.removeItem("lastViewedList");
+    window.location.href = "/";
+  }, []);
 
   if (error) {
     return {

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSWRConfig } from "swr";
 import { TextInput, PasswordInput, Divider, Button, Alert, Stack, Group, Text, VisuallyHidden } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
 import { authClient, signIn } from "@utilities/auth";
@@ -11,13 +10,6 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { mutate } = useSWRConfig();
-
-  // After a successful login, force every SWR key to revalidate. This kicks any
-  // key left in a "stuck" state by a previous session (SWR keeps its internal
-  // revalidator/dedupe registry outside the cache Map, so it can otherwise
-  // refuse to re-fetch after re-login, hanging the app on load).
-  const revalidateAllSwr = () => mutate(() => true, undefined, { revalidate: true });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +24,6 @@ const Auth = () => {
       setError(error.message ?? "An error occurred");
       return;
     }
-    await revalidateAllSwr();
   };
 
   const handleGoogleSignIn = async () => {
@@ -62,9 +53,6 @@ const Auth = () => {
     // before we drop the loading state — this avoids a flash back to the idle
     // login form while the reactive refetch is still in flight.
     await authClient.getSession();
-    // Force any stale SWR keys from a previous session to refetch for the new
-    // one, otherwise lists/details can hang loading until a full reload.
-    await revalidateAllSwr();
     // Keep `loading` true: the app is about to re-render into CoreApp, so there's
     // no need to reset it (resetting can briefly flash the idle form).
   };
