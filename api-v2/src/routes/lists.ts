@@ -49,7 +49,7 @@ listsApi.get("/:id", authMiddleware, async c => {
   if (isCustomList(listId)) {
     const list = await getCustomListById(listId, includeCompleted, { user });
     if (!list) {
-      return c.json({ error: "No list found" }, 404);
+      return c.json({ error: "Invalid List ID" }, 404);
     }
     return c.json(list);
   }
@@ -58,14 +58,14 @@ listsApi.get("/:id", authMiddleware, async c => {
   if (listId === "inbox") {
     const inbox = await getUserInbox(user.id);
     if (!inbox) {
-      return c.json({ error: "No list found" }, 404);
+      return c.json({ error: "Invalid List ID" }, 404);
     }
     listId = inbox.id;
   }
 
   const list = await getListById({ userId: user.id, listId, includeCompleted });
   if (!list) {
-    return c.json({ error: "No list found" }, 404);
+    return c.json({ error: "Invalid List ID" }, 404);
   }
   return c.json(list);
 });
@@ -93,14 +93,14 @@ listsApi.post("/:id", authMiddleware, zValidator("json", updateListSchema), asyn
   if (listId === "inbox") {
     const inbox = await getUserInbox(user.id);
     if (!inbox) {
-      return c.json({ error: "No list found" }, 404);
+      return c.json({ error: "Invalid List ID" }, 404);
     }
     listId = inbox.id;
   }
 
   const list = await getListById({ userId: user.id, listId });
   if (!list) {
-    return c.json({ error: "No list found" }, 404);
+    return c.json({ error: "Invalid List ID" }, 404);
   }
 
   const { members, tasks: taskOrder, ...listProps } = c.req.valid("json");
@@ -145,14 +145,14 @@ listsApi.delete("/:id", authMiddleware, async c => {
   if (listId === "inbox") {
     const inbox = await getUserInbox(user.id);
     if (!inbox) {
-      return c.json({ error: "No list found" }, 404);
+      return c.json({ error: "Invalid List ID" }, 404);
     }
     listId = inbox.id;
   }
 
   const list = await getListById({ userId: user.id, listId });
   if (!list) {
-    return c.json({ error: "No list found" }, 404);
+    return c.json({ error: "Invalid List ID" }, 404);
   }
   await deleteList(listId);
   return c.json({ success: true });
