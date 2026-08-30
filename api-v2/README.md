@@ -1,4 +1,4 @@
-npx @better-auth/cli generate
+yarn generate
 
 https://www.better-auth.com/docs/installation
 

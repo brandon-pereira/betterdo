@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { passkey } from "@better-auth/passkey";
 import { db } from "./db.js";
 import config from "./config.js";
@@ -55,7 +55,14 @@ export const auth = betterAuth({
           }
         },
         after: async user => {
-          await createInboxForUser(user.id);
+          // The user row is already committed at this point. If inbox
+          // creation throws here, better-auth turns it into an opaque 500
+          // (bypassing Hono's onError)
+          try {
+            await createInboxForUser(user.id);
+          } catch (err) {
+            console.error("[auth] failed to create inbox for user", user.id, err);
+          }
         }
       },
       update: {

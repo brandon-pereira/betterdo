@@ -10,16 +10,16 @@
     "lint": "eslint . && tsc --noemit",
     "test": "vitest",
     "push": "NODE_OPTIONS='--import tsx' drizzle-kit push",
-    "generate-auth": "npx @better-auth/cli generate --output ./src/schema/auth.ts && npx prettier --write ./src/schema/auth.ts"
+    "generate": "npx auth generate -y --output ./src/schema/auth.ts && npx prettier --write ./src/schema/auth.ts"
   },
   "dependencies": {
-    "@better-auth/cli": "^1.4.21",
-    "@better-auth/passkey": "^1.7.1",
+    "@better-auth/drizzle-adapter": "^1.7.2",
+    "@better-auth/passkey": "^1.7.2",
     "@electric-sql/pglite": "^0.5.7",
     "@hono/node-server": "^2.1.1",
     "@hono/zod-validator": "^0.9.0",
     "@types/pg": "^8.23.1",
-    "better-auth": "^1.7.1",
+    "better-auth": "^1.7.2",
     "dotenv": "^17.4.2",
     "drizzle-orm": "1.0.0-rc.5-ab785fc",
     "hono": "^4.13.3",
@@ -32,9 +32,9 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@better-auth/cli": "^1.4.21",
     "@electric-sql/pglite": "^0.5.7",
     "@types/pg": "^8.23.1",
+    "auth": "^1.7.2",
     "drizzle-kit": "1.0.0-rc.5-ab785fc",
     "vitest": "^4.1.11"
   }

@@ -1,7 +1,7 @@
 import { createRequire } from "module";
 import { eq, and } from "drizzle-orm";
 import { db } from "./db.js";
-import { pushSubscriptions } from "./schema/auth.js";
+import { pushSubscriptions } from "./schema/notification.js";
 import config from "./config.js";
 import DrizzleNotificationAdapter from "./helpers/drizzleNotificationAdapter.js";
 

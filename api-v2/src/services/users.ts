@@ -1,6 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "../db.js";
-import { user, pushSubscriptions } from "../schema/auth.js";
+import { user } from "../schema/auth.js";
+import { pushSubscriptions } from "../schema/notification.js";
 import { listMembers, lists } from "../schema/list.js";
 import type { Notifier } from "../notifier.js";
 
