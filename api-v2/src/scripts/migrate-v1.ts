@@ -426,7 +426,7 @@ async function migrate() {
       priority: mongoTask.priority ?? "normal",
       position,
       createdAt: mongoTask.creationDate ?? new Date(),
-      updatedAt: new Date()
+      updatedAt: mongoTask.creationDate ?? new Date()
     });
     tasksCreated++;
   }
