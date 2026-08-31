@@ -4,6 +4,7 @@ import {
   createTaskWithNotification,
   deleteTaskWithNotification,
   getTaskById,
+  getTaskDetailById,
   updateTaskWithNotification
 } from "../services/tasks.js";
 import { getNotifier } from "../notifier.js";
@@ -20,7 +21,7 @@ const tasksApi = new Hono();
 
 tasksApi.get("/:id", authMiddleware, async c => {
   const taskId = c.req.param("id");
-  const task = await getTaskById(taskId);
+  const task = await getTaskDetailById(taskId);
   if (!task) {
     return c.json({ error: "Task not found" }, 404);
   }

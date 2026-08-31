@@ -56,6 +56,42 @@ export function getTaskById(taskId: string) {
   });
 }
 
+// Populated detail view of a task, matching the shape the app expects
+// (createdBy as a user profile object, creationDate instead of createdAt).
+// Mirrors the custom-lists task shape so the Edit Task modal's CreatorBlock
+// renders consistently.
+export async function getTaskDetailById(taskId: string) {
+  const task = await db.query.tasks.findFirst({
+    where: { id: taskId },
+    with: {
+      createdBy: {
+        columns: { id: true, email: true, name: true, image: true }
+      }
+    }
+  });
+
+  if (!task) {
+    return undefined;
+  }
+
+  const { createdAt, createdBy, ...rest } = task;
+  const name = createdBy?.name ?? "";
+
+  return {
+    ...rest,
+    creationDate: createdAt,
+    createdBy: createdBy
+      ? {
+          id: createdBy.id,
+          email: createdBy.email ?? undefined,
+          firstName: name.split(" ")[0] ?? "",
+          lastName: name.split(" ").slice(1).join(" "),
+          profilePicture: createdBy.image ?? undefined
+        }
+      : undefined
+  };
+}
+
 function deleteTask(taskId: string) {
   return db.delete(tasks).where(eq(tasks.id, taskId)).returning();
 }
