@@ -72,8 +72,9 @@
   .tiles {
     margin-top: 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    /* Mobile-first: single column so no tile spans more tracks than exist */
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
   .tile {
     background-image: linear-gradient(-40deg, transparent, rgba(0, 0, 0, 0.5));
@@ -95,14 +96,35 @@
     }
     &.ai-generated {
       --color: green;
-      grid-column: span 2;
     }
     &.smart-prioritization {
       --color: orange;
-      grid-row: span 2;
     }
     &.fast-offline {
       --color: blue;
+    }
+  }
+
+  /* Two columns on tablets */
+  @media (min-width: 640px) {
+    .tiles {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  /* Three columns + featured spans on desktop */
+  @media (min-width: 900px) {
+    .tiles {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .tile.ai-generated {
+      grid-column: span 2;
+    }
+    .tile.smart-prioritization {
+      grid-row: span 2;
+    }
+    .tile.fast-offline {
       grid-column: span 2;
     }
   }
