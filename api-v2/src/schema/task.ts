@@ -14,6 +14,7 @@ export const tasks = pgTable("tasks", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   isCompleted: boolean("is_completed").notNull().default(false),
+  completedAt: timestamp("completed_at"),
   dueDate: timestamp("due_date", { withTimezone: true }),
   notes: text("notes"),
   subtasks: jsonb("subtasks"),

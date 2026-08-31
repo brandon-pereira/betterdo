@@ -414,19 +414,29 @@ async function migrate() {
       continue;
     }
 
+    // v1 never recorded a completion timestamp — a task only carried an
+    // `isCompleted` boolean and its `creationDate`. To give v2 features (e.g.
+    // "BetterDo Wrapped") a usable completed_at, we approximate it with the
+    // creation date for completed tasks, matching the historical backfill.
+    // Incomplete tasks get a null completed_at, which is the source of truth
+    // going forward (see services/tasks.ts, which stamps/clears it on toggle).
+    const isCompleted = mongoTask.isCompleted ?? false;
+    const creationDate = mongoTask.creationDate ?? new Date();
+
     await pg.insert(tasks).values({
       id: randomUUID(),
       title: mongoTask.title,
       listId: newListId,
       createdById: newCreatedById,
-      isCompleted: mongoTask.isCompleted ?? false,
+      isCompleted,
+      completedAt: isCompleted ? creationDate : null,
       dueDate: mongoTask.dueDate ?? null,
       notes: mongoTask.notes ?? null,
       subtasks: transformSubtasks(mongoTask.subtasks),
       priority: mongoTask.priority ?? "normal",
       position,
-      createdAt: mongoTask.creationDate ?? new Date(),
-      updatedAt: mongoTask.creationDate ?? new Date()
+      createdAt: creationDate,
+      updatedAt: creationDate
     });
     tasksCreated++;
   }

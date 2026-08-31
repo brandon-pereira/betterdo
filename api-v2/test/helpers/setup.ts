@@ -120,6 +120,7 @@ beforeAll(async () => {
       "list_id" UUID NOT NULL,
       "created_by_id" TEXT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
       "is_completed" BOOLEAN NOT NULL DEFAULT false,
+      "completed_at" TIMESTAMP,
       "due_date" TIMESTAMP WITH TIME ZONE,
       "notes" TEXT,
       "subtasks" JSONB,

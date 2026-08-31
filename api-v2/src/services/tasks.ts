@@ -128,8 +128,13 @@ export async function updateTaskWithNotification(
   // If the task isCompleted state changed
   if (updates.isCompleted !== undefined && existingTask.isCompleted !== updates.isCompleted) {
     if (updates.isCompleted) {
+      // Stamp completion time when transitioning incomplete -> complete
+      updates.completedAt = new Date();
       notificationSent = true;
       notifyAboutSharedList(`${context.user.name} completed ${existingTask.title} in ${list.title}.`, list, context);
+    } else {
+      // Clear completion time when re-opening a task
+      updates.completedAt = null;
     }
   }
 
