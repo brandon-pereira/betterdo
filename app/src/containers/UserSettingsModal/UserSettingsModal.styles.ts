@@ -7,7 +7,7 @@ export const Modal = styled(_Modal)`
   min-width: min(100%, 460px);
   padding: 1rem;
   border-radius: 1.25rem;
-  background: ${({ theme }) => (theme.isDarkMode ? "rgba(30, 30, 30, 0.7)" : "rgba(255, 255, 255, 0.65)")};
+  background: ${({ theme }) => (theme.isDarkMode ? "rgba(30, 30, 30, 0.7)" : "#fff")};
   backdrop-filter: blur(40px) saturate(1.8);
   -webkit-backdrop-filter: blur(40px) saturate(1.8);
   box-shadow:
