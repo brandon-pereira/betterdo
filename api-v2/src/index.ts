@@ -45,4 +45,4 @@ serve({
   ...app
 });
 
-console.log(config.PORT);
+console.log(`API listening on ${config.SERVER_URL} (port ${config.PORT})`);
