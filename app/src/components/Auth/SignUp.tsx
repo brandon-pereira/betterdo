@@ -79,8 +79,8 @@ const SignUp = () => {
     setLoading(true);
     const { error } = await signIn.social({
       provider: "google",
-      callbackURL: `${window.location.origin}/`,
-      errorCallbackURL: `${window.location.origin}/auth/signup`
+      callbackURL: `${window.location.origin}${import.meta.env.BASE_URL}`,
+      errorCallbackURL: `${window.location.origin}${import.meta.env.BASE_URL}auth/signup`
     });
     setLoading(false);
     if (error) {

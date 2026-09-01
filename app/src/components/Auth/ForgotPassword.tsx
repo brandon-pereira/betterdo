@@ -19,7 +19,7 @@ const ForgotPassword = () => {
     try {
       const { error } = await authClient.requestPasswordReset({
         email,
-        redirectTo: `${window.location.origin}/auth/reset-password`
+        redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}auth/reset-password`
       });
 
       setLoading(false);
