@@ -148,10 +148,29 @@ describe("Lists", () => {
       const [task2] = await createTask({ listId: list.id, title: "Task 2", createdById: router.user.id });
       const [task3] = await createTask({ listId: list.id, title: "Task 3", createdById: router.user.id });
       let fetched = await getListById({ userId: router.user.id, listId: list.id });
-      expect(fetched!.tasks.map(t => t.id)).toEqual([task1.id, task2.id, task3.id]);
+      // New tasks are inserted at the top, so order is reversed from creation order
+      expect(fetched!.tasks.map(t => t.id)).toEqual([task3.id, task2.id, task1.id]);
       await reorderTasks(list.id, [task3.id, task1.id, task2.id]);
       fetched = await getListById({ userId: router.user.id, listId: list.id });
       expect(fetched!.tasks.map(t => t.id)).toEqual([task3.id, task1.id, task2.id]);
+    });
+
+    test("Allows reordering when the list contains completed tasks", async () => {
+      const router = await createRouter();
+      const list = await createList({ title: "Reorder w/ Completed", createdById: router.user.id });
+      const [task1] = await createTask({ listId: list.id, title: "Task 1", createdById: router.user.id });
+      const [task2] = await createTask({ listId: list.id, title: "Task 2", createdById: router.user.id });
+      const [task3] = await createTask({ listId: list.id, title: "Task 3", createdById: router.user.id });
+      // Complete one task; it moves out of the sortable `tasks` array
+      await updateTask(task2.id, { isCompleted: true });
+
+      let fetched = await getListById({ userId: router.user.id, listId: list.id });
+      expect(fetched!.tasks.map(t => t.id)).toEqual([task3.id, task1.id]);
+
+      // The client only sends incomplete task IDs; this must not throw
+      await reorderTasks(list.id, [task1.id, task3.id]);
+      fetched = await getListById({ userId: router.user.id, listId: list.id });
+      expect(fetched!.tasks.map(t => t.id)).toEqual([task1.id, task3.id]);
     });
 
     test("Overview hydrates incomplete tasks and completed count per list", async () => {
@@ -165,8 +184,8 @@ describe("Lists", () => {
       const overview = await getUserLists({ userId: router.user.id });
       const fetched = overview.find(l => l.id === list.id);
       expect(fetched).toBeDefined();
-      // Only incomplete tasks are returned in the `tasks` array
-      expect(fetched!.tasks.map(t => t.title)).toEqual(["Active 1", "Active 2"]);
+      // Only incomplete tasks are returned in the `tasks` array (newest first)
+      expect(fetched!.tasks.map(t => t.title)).toEqual(["Active 2", "Active 1"]);
       expect(fetched!.tasks.every(t => !t.isCompleted)).toBe(true);
       // completedTasks is empty in the overview, additionalTasks is the completed count
       expect(fetched!.completedTasks).toHaveLength(0);

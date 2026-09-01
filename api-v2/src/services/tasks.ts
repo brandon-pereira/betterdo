@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "../db.js";
 import { tasks } from "../schema/task.js";
 import { notifyAboutSharedList } from "../helpers/notify.js";
@@ -16,22 +16,24 @@ export function updateTask(taskId: string, updates: Partial<typeof tasks.$inferI
 }
 
 export async function createTask(payload: typeof tasks.$inferInsert) {
-  // Auto-assign next position within the list
-  const [{ value: taskCount }] = await db
-    .select({ value: count() })
-    .from(tasks)
+  // New tasks go to the top of the list (matches v1 behavior).
+  // Shift existing tasks down, then insert the new task at position 0.
+  await db
+    .update(tasks)
+    .set({ position: sql`${tasks.position} + 1` })
     .where(eq(tasks.listId, payload.listId));
 
   return db
     .insert(tasks)
-    .values({ ...payload, position: taskCount })
+    .values({ ...payload, position: 0 })
     .returning();
 }
 
 export async function reorderTasks(listId: string, taskIds: string[]) {
-  // Get all current task IDs for the list
+  // Only incomplete tasks are reorderable in the UI; completed tasks are shown
+  // in a separate, non-sortable section and are never part of `taskIds`.
   const currentTasks = await db.query.tasks.findMany({
-    where: { listId },
+    where: { listId, isCompleted: false },
     columns: { id: true }
   });
   const currentTaskIds = currentTasks.map(t => t.id);

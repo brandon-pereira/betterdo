@@ -52,9 +52,9 @@ describe("Custom Lists API", () => {
     });
     today = await getCustomListById("today", false, { user: router2.user });
     expect(today!.tasks).toHaveLength(2);
-    // Position order: task1 (pos 0) before task2 (pos 1)
-    expect(today!.tasks[0].title).toBe("1");
-    expect(today!.tasks[1].title).toBe("2");
+    // New tasks are inserted at the top, so "2" (pos 0) comes before "1" (pos 1)
+    expect(today!.tasks[0].title).toBe("2");
+    expect(today!.tasks[1].title).toBe("1");
   });
 
   test("Tomorrow list should only return valid tasks", async () => {
@@ -124,7 +124,8 @@ describe("Custom Lists API", () => {
     });
     let hp = await getCustomListById("highPriority", false, { user: router.user });
     expect(hp!.tasks).toHaveLength(3);
-    expect(hp!.tasks.map(t => t.title)).toEqual(["HP First", "HP Second", "HP Third"]);
+    // New tasks are inserted at the top, so order is reversed from creation order
+    expect(hp!.tasks.map(t => t.title)).toEqual(["HP Third", "HP Second", "HP First"]);
     // Reorder: reverse the tasks
     await reorderTasks(list.id, [task3.id, task2.id, task1.id]);
     hp = await getCustomListById("highPriority", false, { user: router.user });
