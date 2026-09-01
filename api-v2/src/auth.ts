@@ -70,7 +70,7 @@ export const auth = betterAuth({
       }
     }
   },
-  trustedOrigins: ["http://localhost:4000", "http://localhost:4001"],
+  trustedOrigins: [config.SERVER_URL, config.APP_URL],
   plugins: [passkey(), profileUpdatePlugin()],
   user: {
     additionalFields: {

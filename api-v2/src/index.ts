@@ -17,7 +17,7 @@ const app = new Hono();
 
 app.use(
   cors({
-    origin: "http://localhost:4001", // Allow all origins, adjust as necessarym
+    origin: config.APP_URL,
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
