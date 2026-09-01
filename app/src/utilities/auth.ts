@@ -1,13 +1,14 @@
 import { createAuthClient } from "better-auth/react";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { passkeyClient } from "@better-auth/passkey/client";
+import { SERVER_URL } from "@utilities/env";
 import type { auth } from "../../../api-v2/src/auth";
 import type { UpdateProfilePayload } from "../../../api-v2/src/plugins/profileUpdate";
 
 export type { UpdateProfilePayload };
 
 export const authClient = createAuthClient({
-  baseURL: "http://localhost:4000",
+  baseURL: SERVER_URL,
   plugins: [passkeyClient(), inferAdditionalFields<typeof auth>()]
 });
 
