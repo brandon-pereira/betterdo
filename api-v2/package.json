@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start:production": "node ./dist/src/index.js",
+    "start:production": "node -r dotenv/config ./dist/src/index.js",
     "build": "tsc",
     "start": "tsx watch -r dotenv/config src/index.ts",
     "lint": "eslint . && tsc --noemit",
