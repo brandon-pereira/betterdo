@@ -42,7 +42,7 @@ export default defineConfig({
     __SERVER_URL__: `"${process.env.NODE_ENV === "production" ? "https://betterdo.app" : "http://localhost:4000"}"`,
     __APP_URL__: `"${process.env.NODE_ENV === "production" ? "https://betterdo.app" : "http://localhost:4001"}"`
   },
-  base: "./",
+  base: process.env.NODE_ENV === "production" ? "/app/" : "/",
   server: {
     port: 4001
   }

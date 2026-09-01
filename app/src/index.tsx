@@ -27,7 +27,7 @@ root.render(
         <ErrorBoundary>
           <SWRProvider>
             <ResponsiveProvider>
-              <BrowserRouter>
+              <BrowserRouter basename={import.meta.env.BASE_URL}>
                 <App />
               </BrowserRouter>
             </ResponsiveProvider>
