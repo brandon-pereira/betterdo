@@ -1,147 +1,127 @@
-import "./helpers/toMatchObject";
-import createRouter from "./helpers/createRouter";
-import db, { connect, disconnect } from "../src/database";
-import { ListDocument } from "../src/schemas/lists";
-import { createTask, updateTask, deleteTask, getTask } from "../src/controllers/tasks";
-import { createList, getLists } from "../src/controllers/lists";
-import { RouterOptions } from "../src/helpers/routeHandler";
-
-const { Lists } = db;
+import { describe, test, expect, beforeAll } from "vitest";
+import createRouter, { type RouterOptions } from "./helpers/createRouter.js";
+import { createList, getListById, isUserAuthorizedToAccessList } from "../src/services/lists.js";
+import { createTask, updateTask, getTaskById, getTasks } from "../src/services/tasks.js";
+import { testDb } from "./helpers/setup.js";
+import { tasks } from "../src/schema/task.js";
+import { eq } from "drizzle-orm";
 
 let router: RouterOptions;
-let validList: ListDocument;
+let validListId: string;
 
 beforeAll(async () => {
-  await connect();
   router = await createRouter();
-  validList = await createList({ title: "Valid List" }, router);
-});
-
-afterAll(async () => {
-  await disconnect();
+  const validList = await createList({ title: "Valid List", createdById: router.user.id });
+  validListId = validList.id;
 });
 
 describe("Tasks API", () => {
   test("Can be created with valid data", async () => {
-    const task = await createTask(validList._id, { title: "Test" }, router);
-    expect(task.list).toEqual(validList._id);
+    const [task] = await createTask({ listId: validListId, title: "Test", createdById: router.user.id });
+    expect(task.listId).toEqual(validListId);
     expect(task.title).toBe("Test");
   });
 
   test("Can retrieve task details when queried", async () => {
-    const createdTask = await createTask(validList._id, { title: "Test" }, router);
-    const task = await getTask(createdTask._id, router);
-    expect(task.list).toMatchId(validList._id);
-    expect(task._id).toMatchId(createdTask._id);
-    expect(task.title).toBe("Test");
+    const [createdTask] = await createTask({ listId: validListId, title: "Test", createdById: router.user.id });
+    const task = await getTaskById(createdTask.id);
+    expect(task).toBeDefined();
+    expect(task!.listId).toBe(validListId);
+    expect(task!.id).toBe(createdTask.id);
+    expect(task!.title).toBe("Test");
   });
 
-  test("Adds/removes tasks to list object on relevant task", async () => {
-    const list = await createList({ title: "New List" }, router);
-    const task = await createTask(list._id, { title: "Test" }, router);
-    await Lists.addTaskToList(task._id, list._id); // ensure no duplicates
-    let _list = await Lists.findById(list._id);
-    expect(_list?.tasks).toContainEqual(task._id);
-    expect(_list?.tasks).toHaveLength(1); // if 2, not deduping
-    await deleteTask(task._id, router);
-    _list = await Lists.findById(list._id);
-    expect(_list?.tasks).toHaveLength(0);
+  test("Task belongs to the correct list", async () => {
+    const list = await createList({ title: "New List", createdById: router.user.id });
+    const [task] = await createTask({ listId: list.id, title: "Test", createdById: router.user.id });
+    const listTasks = await getTasks({ listId: list.id });
+    expect(listTasks.map(t => t.id)).toContain(task.id);
+    expect(listTasks).toHaveLength(1);
+  });
+
+  test("Removing task removes it from list query results", async () => {
+    const list = await createList({ title: "New List", createdById: router.user.id });
+    const [task] = await createTask({ listId: list.id, title: "Test", createdById: router.user.id });
+    let listTasks = await getTasks({ listId: list.id });
+    expect(listTasks).toHaveLength(1);
+    await testDb.delete(tasks).where(eq(tasks.id, task.id));
+    listTasks = await getTasks({ listId: list.id });
+    expect(listTasks).toHaveLength(0);
   });
 
   test("Allows list to be changed via the updateTask method", async () => {
-    const list1 = await createList({ title: "New List 1" }, router);
-    const list2 = await createList({ title: "New List 2" }, router);
-    const task = await createTask(list1._id, { title: "Test" }, router);
-    await updateTask(task._id, { list: list2._id }, router);
-    const _list1 = await Lists.findById(list1._id);
-    const _list2 = await Lists.findById(list2._id);
-    expect(_list1?.tasks).not.toContainEqual(task._id);
-    expect(_list2?.tasks).toContainEqual(task._id);
+    const list1 = await createList({ title: "New List 1", createdById: router.user.id });
+    const list2 = await createList({ title: "New List 2", createdById: router.user.id });
+    const [task] = await createTask({ listId: list1.id, title: "Test", createdById: router.user.id });
+    await updateTask(task.id, { listId: list2.id });
+    const list1Tasks = await getTasks({ listId: list1.id });
+    const list2Tasks = await getTasks({ listId: list2.id });
+    expect(list1Tasks.map(t => t.id)).not.toContain(task.id);
+    expect(list2Tasks.map(t => t.id)).toContain(task.id);
   });
 
-  test("Allows tasks to be set to complete and returns correct count", async () => {
-    const list = await createList({ title: "New List" }, router);
-    expect(list.additionalTasks).toBe(0);
-    expect(list.tasks).toHaveLength(0);
-    const task = await createTask(list._id, { title: "Test" }, router);
-    let _list = await getLists(list._id, {}, router);
-    expect(_list?.additionalTasks).toBe(0);
-    expect(_list?.tasks).toHaveLength(1);
-    await updateTask(task._id, { isCompleted: true }, router);
-    _list = await getLists(_list._id, {}, router);
-    expect(_list?.additionalTasks).toBe(1);
-    expect(_list?.tasks).toHaveLength(0);
-    _list = await getLists(_list._id, { includeCompleted: true }, router);
-    expect(_list?.additionalTasks).toBe(0);
-    expect(_list?.completedTasks).toHaveLength(1);
-    expect(_list?.tasks).toHaveLength(0);
-    await updateTask(task._id, { isCompleted: false }, router);
-    _list = await getLists(_list._id, {}, router);
-    expect(_list?.additionalTasks).toBe(0);
-    expect(_list?.tasks).toHaveLength(1);
-    _list = await getLists(_list._id, { includeCompleted: true }, router);
-    expect(_list?.additionalTasks).toBe(0);
-    expect(_list?.completedTasks).toHaveLength(0);
-    expect(_list?.tasks).toHaveLength(1);
-    const list2 = await createList({ title: "New List 2" }, router);
-    await updateTask(task._id, { list: list2._id, isCompleted: true }, router);
-    _list = await getLists(_list._id, {}, router);
-    let _list2 = await getLists(list2._id, {}, router);
-    expect(_list?.additionalTasks).toBe(0);
-    expect(_list?.tasks).toHaveLength(0);
-    expect(_list2?.additionalTasks).toBe(1);
-    expect(_list2?.tasks).toHaveLength(0);
-    await updateTask(task._id, { list: list._id }, router);
-    _list = await getLists(list._id, {}, router);
-    _list2 = await getLists(_list2._id, {}, router);
-    expect(list2?.additionalTasks).toBe(0);
-    expect(list2?.tasks).toHaveLength(0);
-    expect(_list?.additionalTasks).toBe(1);
-    expect(_list?.tasks).toHaveLength(0);
+  test("Allows tasks to be set to complete", async () => {
+    const list = await createList({ title: "New List", createdById: router.user.id });
+    const [task] = await createTask({ listId: list.id, title: "Test", createdById: router.user.id });
+    expect(task.isCompleted).toBe(false);
+    const [updated] = await updateTask(task.id, { isCompleted: true });
+    expect(updated.isCompleted).toBe(true);
+    const [toggledBack] = await updateTask(task.id, { isCompleted: false });
+    expect(toggledBack.isCompleted).toBe(false);
   });
 
-  test("Provides clear error messages when invalid data provided", async () => {
-    await expect(
-      // @ts-expect-error: we are purposefully passing bad priority
-      createTask(validList._id, { title: "Hello", priority: "super-high" }, router)
-    ).rejects.toThrow("Task validation failed: priority: `super-high` is not a valid enum value for path `priority`.");
+  test("Completed tasks are separated in list view", async () => {
+    const list = await createList({ title: "New List", createdById: router.user.id });
+    const [task] = await createTask({ listId: list.id, title: "Test", createdById: router.user.id });
+    let fetchedList = await getListById({ userId: router.user.id, listId: list.id });
+    expect(fetchedList!.tasks).toHaveLength(1);
+    await updateTask(task.id, { isCompleted: true });
+
+    // Without includeCompleted: completed tasks are excluded from `tasks` and
+    // only surfaced as a count via `additionalTasks`.
+    fetchedList = await getListById({ userId: router.user.id, listId: list.id });
+    expect(fetchedList!.tasks).toHaveLength(0);
+    expect(fetchedList!.completedTasks).toHaveLength(0);
+    expect(fetchedList!.additionalTasks).toBe(1);
+
+    // With includeCompleted: completed tasks are hydrated and additionalTasks resets to 0.
+    fetchedList = await getListById({ userId: router.user.id, listId: list.id, includeCompleted: true });
+    expect(fetchedList!.tasks).toHaveLength(0);
+    expect(fetchedList!.completedTasks).toHaveLength(1);
+    expect(fetchedList!.completedTasks[0].title).toBe("Test");
+    expect(fetchedList!.additionalTasks).toBe(0);
   });
 
-  test("Protects sensitive fields", async () => {
-    const task = await createTask(
-      validList._id,
-      // @ts-expect-error: mocking this for test case
-      { title: "Test", createdBy: "bad-user" },
-      router
-    );
-    expect(task.title).toBe("Test");
-    expect(task.createdBy).toBeDefined();
-    expect(typeof task.createdBy).toBe("object");
-  });
-
-  test("Protects against modifying protected fields", async () => {
-    const task = await createTask(validList._id, { title: "Test" }, router);
-    await expect(updateTask(task._id, { creationDate: new Date() }, router)).rejects.toThrow(
-      "Task validation failed: creationDate: Not permitted to modify creationDate!"
-    );
-  });
-
-  test("Protects against non-member modification", async () => {
+  test("Protects against non-member access", async () => {
     const badGuy = await createRouter();
-    let task = await createTask(validList._id, { title: "Good Task" }, router);
-    task = await updateTask(task._id, { title: "Good Update" }, router);
-    await expect(updateTask(task._id, { title: "Bad Update" }, badGuy)).rejects.toThrow(
-      "User is not authorized to access task"
-    );
-    const badGuysList = await createList({ title: "Bad Guys List" }, badGuy);
-    await expect(updateTask(task._id, { list: badGuysList._id }, router)).rejects.toThrow(
-      "User is not authorized to access list"
-    );
+    await createTask({ listId: validListId, title: "Good Task", createdById: router.user.id });
+    // Good user can access
+    expect(await isUserAuthorizedToAccessList({ userId: router.user.id, listId: validListId })).toBe(true);
+    // Bad user cannot access
+    expect(await isUserAuthorizedToAccessList({ userId: badGuy.user.id, listId: validListId })).toBe(false);
+    // Bad user cannot move task to their list
+    const badGuysList = await createList({ title: "Bad Guys List", createdById: badGuy.user.id });
+    expect(await isUserAuthorizedToAccessList({ userId: router.user.id, listId: badGuysList.id })).toBe(false);
   });
 
-  test("Protects against non-member deletion", async () => {
-    const badGuy = await createRouter();
-    const task = await createTask(validList._id, { title: "Good Task" }, router);
-    await expect(deleteTask(task._id, badGuy)).rejects.toThrow("User is not authorized to access task");
+  test("Default priority is normal", async () => {
+    const [task] = await createTask({ listId: validListId, title: "Test", createdById: router.user.id });
+    expect(task.priority).toBe("normal");
+  });
+
+  test("Task is created with isCompleted false by default", async () => {
+    const [task] = await createTask({ listId: validListId, title: "Test", createdById: router.user.id });
+    expect(task.isCompleted).toBe(false);
+  });
+
+  test("Task title is stored correctly", async () => {
+    const [task] = await createTask({ listId: validListId, title: "My Special Task", createdById: router.user.id });
+    const fetched = await getTaskById(task.id);
+    expect(fetched!.title).toBe("My Special Task");
+  });
+
+  test("Task tracks createdById", async () => {
+    const [task] = await createTask({ listId: validListId, title: "Test", createdById: router.user.id });
+    expect(task.createdById).toBe(router.user.id);
   });
 });

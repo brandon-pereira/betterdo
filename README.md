@@ -32,7 +32,7 @@ Once you have these installed, you can clone the repository and run the followin
 ```bash
 nvm use
 yarn install
-cp api-v2/.env.sample api-v2/.env
+cp api/.env.sample api/.env
 ```
 
 After copying the `.env` file, you should edit it to set your environment variables. You can use the `.env.sample` file as a reference.

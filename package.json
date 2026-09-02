@@ -6,15 +6,14 @@
   "workspaces": [
     "app",
     "api",
-    "api-v2",
     "website"
   ],
   "scripts": {
-    "start": "docker compose up -d && concurrently \"yarn workspace  app start\" \"yarn workspace api-v2 start\" \"yarn workspace website start\" && docker compose down",
+    "start": "docker compose up -d && concurrently \"yarn workspace  app start\" \"yarn workspace api start\" \"yarn workspace website start\" && docker compose down",
     "start:website": "yarn workspace website start",
     "lint": "yarn workspaces run lint && yarn knip",
     "knip": "knip",
-    "migrate": "yarn workspace api-v2 push",
+    "migrate": "yarn workspace api push",
     "test": "yarn workspace api test",
     "build:website": "yarn workspace website build",
     "build:app": "yarn workspace app build",
