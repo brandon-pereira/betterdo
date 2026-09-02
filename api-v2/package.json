@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start:production": "node -r dotenv/config ./dist/src/index.js",
-    "build": "tsc",
+    "build": "NODE_ENV=production tsc",
     "start": "tsx watch -r dotenv/config src/index.ts",
     "lint": "eslint . && tsc --noemit",
     "test": "vitest",
