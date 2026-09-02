@@ -9,6 +9,14 @@ import usersApi from "./routes/users.js";
 import configApi from "./routes/config.js";
 import { getNotifier } from "./notifier.js";
 
+// Last-resort guard: transient DB failures (e.g. Postgres not up yet when pm2
+// starts the app) can surface as unhandled rejections from background timers
+// like web-notifier's scheduler. Log instead of letting Node crash the process;
+// the underlying pool reconnects and background pollers retry on their own.
+process.on("unhandledRejection", reason => {
+  console.error("[api] unhandledRejection:", reason instanceof Error ? reason.message : reason);
+});
+
 // Instantiate the push notifier once at startup so config issues surface early
 // and the singleton is warm before the first request.
 getNotifier();
