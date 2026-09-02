@@ -10,9 +10,7 @@
     "lint": "eslint . && tsc --noemit",
     "test": "vitest",
     "push": "NODE_OPTIONS='--import tsx' drizzle-kit push",
-    "generate": "npx auth generate -y --output ./src/schema/auth.ts && npx prettier --write ./src/schema/auth.ts",
-    "migrate:v1": "tsx src/scripts/migrate-v1.ts",
-    "backfill:deleted-lists": "tsx src/scripts/backfill-deleted-lists.ts"
+    "generate": "npx auth generate -y --output ./src/schema/auth.ts && npx prettier --write ./src/schema/auth.ts"
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "^1.7.2",
