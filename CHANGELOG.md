@@ -1,5 +1,17 @@
 # Changelog
 
+## v8.0.0
+
+- Rebuilt the API from the ground up on Hono, Drizzle, and Postgres (dropping Express and MongoDB)
+- Migrated authentication to Better Auth
+- Added email & password accounts alongside the existing Google login
+- Added Passkey support for passwordless sign in
+- Added email verification and password reset flows
+- Redesigned the sign in, sign up, and account settings screens (now built on Mantine)
+- Added a migration script to bring existing v1 data over to the new backend
+- Use Gravatar for default profile pictures
+- [Internal] Introduced end-to-end test coverage for the new API using Vitest
+
 ## v7.1.0
 
 - Migrate rich text editor from basic text area to rich text editor (via TipTap)
