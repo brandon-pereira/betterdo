@@ -1,23 +1,32 @@
-import { List } from "../schemas/lists";
-import { RouterOptions } from "./routeHandler";
-import url from "url";
+import type { Notifier } from "../notifier.js";
 
-const BASE_URL = url.resolve(process.env.APP_URL || "", process.env.NODE_ENV === "production" ? "/app" : "");
+const BASE_URL = process.env.APP_URL || "";
 
-function notifyAboutSharedList(title: string, list: List, { notifier, user }: RouterOptions): void {
+interface ListWithMembers {
+  id: string;
+  title: string;
+  members: { id: string }[];
+}
+
+interface NotifyContext {
+  notifier: Notifier;
+  user: { id: string; name: string };
+}
+
+export function notifyAboutSharedList(title: string, list: ListWithMembers, { notifier, user }: NotifyContext): void {
   const members = list.members;
-  const listId = list._id;
+  const listId = list.id;
   const isSharedList = members.length > 1;
 
   if (isSharedList) {
-    members.map(async member => {
-      if (!member._id.equals(user._id)) {
-        await notifier.send(member._id, {
+    members.forEach(async member => {
+      if (member.id !== user.id) {
+        await notifier.send(member.id, {
           title,
           url: `${BASE_URL}/#/${listId}`,
           tag: `shared-list:${listId}`,
           data: {
-            listId: listId.toString(),
+            listId,
             listTitle: list.title
           }
         });
@@ -25,5 +34,3 @@ function notifyAboutSharedList(title: string, list: List, { notifier, user }: Ro
     });
   }
 }
-
-export { notifyAboutSharedList };

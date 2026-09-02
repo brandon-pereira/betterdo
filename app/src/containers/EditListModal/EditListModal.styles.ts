@@ -9,23 +9,35 @@ export const Modal = styled(_Modal)`
   left: auto;
   opacity: 0;
   width: 100%;
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   padding: 1rem;
+  background: ${({ theme }) => (theme.isDarkMode ? "rgba(30, 30, 30, 0.7)" : "#fff")};
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
   box-shadow:
-    0 19px 38px rgba(0, 0, 0, 0.2),
-    0 15px 12px rgba(0, 0, 0, 0.1);
+    0 8px 32px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.6)")},
+    inset 0 1px 0 ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.8)")};
   & [data-betterdo-modal-arrow] {
-    top: -0.6rem;
-    right: 1.7rem;
-    height: 1.2rem;
-    width: 1.2rem;
-    left: auto;
-    border-radius: 4px 0 0 0;
+    display: none;
   }
   ${({ theme }) => theme.queries.medium} {
     right: 10px;
     & [data-betterdo-modal-arrow] {
+      display: block;
+      top: -0.5rem;
       right: 1.2rem;
+      left: auto;
+      height: 1.2rem;
+      width: 1.2rem;
+      border-radius: 3px 0 0 0;
+      transform: rotate(45deg);
+      background: ${({ theme }) => theme.colors.modals.contentBackground};
+      border-left: 1px solid ${({ theme }) => theme.colors.modals.contentBackground};
+      border-top: 1px solid ${({ theme }) => theme.colors.modals.contentBackground};
+      box-shadow:
+        -1px -1px 0 rgba(255, 255, 255, 0.15),
+        -2px -2px 0 rgba(0, 0, 0, 0.6);
     }
   }
 `;

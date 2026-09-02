@@ -1,6 +1,6 @@
 import Task from "@customTypes/task";
 import List, { ServerList } from "@customTypes/list";
-import User, { _UpdateUserPayload } from "@customTypes/user";
+import User from "@customTypes/user";
 import { SERVER_URL } from "@utilities/env";
 
 const baseUrl = `${SERVER_URL}/api`;
@@ -32,10 +32,6 @@ export const deleteList = (listId: string): Promise<void> => {
   return _delete(`lists/${listId}`);
 };
 
-export const updateUser = (updatedProps: _UpdateUserPayload): Promise<User> => {
-  return _post<User>(`users`, updatedProps);
-};
-
 export const getUserByEmail = (email: string): Promise<User> => {
   return _get<User>(`users/${email}`);
 };
@@ -45,7 +41,7 @@ export class ServerError extends Error {
   formattedMessage: string;
   originalError: unknown;
 
-  constructor(formattedMessage = "An unexpected error ocurred", originalError?: unknown, code = 500) {
+  constructor(formattedMessage = "An unexpected error occurred", originalError?: unknown, code = 500) {
     super(formattedMessage);
     this.name = "ServerError";
     this.code = code;
@@ -53,7 +49,7 @@ export class ServerError extends Error {
     this.formattedMessage = formattedMessage || ServerError.defaultError;
   }
 
-  static defaultError = "An unexpected error ocurred";
+  static defaultError = "An unexpected error occurred";
 }
 
 /**
@@ -106,8 +102,13 @@ async function _fetch<T>(url: string, data?: RequestInit): Promise<T> {
     if (response.status === 401) {
       window.location.href = SERVER_URL;
     }
-    const message = (await response.json()).error;
-    throw new ServerError(message, undefined, response.status);
+    try {
+      const json = await response.json();
+      const message = json?.formattedMessage || json?.error || ServerError.defaultError;
+      throw new ServerError(message, response.status);
+    } catch (err) {
+      throw new ServerError(undefined, err, response.status);
+    }
   }
   return await response.json();
 }

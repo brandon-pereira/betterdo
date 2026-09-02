@@ -1,5 +1,7 @@
 # build output
 **/dist
+**/dev-dist
+**/cache
 
 # dependencies
 **/node_modules

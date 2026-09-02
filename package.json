@@ -1,6 +1,6 @@
 {
   "name": "betterdo",
-  "version": "7.1.0",
+  "version": "8.0.0-beta.1",
   "type": "module",
   "private": true,
   "workspaces": [
@@ -9,10 +9,11 @@
     "website"
   ],
   "scripts": {
-    "start": "concurrently \"yarn workspace  app start\" \"yarn workspace api start\" \"yarn workspace website start\"",
+    "start": "docker compose up -d && concurrently \"yarn workspace  app start\" \"yarn workspace api start\" \"yarn workspace website start\" && docker compose down",
     "start:website": "yarn workspace website start",
     "lint": "yarn workspaces run lint && yarn knip",
     "knip": "knip",
+    "migrate": "yarn workspace api push",
     "test": "yarn workspace api test",
     "build:website": "yarn workspace website build",
     "build:app": "yarn workspace app build",
@@ -23,7 +24,7 @@
   "author": "Brandon Pereira",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^9.1.2",
-    "knip": "^5.62.0"
+    "concurrently": "^9.2.1",
+    "knip": "^5.83.1"
   }
 }

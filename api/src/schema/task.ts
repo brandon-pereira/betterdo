@@ -1,0 +1,29 @@
+import { pgTable, uuid, varchar, boolean, jsonb, timestamp, text, integer } from "drizzle-orm/pg-core";
+import { lists } from "./list.js";
+import { user } from "./auth.js";
+
+export const tasks = pgTable("tasks", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: varchar("title", { length: 100 }).notNull(),
+  listId: uuid("list_id")
+    .notNull()
+    .references(() => lists.id, {
+      onDelete: "cascade"
+    }),
+  createdById: text("created_by_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  isCompleted: boolean("is_completed").notNull().default(false),
+  completedAt: timestamp("completed_at"),
+  dueDate: timestamp("due_date", { withTimezone: true }),
+  notes: text("notes"),
+  subtasks: jsonb("subtasks"),
+  priority: text("priority", {
+    enum: ["low", "normal", "high"]
+  }).default("normal"),
+  position: integer("position").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
+    .$onUpdate(() => new Date())
+    .defaultNow()
+});

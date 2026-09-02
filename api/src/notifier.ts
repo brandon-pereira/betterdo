@@ -1,8 +1,14 @@
-import WebNotifier from "web-notifier";
-import MongoDbAdapter from "web-notifier/dist/adapters/MongoDbAdapter";
-import { InternalRouter } from "./helpers/routeHandler";
+import { createRequire } from "module";
+import { eq, and } from "drizzle-orm";
+import { db } from "./db.js";
+import { pushSubscriptions } from "./schema/notification.js";
+import config from "./config.js";
+import DrizzleNotificationAdapter from "./helpers/drizzleNotificationAdapter.js";
 
-interface DefaultNotificationFormat {
+const require = createRequire(import.meta.url);
+const WebNotifier = require("web-notifier").default as typeof import("web-notifier").default;
+
+interface NotificationPayload {
   title: string;
   body?: string;
   icon?: string;
@@ -13,43 +19,55 @@ interface DefaultNotificationFormat {
     listTitle: string;
   };
 }
-type Notifier = WebNotifier<DefaultNotificationFormat>;
+
+type Notifier = InstanceType<typeof WebNotifier<NotificationPayload>>;
 export type { Notifier };
 
-export default ({ db }: InternalRouter) => {
-  const getUserPushSubscriptions = async (userId: string) => {
-    const user = await db.Users.findById(userId);
-    if (user && user.isPushEnabled) {
-      return user.pushSubscriptions;
+function createNotifier(): Notifier {
+  const getUserPushSubscriptions = async (userId: string): Promise<string[]> => {
+    const result = await db.query.user.findFirst({
+      where: { id: userId }
+    });
+    if (!result || !result.isPushEnabled) {
+      return [];
     }
-    return [];
+    const subs = await db.query.pushSubscriptions.findMany({
+      where: { userId }
+    });
+    return subs.map(s => s.endpoint);
   };
 
-  const removeUserPushSubscription = async (userId: string, subscription: string) => {
-    const user = await db.Users.findById(userId);
-    if (!user) return;
-    const index = user.pushSubscriptions.indexOf(subscription);
-    if (index !== -1) {
-      user.pushSubscriptions.splice(index, 1);
-    }
-    await user.save();
-    return;
+  const removeUserPushSubscription = async (userId: string, subscription: string): Promise<void> => {
+    await db
+      .delete(pushSubscriptions)
+      .where(and(eq(pushSubscriptions.userId, userId), eq(pushSubscriptions.endpoint, subscription)));
   };
 
-  const notifier = new WebNotifier<DefaultNotificationFormat>({
+  const notifier = new WebNotifier<NotificationPayload>({
     vapidKeys: {
-      publicKey: process.env.VAPID_PUBLIC_KEY || "",
-      privateKey: process.env.VAPID_PRIVATE_KEY || "",
-      email: process.env.VAPID_EMAIL || ""
+      publicKey: config.VAPID_PUBLIC_KEY || "",
+      privateKey: config.VAPID_PRIVATE_KEY || "",
+      email: config.VAPID_EMAIL || ""
     },
     notificationDefaults: {
-      icon: `${process.env.SERVER_URL}/icon-192x192.png`,
-      url: `${process.env.SERVER_URL}/app`
+      icon: `${config.SERVER_URL || ""}/icon-192x192.png`,
+      url: `${config.SERVER_URL || ""}/app`
     },
     getUserPushSubscriptions,
     removeUserPushSubscription,
-    adapter: new MongoDbAdapter()
+    adapter: new DrizzleNotificationAdapter<NotificationPayload>()
   });
 
   return notifier;
-};
+}
+
+// Shared singleton so routes/services can import the notifier directly without
+// threading it through Hono context. Created lazily on first access.
+let notifierInstance: Notifier | null = null;
+
+export function getNotifier(): Notifier {
+  if (!notifierInstance) {
+    notifierInstance = createNotifier();
+  }
+  return notifierInstance;
+}

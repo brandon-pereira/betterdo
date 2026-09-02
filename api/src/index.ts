@@ -1,40 +1,48 @@
-import "dotenv/config";
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+import { cors } from "hono/cors";
+import { auth } from "./auth.js"; // path to your auth file
+import config from "./config.js";
+import listsApi from "./routes/lists.js";
+import tasksApi from "./routes/tasks.js";
+import usersApi from "./routes/users.js";
+import configApi from "./routes/config.js";
+import { getNotifier } from "./notifier.js";
 
-/**
- * Instantiate the server (using express)
- */
-import app from "./express";
+// Instantiate the push notifier once at startup so config issues surface early
+// and the singleton is warm before the first request.
+getNotifier();
 
-/**
- * Get a reference to the database and connect
- */
-import db, { connect } from "./database";
-connect();
-const internalRouter = { app, db };
+const app = new Hono();
 
-/**
- * Get a reference to notifier
- */
-import _notifier from "./notifier";
-const notifier = _notifier(internalRouter);
+app.use(
+  cors({
+    origin: config.APP_URL,
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true
+  })
+);
 
-/**
- * Passport authentication middleware
- */
-import authentication from "./authentication";
-authentication(internalRouter);
-
-/**
- * Initialize Routes
- */
-const router = { app, db, notifier };
-import App from "./routes/app";
-App(router);
-import Api from "./routes/api";
-Api(router);
-import Root from "./routes/root";
-Root(router);
-
-app.listen(process.env.SERVER_PORT || 4000, () => {
-  console.info(`🚀 Server started at http://localhost:${process.env.SERVER_PORT || 4000}/`);
+// Any error thrown from a route (including DB failures) lands here instead of
+// crashing or hanging the request.
+app.onError((err, c) => {
+  console.error("[api]", err);
+  return c.json({ error: "Internal server error" }, 500);
 });
+
+app.on(["POST", "GET"], "/api/auth/**", c => auth.handler(c.req.raw));
+
+app.route("/api/lists", listsApi);
+app.route("/api/tasks", tasksApi);
+app.route("/api/users", usersApi);
+app.route("/api/config", configApi);
+
+serve({
+  port: config.PORT,
+  ...app
+});
+
+console.log(`API listening on ${config.SERVER_URL} (port ${config.PORT})`);

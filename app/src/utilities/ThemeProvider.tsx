@@ -3,11 +3,23 @@ import { createGlobalStyle, ThemeProvider as _ThemeProvider } from "styled-compo
 import { LIGHT_THEME, DARK_THEME } from "../theme";
 
 import useDarkMode from "@hooks/useDarkMode";
+import { MantineProvider } from "@mantine/core";
 
 export function ThemeProvider({ children }: { children: React.ReactChild }) {
   const [isDarkMode] = useDarkMode();
 
-  return <_ThemeProvider theme={isDarkMode ? DARK_THEME : LIGHT_THEME}>{children}</_ThemeProvider>;
+  return (
+    <MantineProvider
+      forceColorScheme={isDarkMode ? "dark" : "light"}
+      theme={
+        {
+          // primaryColor: "red"
+        }
+      }
+    >
+      <_ThemeProvider theme={isDarkMode ? DARK_THEME : LIGHT_THEME}>{children}</_ThemeProvider>
+    </MantineProvider>
+  );
 }
 
 export const GlobalStyles = createGlobalStyle`    

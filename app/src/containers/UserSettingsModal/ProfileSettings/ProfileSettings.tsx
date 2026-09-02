@@ -45,8 +45,7 @@ function ProfileSettings() {
         try {
           await modifyProfile({
             firstName: state.firstName,
-            lastName: state.lastName,
-            email: state.email
+            lastName: state.lastName
           });
         } catch (err) {
           setSaving(false);
@@ -105,6 +104,7 @@ function ProfileSettings() {
         value={state.email}
         name="email"
         id="email"
+        disabled
         invalid={Boolean(invalid === "email")}
         onChange={evt =>
           setState(state => ({

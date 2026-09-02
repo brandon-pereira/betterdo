@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { Variant } from "framer-motion";
+import { Transition, Variant } from "framer-motion";
 
 import useEscapeKey from "./useEscapeKey";
 import { Overlay, FocusLock, Content, Arrow, Container, ModalClose, ContentContainer } from "./Modal.styles";
@@ -19,6 +19,7 @@ interface Props {
   };
   disableHeightAnimation?: boolean;
   onAnimationComplete?: () => void;
+  transition?: Transition;
 }
 
 const defaultVariant = {
@@ -40,7 +41,8 @@ const Modal = forwardRef<HTMLDivElement, Props>(
       children,
       canCloseModal,
       onRequestClose,
-      disableHeightAnimation
+      disableHeightAnimation,
+      transition
     },
     ref
   ) => {
@@ -85,7 +87,7 @@ const Modal = forwardRef<HTMLDivElement, Props>(
             initial="hidden"
             animate="visible"
             exit="hidden"
-            transition={{ duration: 0.1, type: "easeOut" }}
+            transition={transition || { duration: 0.1, type: "easeOut" }}
             variants={variants || defaultVariant}
             $disableHeightAnimation={disableHeightAnimation}
             onAnimationComplete={() => {

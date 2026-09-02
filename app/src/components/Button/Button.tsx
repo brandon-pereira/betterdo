@@ -5,6 +5,7 @@ interface Props {
   loaderColor?: string;
   isLoading?: boolean;
   loadingText?: string;
+  variant?: "primary" | "secondary";
 }
 
 const Button = ({
@@ -13,11 +14,13 @@ const Button = ({
   loaderColor,
   loadingText,
   isLoading,
+  variant = "primary",
+
   ...props
 }: Props & React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <StyledButton type={type || "button"} {...props}>
+  <StyledButton type={type || "button"} $variant={variant} {...props}>
     {isLoading && <Loader isVisible={true} color={loaderColor} size="1rem" />}
-    {isLoading ? <span>{loadingText || "Loading"}</span> : <span>{children}</span>}
+    <span>{isLoading ? loadingText || "Loading" : children}</span>
   </StyledButton>
 );
 

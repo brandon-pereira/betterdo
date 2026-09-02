@@ -1,7 +1,5 @@
 import { styled } from "styled-components";
-
 import _Icon from "@components/Icon";
-import _Button from "@components/Button";
 
 export const Container = styled.div`
   position: fixed;
@@ -36,12 +34,9 @@ export const Container = styled.div`
 `;
 
 export const Icon = styled(_Icon)`
-  /* background: red; */
   margin-bottom: 2rem;
   * {
     fill: #fff;
     stroke-width: 0;
   }
 `;
-
-export const Button = styled(_Button)``;

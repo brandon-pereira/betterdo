@@ -1,12 +1,11 @@
 import { useEffect, useCallback, useState } from "react";
 
-import { Container, Content, Block, ButtonContainer } from "./EditTask.styles";
+import { Container, Content, Block, ButtonContainer, HeaderBar, HeaderTitle } from "./EditTask.styles";
 import CreatorBlock from "./CreatorBlock";
 import ListsDropdown from "./ListsDropdown";
 import Loader from "./Loader";
 
 import Task from "@customTypes/task";
-import { Header } from "@components/Copy";
 import Selector from "@components/Selector";
 import { Label, Input, Error } from "@components/Forms";
 import Button from "@components/Button";
@@ -34,23 +33,23 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
   const { task, loading, error } = useTaskDetails(taskId);
   const modifyTask = useModifyTask();
   const deleteTask = useDeleteTask();
-  const [state, _setState] = useState<Partial<Task>>({ ...(task || {}) });
+  const [state, _setState] = useState<Partial<Task>>({ ...(task || {}), priority: task?.priority ?? "normal" });
   const [_error, setError] = useState<string | undefined>();
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    _setState({ ...(task || {}) });
+    _setState({ ...(task || {}), priority: task?.priority ?? "normal" });
   }, [task]);
 
   const onSaveTask = useCallback(
     async (updatedProps: Partial<Task>) => {
-      if (!state.list) {
+      if (!state.listId) {
         return;
       }
       setSaving(true);
       try {
-        await modifyTask(taskId, state.list, updatedProps);
+        await modifyTask(taskId, state.listId, updatedProps);
       } catch (err) {
         console.error(err);
         if (err instanceof ServerError) {
@@ -63,7 +62,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
       setUnsavedChanges(false);
       setSaving(false);
     },
-    [modifyTask, setUnsavedChanges, state.list, taskId]
+    [modifyTask, setUnsavedChanges, state.listId, taskId]
   );
 
   const onSaveButtonPressed = useCallback(() => {
@@ -76,7 +75,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
         subtasks: state.subtasks,
         // we only mutate list if changed, or else we automatically
         // redirect which isn't ideal (custom lists)
-        ...(state.list !== task.list ? { list: state.list } : {})
+        ...(state.listId !== task.listId ? { listId: state.listId } : {})
       });
     }
   }, [state, task, onSaveTask]);
@@ -129,7 +128,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
     }));
   };
 
-  if (loading || !state._id) {
+  if (loading || !state.id) {
     return <Loader />;
   }
 
@@ -140,7 +139,9 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
   return (
     <Container>
       <Content>
-        <Header>Edit Task</Header>
+        <HeaderBar>
+          <HeaderTitle>Edit Task</HeaderTitle>
+        </HeaderBar>
         {_error && <Error>{_error}</Error>}
         <Block>
           <Label>Title</Label>
@@ -177,7 +178,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
         </Block>
         <Block>
           <Label>List</Label>
-          <ListsDropdown onSelect={list => onValueChange({ list })} currentListId={state.list} />
+          <ListsDropdown onSelect={listId => onValueChange({ listId })} currentListId={state.listId} />
         </Block>
         <Block>
           <Label>Due By</Label>

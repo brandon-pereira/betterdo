@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
+import useConfig from "@hooks/useConfig";
 import useModifyProfile from "@hooks/useModifyProfile";
 import useProfile from "@hooks/useProfile";
 
@@ -13,6 +14,7 @@ type valueof<T> = T[keyof T];
 
 function usePushNotifications() {
   const { profile, loading, error } = useProfile();
+  const { vapidKey } = useConfig();
   const modifyProfile = useModifyProfile();
   const [status, setStatus] = useState<valueof<typeof STATES>>(STATES.DISABLED);
 
@@ -37,7 +39,7 @@ function usePushNotifications() {
       console.warn("Requesting user notification subscription before ready!");
       return;
     }
-    const subscription = await _requestNotificationAccess(profile?.config.vapidKey);
+    const subscription = await _requestNotificationAccess(vapidKey);
     if (subscription) {
       console.info("Successfully got user subscription", subscription);
       setStatus("ENABLED");
@@ -47,7 +49,7 @@ function usePushNotifications() {
       localStorage.setItem("banners.pushDisabled", "true");
       setStatus("DISABLED");
     }
-  }, [profile, modifyProfile, loading, error]);
+  }, [vapidKey, modifyProfile, loading, error]);
 
   const onDeclineNotificationAccess = useCallback(() => {
     setStatus("DISABLED");
@@ -81,7 +83,7 @@ const _getNotificationSubscription = async () => {
   }
 };
 
-const _requestNotificationAccess = async (vapidPublicKey?: string) => {
+const _requestNotificationAccess = async (vapidPublicKey?: string | null) => {
   if (navigator.serviceWorker && vapidPublicKey) {
     try {
       const reg = await navigator.serviceWorker.ready;

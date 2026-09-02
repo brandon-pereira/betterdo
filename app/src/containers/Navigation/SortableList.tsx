@@ -70,8 +70,8 @@ function SortableList({ lists, onSortEnd }: SortableListProps) {
     (event: DragEndEvent) => {
       const { active, over } = event;
       if (active && over && active.id !== over.id) {
-        const oldIndex = lists.findIndex(list => list._id === active.id);
-        const newIndex = lists.findIndex(list => list._id === over.id);
+        const oldIndex = lists.findIndex(list => list.id === active.id);
+        const newIndex = lists.findIndex(list => list.id === over.id);
         return onSortEnd({ oldIndex, newIndex });
       }
     },
@@ -85,11 +85,11 @@ function SortableList({ lists, onSortEnd }: SortableListProps) {
       onDragEnd={onDragEnd}
       modifiers={[restrictToParentElement, restrictToVerticalAxis]}
     >
-      <SortableContext items={lists.map(list => list._id)} strategy={verticalListSortingStrategy}>
+      <SortableContext items={lists.map(list => list.id)} strategy={verticalListSortingStrategy}>
         {lists.map((list, index) => (
           <SortableItem
-            key={typeof list === "object" ? list._id : index}
-            id={typeof list === "object" ? list._id : `${index}`}
+            key={typeof list === "object" ? list.id : index}
+            id={typeof list === "object" ? list.id : `${index}`}
             value={list}
           />
         ))}

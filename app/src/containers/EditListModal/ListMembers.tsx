@@ -56,9 +56,9 @@ function ListMembers() {
   const [members, setMembers] = useState(list.members!);
 
   const removeMember = useCallback(
-    async (_id: string) => {
+    async (id: string) => {
       // Temporarily update UI while request sends
-      const _members = members.filter(member => member._id !== _id);
+      const _members = members.filter(member => member.id !== id);
       setMembers(_members);
       // Make actual request
       await modifyList(currentListId, {
@@ -83,7 +83,7 @@ function ListMembers() {
       try {
         // See if member exists
         const user = await getUserByEmail(input);
-        if (members.find(m => m._id === user._id)) {
+        if (members.find(m => m.id === user.id)) {
           setLoading(false);
           setInvalid(true);
           setError("User already exists on list");
@@ -126,7 +126,7 @@ function ListMembers() {
             <UsersName>
               {user.firstName} {user.lastName}
             </UsersName>
-            {user._id === list.owner ? <Owner /> : <Button onClick={() => removeMember(user._id)}>Remove</Button>}
+            {user.id === list.owner ? <Owner /> : <Button onClick={() => removeMember(user.id)}>Remove</Button>}
           </User>
         ))}
       </UserList>

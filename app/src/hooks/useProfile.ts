@@ -1,26 +1,54 @@
-import useSWR from "swr";
 import { useCallback } from "react";
 
 import createSharedHook from "./internal/createSharedHook";
-import { getProfileUrl } from "./internal/urls";
 
 import User from "@customTypes/user";
-import { SERVER_URL } from "@utilities/env";
+import { signOut, useSession } from "@utilities/auth";
+import { pick } from "radash";
 
 function useProfileOnce() {
-  const { data, error } = useSWR<User>(getProfileUrl(), {
-    dedupingInterval: 7200000 // 2hr
-  });
+  const { data, error } = useSession();
 
-  const logout = useCallback(() => {
-    window.location.href = `${SERVER_URL}/auth/logout`;
+  const logout = useCallback(async () => {
+    await signOut();
+    // Clear per-user state, then hard reload to wipe all in-memory state.
+    localStorage.removeItem("lastViewedList");
+    window.location.href = "/";
   }, []);
+
+  if (error) {
+    return {
+      logout,
+      error: error.message,
+      loading: false,
+      profile: null
+    };
+  }
+
+  if (!data) {
+    return {
+      logout,
+      error,
+      loading: true,
+      profile: null
+    };
+  }
 
   return {
     logout,
     error,
-    loading: Boolean(!data),
-    profile: data
+    loading: false,
+    profile: {
+      ...pick(data.user, ["id", "email", "image", "isPushEnabled", "isBeta", "timeZone"]),
+      firstName: data.user.name.split(" ")[0] || "",
+      lastName: data.user.name.split(" ").slice(1).join(" ") || "",
+      profilePicture: data.user.image,
+      lastLogin: data?.session.updatedAt,
+      creationDate: data?.user.createdAt,
+      isPushEnabled: !!data.user.isPushEnabled,
+      customLists: data.user.customLists || {},
+      isBeta: !!data.user.isBeta
+    } satisfies User
   };
 }
 

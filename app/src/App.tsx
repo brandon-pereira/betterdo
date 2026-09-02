@@ -1,50 +1,27 @@
-import { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-
-import Container from "./containers/Container";
-import Header from "./containers/Header";
-import Navigation from "./containers/Navigation";
-import Logo from "./containers/Logo";
-import Body from "./containers/Body";
-import AddListModal from "./containers/AddListModal";
-import EditListModal from "./containers/EditListModal";
-import EditTaskModal from "./containers/EditTaskModal";
-import UserSettingsModal from "./containers/UserSettingsModal";
-
-import Helmet from "@components/Helmet";
+import { useRef } from "react";
+import { useSession } from "@utilities/auth";
+import CoreApp from "./pages/CoreApp";
+import AuthPages from "./pages/Auth";
+import FullScreenLoader from "@components/FullScreenLoader";
 
 const App = () => {
-  useEffect(() => {
-    document.body.classList.add("loaded");
-    document.querySelector("#critical-css")?.remove();
-  }, []);
+  const { isPending, data } = useSession();
 
-  return (
-    <>
-      <Helmet />
-      <Container>
-        <Logo />
-        <Navigation />
-        <Header />
-        <Body />
-      </Container>
-      <AnimatePresence>
-        {/* 
-                    We can get unmount animations once this open issue is resolved:
-                    I've previously added   <Routes location={location} key={location.pathname}>
-                    which works but causes app to error when you change lists. No good.
-                    https://github.com/remix-run/react-router/issues/7117 
-                */}
-        <Routes>
-          <Route element={<AddListModal isOpen={true} />} path="create-list" key="create-list" />
-          <Route element={<EditListModal isOpen={true} />} path="edit-list/:section" />
-          <Route element={<EditTaskModal isOpen={true} />} path="edit-task/:currentTaskId" />
-          <Route element={<UserSettingsModal isOpen={true} />} path="profile-settings/:section" />
-        </Routes>
-      </AnimatePresence>
-    </>
-  );
+  // Only show the loader on the initial session resolution. Blocking on later
+  // background refetches would unmount the current view mid-flow, flashing the
+  // login form and wiping in-progress state (e.g. the post-signup screen).
+  const hasResolved = useRef(false);
+  if (!isPending) {
+    hasResolved.current = true;
+  }
+
+  if (isPending && !hasResolved.current) {
+    return <FullScreenLoader />;
+  }
+  if (!data) {
+    return <AuthPages />;
+  }
+  return <CoreApp />;
 };
 
 export default App;

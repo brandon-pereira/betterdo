@@ -12,7 +12,7 @@ function useDeleteList() {
   const navigate = useNavigate();
   return useCallback(
     async (listId: string) => {
-      await mutate(getListsUrl(), async (lists?: List[]) => lists?.filter(list => list._id !== listId), false);
+      await mutate(getListsUrl(), async (lists?: List[]) => lists?.filter(list => list.id !== listId), false);
       try {
         await deleteList(listId);
       } catch (err) {

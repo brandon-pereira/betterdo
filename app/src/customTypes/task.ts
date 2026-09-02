@@ -2,15 +2,15 @@ import User from "./user";
 
 export interface Subtask {
   // Id is temporary because it could be a temp task
-  _id?: string;
+  id?: string;
   title: string;
   isComplete: boolean;
 }
 
 interface Task {
-  _id: string;
+  id: string;
   title: string;
-  list: string;
+  listId: string;
   isCompleted: boolean;
   createdBy: User;
   notes: string;

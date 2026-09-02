@@ -63,7 +63,7 @@ const SortableItem = function ({ id, task }: SortableItemProps) {
   return (
     <motion.div
       // we need to tell framer to re-calculate if isTemporary changes
-      key={task._id + task.isTemporaryTask}
+      key={task.id + task.isTemporaryTask}
       // Disable animations because ghost element prob did this already
       layout={!task.isTemporaryTask}
       exit={task.isCompleted ? { x: "50vw", opacity: 0 } : undefined}
@@ -79,9 +79,10 @@ const SortableItem = function ({ id, task }: SortableItemProps) {
 interface SortableListProps {
   listId: string;
   tasks: TaskType[];
-  onSortEnd: (payload: { oldIndex: number; newIndex: number }) => void;
+  onSortEnd?: (payload: { oldIndex: number; newIndex: number }) => void;
 }
 function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
+  const isSortable = typeof onSortEnd === "function";
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -97,9 +98,9 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
   const onDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
-      if (active && over && active.id !== over.id) {
-        const oldIndex = tasks.findIndex(task => task._id === active.id);
-        const newIndex = tasks.findIndex(task => task._id === over.id);
+      if (onSortEnd && active && over && active.id !== over.id) {
+        const oldIndex = tasks.findIndex(task => task.id === active.id);
+        const newIndex = tasks.findIndex(task => task.id === over.id);
         return onSortEnd({ oldIndex, newIndex });
       }
     },
@@ -116,13 +117,13 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
 
   return (
     <DndContext
-      sensors={sensors}
+      sensors={isSortable ? sensors : []}
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}
       modifiers={[restrictToWindowEdges]}
     >
       <SortableContext
-        items={tasks.map((task, index) => (typeof task === "object" ? task._id : `${index}`))}
+        items={tasks.map((task, index) => (typeof task === "object" ? task.id : `${index}`))}
         strategy={verticalListSortingStrategy}
       >
         <AnimatePresence mode={prevLength.current === 0 ? "sync" : "wait"} custom={{ newListLength: tasks.length }}>
@@ -137,8 +138,8 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
             <AnimatePresence>
               {tasks.map((task, index) => (
                 <SortableItem
-                  key={typeof task === "object" ? task._id : index}
-                  id={typeof task === "object" ? task._id : `${index}`}
+                  key={typeof task === "object" ? task.id : index}
+                  id={typeof task === "object" ? task.id : `${index}`}
                   task={task}
                 />
               ))}

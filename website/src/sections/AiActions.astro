@@ -57,13 +57,13 @@ import ScrollText from "../components/ScrollText.astro";
     border-radius: calc(4rem + var(--padding));
     /* height: 20rem; */
     /* font-family: "DM Serif Display", serif; */
-    font-size: 2rem;
-    line-height: 2.5rem;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
     text-align: center;
   }
 
   .title {
-    font-size: 2.5rem;
+    font-size: 1.75rem;
     margin: 0;
   }
 
@@ -73,9 +73,23 @@ import ScrollText from "../components/ScrollText.astro";
   }
 
   .actions {
-    height: 5rem;
     text-wrap: balance;
-    width: 800px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      font-size: 2rem;
+      line-height: 2.5rem;
+    }
+    .title {
+      font-size: 2.5rem;
+    }
+    .actions {
+      height: 5rem;
+    }
   }
   @keyframes ai-rotate {
     from {

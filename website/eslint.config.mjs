@@ -2,8 +2,9 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import prettier from "eslint-plugin-prettier/recommended";
 import astro from "eslint-plugin-astro";
+import { defineConfig, globalIgnores } from "eslint/config";
 
-export default tseslint.config(
+export default defineConfig(
   eslint.configs.recommended,
   tseslint.configs.recommended,
   prettier,
@@ -16,7 +17,5 @@ export default tseslint.config(
       }
     }
   },
-  {
-    ignores: [".astro"]
-  }
+  globalIgnores([".astro"])
 );

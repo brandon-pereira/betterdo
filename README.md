@@ -12,6 +12,9 @@ This project is powered by a modern tech stack — TypeScript, Node.js, React, V
 
 - ⚛️ React Application leveraging Hooks and SWR.
 - 🤓 Uses TypeScript to reduce bugs and improve code satisfaction
+- ⚡️ API built on [Hono](https://hono.dev/), [Drizzle ORM](https://orm.drizzle.team/), and Postgres.
+- 🔐 Authentication powered by [Better Auth](https://www.better-auth.com/) — email & password, Passkeys, and Google login, plus email verification and password reset flows.
+- ✉️ Branded transactional emails via [Resend](https://resend.com/).
 - 👷‍♂️ Leverages a Service Worker for offline support, push notifications, and an installable PWA.
 - 🧱 Uses Vite for blazing fast development and builds
 - 🎼 Leverages GitHub actions for automated production deploys and testing
@@ -29,15 +32,16 @@ Once you have these installed, you can clone the repository and run the followin
 ```bash
 nvm use
 yarn install
-cp api/.env.example api/.env
+cp api/.env.sample api/.env
 ```
 
-After copying the `.env` file, you should edit it to set your environment variables. You can use the `.env.example` file as a reference.
+After copying the `.env` file, you should edit it to set your environment variables. You can use the `.env.sample` file as a reference.
 
 After setting your environment variables, you can run the development server:
 
 ```bash
 docker compose up -d
+yarn migrate
 yarn start
 ```
 

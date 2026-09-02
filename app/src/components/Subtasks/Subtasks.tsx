@@ -37,7 +37,7 @@ function Subtasks({ subtasks, onChange }: Props) {
 
   const onToggleCompleted = (idx: string) => {
     const _temp = Array.from(_subtasks);
-    const index = _temp.findIndex(subtask => subtask._id === idx);
+    const index = _temp.findIndex(subtask => subtask.id === idx);
     if (Number.isInteger(index)) {
       _temp[index].isComplete = !_temp[index].isComplete;
       setSubtasks(_temp);
@@ -46,7 +46,7 @@ function Subtasks({ subtasks, onChange }: Props) {
 
   const onDelete = (idx: string) => {
     const _temp = Array.from(_subtasks);
-    const index = _temp.findIndex(subtask => subtask._id === idx);
+    const index = _temp.findIndex(subtask => subtask.id === idx);
     if (Number.isInteger(index)) {
       _temp.splice(index, 1);
       setSubtasks(_temp);

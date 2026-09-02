@@ -1,19 +1,23 @@
 import * as ReactDOM from "react-dom/client";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { ResponsiveProvider } from "@hooks/useResponsive";
+import "@mantine/core/styles.css";
 
 import { ThemeProvider, GlobalStyles } from "./utilities/ThemeProvider";
-import InitialListRedirect from "./containers/Redirects/InitialListRedirect";
 import SWRProvider from "./utilities/SWRProvider";
 import App from "./App";
 
 import { DarkModeProvider } from "@hooks/useDarkMode";
-import SharedProviders from "@hooks/internal/SharedProviders";
+
 import ErrorBoundary from "@components/ErrorBoundary";
 
 import "./utilities/ServiceWorkerRegister";
 
 const root = ReactDOM.createRoot(document.querySelector(".main-container")!);
+
+document.body.classList.add("loaded");
+document.querySelector("#critical-css")?.remove();
 
 root.render(
   <HelmetProvider>
@@ -21,32 +25,13 @@ root.render(
     <DarkModeProvider>
       <ThemeProvider>
         <ErrorBoundary>
-          <HashRouter>
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <SWRProvider>
-                    <SharedProviders>
-                      <InitialListRedirect />
-                    </SharedProviders>
-                  </SWRProvider>
-                }
-              />
-              <Route
-                path=":currentListId/*"
-                element={
-                  <>
-                    <SWRProvider>
-                      <SharedProviders>
-                        <App />
-                      </SharedProviders>
-                    </SWRProvider>
-                  </>
-                }
-              />
-            </Routes>
-          </HashRouter>
+          <SWRProvider>
+            <ResponsiveProvider>
+              <BrowserRouter basename={import.meta.env.BASE_URL}>
+                <App />
+              </BrowserRouter>
+            </ResponsiveProvider>
+          </SWRProvider>
         </ErrorBoundary>
       </ThemeProvider>
     </DarkModeProvider>

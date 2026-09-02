@@ -90,8 +90,8 @@ const SortableList = ({ items, onDelete, onToggleCompleted, onSortEnd }: Sortabl
     (event: DragEndEvent) => {
       const { active, over } = event;
       if (active && over && active.id !== over.id) {
-        const oldIndex = items.findIndex(task => task._id === active.id);
-        const newIndex = items.findIndex(task => task._id === over.id);
+        const oldIndex = items.findIndex(task => task.id === active.id);
+        const newIndex = items.findIndex(task => task.id === over.id);
         return onSortEnd({ oldIndex, newIndex });
       }
     },
@@ -105,16 +105,13 @@ const SortableList = ({ items, onDelete, onToggleCompleted, onSortEnd }: Sortabl
       onDragEnd={onDragEnd}
       modifiers={[restrictToParentElement]}
     >
-      <SortableContext
-        items={items.map((item, index) => item._id || `${index}`)}
-        strategy={verticalListSortingStrategy}
-      >
+      <SortableContext items={items.map((item, index) => item.id || `${index}`)} strategy={verticalListSortingStrategy}>
         {items.map((value, index) => (
           <SortableItem
             onDelete={onDelete}
             onToggleCompleted={onToggleCompleted}
-            key={value._id || index}
-            id={value._id || `${index}`}
+            key={value.id || index}
+            id={value.id || `${index}`}
             value={value}
           />
         ))}

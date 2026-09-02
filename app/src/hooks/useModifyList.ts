@@ -38,10 +38,10 @@ function useModifyList() {
 function normalizeDataForServerCall(updatedProps: Partial<List>): ServerList {
   const serverData = { ...updatedProps } as unknown as ServerList;
   if (updatedProps.tasks) {
-    serverData.tasks = updatedProps.tasks.map(m => m._id);
+    serverData.tasks = updatedProps.tasks.map(m => m.id);
   }
   if (updatedProps.members) {
-    serverData.members = updatedProps.members.map(m => m._id);
+    serverData.members = updatedProps.members.map(m => m.id);
   }
   return serverData;
 }

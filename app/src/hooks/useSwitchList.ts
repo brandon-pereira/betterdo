@@ -8,6 +8,7 @@ import List from "@customTypes/list";
 import Task from "@customTypes/task";
 import useCompletedTasks from "@hooks/useCompletedTasks";
 import useHamburgerNav from "@hooks/useHamburgerNav";
+import { getListSlug } from "@utilities/customLists";
 
 type DeepOptional<T> = T extends object ? DeepOptionalObject<T> : T | undefined;
 
@@ -21,27 +22,29 @@ function useSwitchList() {
 
   const switchList = useCallback(
     async (nextList: DeepOptional<List>) => {
-      if (!nextList._id) {
+      if (!nextList.id) {
         console.warn("Next List ID is required!");
         return;
       }
+      // Use type-based slug for custom lists (inbox, today, etc.), UUID for regular lists
+      const slug = getListSlug(nextList as { id: string; type?: string });
       if (nextList && nextList.tasks) {
-        nextList.tasks = nextList.tasks.map(_id => {
-          if (typeof _id === "string") {
+        nextList.tasks = nextList.tasks.map(id => {
+          if (typeof id === "string") {
             return {
-              _id: _id,
+              id: id,
               isTemporaryTask: true,
               isLoading: true
             } as Partial<Task>;
           }
-          return _id;
+          return id;
         });
       }
       // close the hamburger nav
       setMobileNavVisibility(false);
       // update the local data immediately, but disable the revalidation.
       await mutate(
-        getListDetailUrl(nextList._id),
+        getListDetailUrl(slug),
         (list?: Partial<List>) =>
           ({
             ...nextList,
@@ -52,9 +55,9 @@ function useSwitchList() {
       // turn off completed tasks view
       setShowCompletedTasks(false);
       // update url
-      navigate(`/${nextList._id}`);
+      navigate(`/${slug}`);
       // Force a network refresh when changing lists
-      await mutate(getListDetailUrl(nextList._id));
+      await mutate(getListDetailUrl(slug));
     },
     [navigate, mutate, setMobileNavVisibility, setShowCompletedTasks]
   );

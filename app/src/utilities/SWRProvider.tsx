@@ -1,7 +1,5 @@
 import { SWRConfig } from "swr";
 
-import { SERVER_URL } from "@utilities/env";
-
 function SWRProvider({ children }: { children: React.ReactChild }) {
   return (
     <SWRConfig
@@ -11,9 +9,6 @@ function SWRProvider({ children }: { children: React.ReactChild }) {
             credentials: "include"
           });
           if (res.status >= 400) {
-            if (res.status === 401) {
-              window.location.href = SERVER_URL + "/auth/google";
-            }
             let error = "Unexpected Error";
             try {
               const data = await res.json();
