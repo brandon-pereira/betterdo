@@ -34,14 +34,26 @@ export default class DrizzleNotificationAdapter<NotificationFormat> implements N
   }
 
   async fetchNotifications(date: Date): Promise<QueuedNotification<NotificationFormat>[]> {
-    const rows = await db.select().from(scheduledNotifications).where(lte(scheduledNotifications.date, date));
+    try {
+      const rows = await db.select().from(scheduledNotifications).where(lte(scheduledNotifications.date, date));
 
-    return rows.map(row => ({
-      id: row.id,
-      date: row.date,
-      userId: row.userId,
-      payload: row.payload as NotificationFormat
-    }));
+      return rows.map(row => ({
+        id: row.id,
+        date: row.date,
+        userId: row.userId,
+        payload: row.payload as NotificationFormat
+      }));
+    } catch (err) {
+      // web-notifier's scheduler polls this every 5s with no error handling, so
+      // any rejection here becomes an unhandled rejection and crashes the
+      // process (e.g. when Postgres isn't up yet at boot). Swallow the error and
+      // return an empty queue; the next poll retries once the DB is reachable.
+      console.error(
+        "[notifier] fetchNotifications failed, retrying next poll:",
+        err instanceof Error ? err.message : err
+      );
+      return [];
+    }
   }
 
   async clearNotification(id: string): Promise<boolean> {
