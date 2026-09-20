@@ -11,7 +11,7 @@ export const TabsHeader = styled.div`
   border: 2px solid ${props => props.color || props.theme.colors.general.blue};
   border-radius: 3px;
   margin-bottom: 1rem;
-  overflow-x: hidden;
+  overflow-x: auto;
 `;
 export const ActiveTabHeaderBackground = styled(motion.div)<{
   color?: string;

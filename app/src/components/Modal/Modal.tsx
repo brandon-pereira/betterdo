@@ -118,7 +118,7 @@ const Modal = forwardRef<HTMLDivElement, Props>(
             $visible={visible}
           >
             <ContentContainer $disableHeightAnimation={disableHeightAnimation} $height={height}>
-              <Content $disableHeightAnimation={disableHeightAnimation} ref={contentRef}>
+              <Content data-betterdo-modal-content $disableHeightAnimation={disableHeightAnimation} ref={contentRef}>
                 {children}
               </Content>
             </ContentContainer>

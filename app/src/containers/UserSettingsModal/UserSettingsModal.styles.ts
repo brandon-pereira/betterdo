@@ -3,9 +3,8 @@ import { styled } from "styled-components";
 import _Modal from "@components/Modal";
 
 export const Modal = styled(_Modal)`
-  /* 460 is to make all tabs fit nicely */
-  min-width: min(100%, 460px);
-  padding: 1rem;
+  width: 100%;
+  max-width: 800px;
   border-radius: 1.25rem;
   background: ${({ theme }) => (theme.isDarkMode ? "rgba(30, 30, 30, 0.7)" : "#fff")};
   backdrop-filter: blur(40px) saturate(1.8);
@@ -16,5 +15,8 @@ export const Modal = styled(_Modal)`
     inset 0 1px 0 ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.8)")};
   & [data-betterdo-modal-arrow] {
     display: none;
+  }
+  & [data-betterdo-modal-content] {
+    padding: 2rem;
   }
 `;
