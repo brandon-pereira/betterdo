@@ -1,4 +1,5 @@
 import { StyledButton, Loader } from "./Button.styles";
+import { vibrate } from "@utilities/haptics";
 
 interface Props {
   children: React.ReactNode;
@@ -15,13 +16,21 @@ const Button = ({
   loadingText,
   isLoading,
   variant = "primary",
+  onClick,
 
   ...props
-}: Props & React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <StyledButton type={type || "button"} $variant={variant} {...props}>
-    {isLoading && <Loader isVisible={true} color={loaderColor} size="1rem" />}
-    <span>{isLoading ? loadingText || "Loading" : children}</span>
-  </StyledButton>
-);
+}: Props & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    vibrate("tap");
+    onClick?.(e);
+  };
+
+  return (
+    <StyledButton type={type || "button"} $variant={variant} onClick={handleClick} {...props}>
+      {isLoading && <Loader isVisible={true} color={loaderColor} size="1rem" />}
+      <span>{isLoading ? loadingText || "Loading" : children}</span>
+    </StyledButton>
+  );
+};
 
 export default Button;

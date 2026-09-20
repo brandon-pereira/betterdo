@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 
 import { Switch, Slider } from "./Toggle.styles";
+import { vibrate } from "@utilities/haptics";
 
 interface Props {
   value: boolean;
@@ -14,6 +15,7 @@ function Toggle({ value, onChange, disabled }: Props) {
   const _onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const newState = e.target.checked;
+      vibrate("tap");
       setChecked(newState);
       if (onChange) {
         onChange(e, newState);

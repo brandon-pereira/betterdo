@@ -20,6 +20,7 @@ import {
 import { DeleteIcon, Task, Checkbox } from "./Subtasks.styles";
 
 import x from "@components/Icon/svgs/x.svg";
+import { vibrate } from "@utilities/haptics";
 import { Subtask } from "@customTypes/task";
 
 interface Props {
@@ -86,10 +87,15 @@ const SortableList = ({ items, onDelete, onToggleCompleted, onSortEnd }: Sortabl
     })
   );
 
+  const onDragStart = useCallback(() => {
+    vibrate("pickup");
+  }, []);
+
   const onDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
       if (active && over && active.id !== over.id) {
+        vibrate("tap");
         const oldIndex = items.findIndex(task => task.id === active.id);
         const newIndex = items.findIndex(task => task.id === over.id);
         return onSortEnd({ oldIndex, newIndex });
@@ -102,6 +108,7 @@ const SortableList = ({ items, onDelete, onToggleCompleted, onSortEnd }: Sortabl
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       modifiers={[restrictToParentElement]}
     >

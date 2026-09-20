@@ -1,5 +1,7 @@
 import { TouchEvent, useState } from "react";
 
+import { vibrate } from "@utilities/haptics";
+
 interface SwipeInput {
   onSwipedLeft?: () => void;
   onSwipedRight?: () => void;
@@ -31,9 +33,11 @@ export default (input: SwipeInput): SwipeOutput => {
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
     if (isLeftSwipe) {
+      vibrate("tap");
       input?.onSwipedLeft?.();
     }
     if (isRightSwipe) {
+      vibrate("tap");
       input?.onSwipedRight?.();
     }
   };

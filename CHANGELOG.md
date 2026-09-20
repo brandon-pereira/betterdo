@@ -1,7 +1,8 @@
 # Changelog
 
-## v8.0.1
+## v8.1.0
 
+- Add Web Haptics
 - Make cmd+s save forms automatically
 - Automatically save notes on change to match other inputs
 - automatically save notes when closing modal

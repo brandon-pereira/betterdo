@@ -20,6 +20,7 @@ import {
 
 import TaskType from "@customTypes/task";
 import Task from "@components/Task";
+import { vibrate } from "@utilities/haptics";
 
 const variants = {
   visible: {
@@ -95,10 +96,15 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
     })
   );
 
+  const onDragStart = useCallback(() => {
+    vibrate("pickup");
+  }, []);
+
   const onDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
       if (onSortEnd && active && over && active.id !== over.id) {
+        vibrate("tap");
         const oldIndex = tasks.findIndex(task => task.id === active.id);
         const newIndex = tasks.findIndex(task => task.id === over.id);
         return onSortEnd({ oldIndex, newIndex });
@@ -119,6 +125,7 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
     <DndContext
       sensors={isSortable ? sensors : []}
       collisionDetection={closestCenter}
+      onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       modifiers={[restrictToWindowEdges]}
     >

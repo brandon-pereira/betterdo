@@ -5,6 +5,7 @@ import { Container, Checkbox, Title, HighPriorityFlag, Loader } from "./Task.sty
 import TaskType from "@customTypes/task";
 import useEditTaskModal from "@hooks/useEditTaskModal";
 import useModifyTask from "@hooks/useModifyTask";
+import { vibrate } from "@utilities/haptics";
 
 interface Props extends TaskType {
   containerProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
@@ -21,6 +22,7 @@ const Task = forwardRef<HTMLButtonElement, Props>(
     }, [openTaskModal, id]);
 
     const onToggleTaskCompletion = useCallback(() => {
+      vibrate(!isCompleted ? "success" : "tap");
       modifyTask(id, listId, {
         isCompleted: !isCompleted
       });
