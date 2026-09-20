@@ -7,21 +7,21 @@
  * Keep durations short (<= ~30ms for taps) so feedback feels crisp, not heavy.
  */
 
-const canVibrate = (): boolean => typeof navigator !== "undefined" && typeof navigator.vibrate === "function";
-
 /** Named vibration patterns (ms, or [on, off, on, ...] sequences). */
-export const patterns = {
-  /** Light tick for taps, button presses, toggles. */
+const patterns: Record<string, number | number[]> = {
+  /** Light tick for taps, button presses, toggles, reorders. */
   tap: 10,
-  /** Positive confirmation, e.g. completing a task. */
-  success: [12, 40, 20] as number[],
+  /** Positive confirmation, e.g. completing or creating a task. */
+  success: [12, 40, 20],
   /** Destructive / failed action, e.g. delete or validation error. */
-  error: [30, 40, 30] as number[],
+  error: [30, 40, 30],
   /** Short buzz when a drag pickup begins. */
   pickup: 15
-} as const;
+};
 
-export type HapticPattern = keyof typeof patterns;
+type HapticPattern = keyof typeof patterns;
+
+const canVibrate = (): boolean => typeof navigator !== "undefined" && typeof navigator.vibrate === "function";
 
 /**
  * Trigger a haptic vibration. Accepts a named pattern or a raw
@@ -38,5 +38,3 @@ export const vibrate = (pattern: HapticPattern | number | number[] = "tap"): voi
     // Some browsers throw if called outside a user gesture; ignore.
   }
 };
-
-export default vibrate;
