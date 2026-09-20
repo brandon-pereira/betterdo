@@ -1,1 +1,7 @@
-export { verifyEmailTemplate, resetPasswordTemplate } from "./templates.js";
+export {
+  verifyEmailTemplate,
+  resetPasswordTemplate,
+  passwordChangedTemplate,
+  passkeyAddedTemplate,
+  passkeyRemovedTemplate
+} from "./templates.js";
