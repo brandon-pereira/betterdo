@@ -63,6 +63,8 @@ const ForgotPassword = () => {
           )}
           <TextInput
             type="email"
+            name="email"
+            autoComplete="username"
             placeholder="Enter your email"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}

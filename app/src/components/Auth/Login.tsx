@@ -84,6 +84,8 @@ const Auth = () => {
           {error && <Alert color="red">{error}</Alert>}
           <TextInput
             type="email"
+            name="email"
+            autoComplete="username"
             placeholder="Email"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
@@ -91,6 +93,8 @@ const Auth = () => {
           />
 
           <PasswordInput
+            name="password"
+            autoComplete="current-password"
             placeholder="Password"
             value={password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}

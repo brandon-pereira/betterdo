@@ -124,6 +124,8 @@ const SignUp = () => {
 
           <TextInput
             type="text"
+            name="given-name"
+            autoComplete="given-name"
             placeholder="First Name"
             value={firstName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
@@ -131,6 +133,8 @@ const SignUp = () => {
           />
           <TextInput
             type="text"
+            name="family-name"
+            autoComplete="family-name"
             placeholder="Last Name"
             value={lastName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastName(e.target.value)}
@@ -139,6 +143,8 @@ const SignUp = () => {
 
           <TextInput
             type="email"
+            name="email"
+            autoComplete="username"
             placeholder="Email"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
@@ -146,6 +152,8 @@ const SignUp = () => {
           />
 
           <PasswordInput
+            name="new-password"
+            autoComplete="new-password"
             placeholder="Password"
             value={password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
@@ -153,6 +161,8 @@ const SignUp = () => {
           />
 
           <PasswordInput
+            name="confirm-password"
+            autoComplete="new-password"
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}

@@ -95,6 +95,8 @@ const ResetPassword = () => {
             </Alert>
           )}
           <PasswordInput
+            name="new-password"
+            autoComplete="new-password"
             placeholder="New Password"
             value={password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
@@ -103,6 +105,8 @@ const ResetPassword = () => {
           />
 
           <PasswordInput
+            name="confirm-password"
+            autoComplete="new-password"
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
