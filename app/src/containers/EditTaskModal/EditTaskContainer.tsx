@@ -29,12 +29,31 @@ const transition = {
 
 function EditTaskContainer({ isOpen }: Props) {
   const hasUnsavedChanges = useRef(false);
+  // The content registers a "flush" that persists any unsaved edits (e.g. notes
+  // that haven't blurred yet) and resolves once the save settles. We call it on
+  // close so pending edits are saved instead of prompting to discard them.
+  const flushPendingSave = useRef<(() => Promise<void>) | null>(null);
   const { closeModal } = useEditTaskModal();
   const setUnsavedChanges = useCallback((bool: boolean) => {
     hasUnsavedChanges.current = bool;
   }, []);
+  const registerFlush = useCallback((flush: (() => Promise<void>) | null) => {
+    flushPendingSave.current = flush;
+  }, []);
 
-  const canCloseModal = useCallback(() => {
+  const canCloseModal = useCallback(async () => {
+    // Flush any unsaved edits before deciding. Notes save on blur, but closing
+    // via the X/overlay can race that blur, so we explicitly persist here.
+    // After a successful flush there are no unsaved changes and we close
+    // cleanly without an unnecessary confirm dialog.
+    if (flushPendingSave.current) {
+      try {
+        await flushPendingSave.current();
+      } catch {
+        // If the save failed, fall through to the unsaved-changes check below.
+      }
+    }
+
     if (!hasUnsavedChanges.current) {
       return true;
     } else {
@@ -65,7 +84,7 @@ function EditTaskContainer({ isOpen }: Props) {
     >
       {isOpen && (
         <Suspense fallback={<Loader />}>
-          <Content setUnsavedChanges={setUnsavedChanges} />
+          <Content setUnsavedChanges={setUnsavedChanges} registerFlush={registerFlush} />
         </Suspense>
       )}
     </Modal>

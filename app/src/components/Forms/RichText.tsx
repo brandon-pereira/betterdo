@@ -156,6 +156,7 @@ const Editor = styled(EditorContent)`
 interface RichTextEditorProps {
   content?: string;
   onChange?: (content: string) => void;
+  onBlur?: (content: string) => void;
   placeholder?: string;
   invalid?: boolean;
 }
@@ -163,6 +164,7 @@ interface RichTextEditorProps {
 export default function RichTextEditor({
   content = "",
   onChange,
+  onBlur,
   placeholder = "Start typing..."
 }: RichTextEditorProps) {
   const editor = useEditor({
@@ -170,7 +172,16 @@ export default function RichTextEditor({
       Document,
       Paragraph,
       Text,
-      Link,
+      Link.configure({
+        autolink: true,
+        linkOnPaste: true,
+        openOnClick: true,
+        defaultProtocol: "https",
+        HTMLAttributes: {
+          target: "_blank",
+          rel: "noopener noreferrer nofollow"
+        }
+      }),
       Bold,
       Heading.configure({
         levels: [1, 2, 3]
@@ -180,6 +191,9 @@ export default function RichTextEditor({
     content,
     onUpdate: ({ editor }) => {
       onChange?.(editor.getHTML());
+    },
+    onBlur: ({ editor }) => {
+      onBlur?.(editor.getHTML());
     },
     editorProps: {
       attributes: {

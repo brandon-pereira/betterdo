@@ -12,7 +12,7 @@ interface Props {
   style?: React.CSSProperties;
   visible: boolean;
   children: React.ReactNode;
-  canCloseModal?: () => boolean;
+  canCloseModal?: () => boolean | Promise<boolean>;
   onRequestClose: () => void;
   variants?: {
     visible: Variant;
@@ -50,10 +50,10 @@ const Modal = forwardRef<HTMLDivElement, Props>(
     const contentRef = useRef<HTMLDivElement>(null);
     const [height, setHeight] = useState<number | "auto">("auto");
     const closeModal = useCallback(
-      (e?: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      async (e?: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const isBackgroundClick = !e || e.currentTarget === e.target;
         if (isBackgroundClick) {
-          const _canCloseModal = typeof canCloseModal === "function" ? canCloseModal() : true;
+          const _canCloseModal = typeof canCloseModal === "function" ? await canCloseModal() : true;
           if (_canCloseModal) {
             onRequestClose();
           }

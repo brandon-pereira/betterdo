@@ -26,9 +26,10 @@ const PRIORITIES = [
 
 interface Props {
   setUnsavedChanges: (bool: boolean) => void;
+  registerFlush?: (flush: (() => Promise<void>) | null) => void;
 }
 
-function EditTaskContent({ setUnsavedChanges }: Props) {
+function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
   const taskId = useCurrentTaskId() || "";
   const { task, loading, error } = useTaskDetails(taskId);
   const modifyTask = useModifyTask();
@@ -42,28 +43,60 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
     _setState({ ...(task || {}), priority: task?.priority ?? "normal" });
   }, [task]);
 
+  // Mirror the latest state + dirty flag in refs so `flush` (called from the
+  // container on close) can read current values without stale closures.
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const isDirty = useRef(false);
+  const markDirty = useCallback(
+    (dirty: boolean) => {
+      isDirty.current = dirty;
+      setUnsavedChanges(dirty);
+    },
+    [setUnsavedChanges]
+  );
+
   const onSaveTask = useCallback(
     async (updatedProps: Partial<Task>) => {
-      if (!state.listId) {
+      if (!stateRef.current.listId) {
         return;
       }
       setSaving(true);
       try {
-        await modifyTask(taskId, state.listId, updatedProps);
+        await modifyTask(taskId, stateRef.current.listId, updatedProps);
+        markDirty(false);
       } catch (err) {
         console.error(err);
-        if (err instanceof ServerError) {
-          setError(err.formattedMessage);
-        } else {
-          setError(ServerError.defaultError);
-        }
+        setError(err instanceof ServerError ? err.formattedMessage : ServerError.defaultError);
+      } finally {
         setSaving(false);
       }
-      setUnsavedChanges(false);
-      setSaving(false);
     },
-    [modifyTask, setUnsavedChanges, state.listId, taskId]
+    [modifyTask, markDirty, taskId]
   );
+
+  // Persist any unsaved edits on close (notes save on blur, but closing via the
+  // X/overlay can race that blur). Saves all editable fields when dirty.
+  useEffect(() => {
+    if (!registerFlush) {
+      return;
+    }
+    registerFlush(async () => {
+      if (!isDirty.current) {
+        return;
+      }
+      const s = stateRef.current;
+      await onSaveTask({
+        title: s.title,
+        priority: s.priority,
+        dueDate: s.dueDate,
+        notes: s.notes,
+        subtasks: s.subtasks,
+        ...(task && s.listId !== task.listId ? { listId: s.listId } : {})
+      });
+    });
+    return () => registerFlush(null);
+  }, [registerFlush, onSaveTask, task]);
 
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -105,17 +138,17 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
 
   const onInputChange = (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     // Mark content as dirty
-    setUnsavedChanges(true);
+    markDirty(true);
     // Set state for re-render
     _setValues({ [id]: e.target.value });
   };
 
   const onValueChange = useCallback(
     (updatedProps: Partial<Task>) => {
-      setUnsavedChanges(true);
+      markDirty(true);
       _setValues(updatedProps);
     },
-    [setUnsavedChanges]
+    [markDirty]
   );
 
   const _setValues = (updatedProps: Partial<Task>) => {
@@ -125,28 +158,22 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
     }));
   };
 
-  const notesSaveTimeout = useRef<ReturnType<typeof setTimeout>>();
-
+  // Notes update local state live (marking the form dirty) and persist when the
+  // editor loses focus. Saving on blur keeps the save logic simple (no debounce
+  // timers or flush bookkeeping) while still autosaving without a button press.
   const onNotesChange = useCallback(
     (notes: string) => {
       onValueChange({ notes });
-      if (notesSaveTimeout.current) {
-        clearTimeout(notesSaveTimeout.current);
-      }
-      notesSaveTimeout.current = setTimeout(() => {
-        onSaveTask({ notes });
-      }, 1000);
     },
-    [onSaveTask, onValueChange]
+    [onValueChange]
   );
 
-  useEffect(() => {
-    return () => {
-      if (notesSaveTimeout.current) {
-        clearTimeout(notesSaveTimeout.current);
-      }
-    };
-  }, []);
+  const onNotesBlur = useCallback(
+    (notes: string) => {
+      onSaveTask({ notes });
+    },
+    [onSaveTask]
+  );
 
   if (loading || !state.id) {
     return <Loader />;
@@ -187,7 +214,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
         </Block>
         <Block>
           <Label>Notes</Label>
-          <RichTextEditor content={state.notes} onChange={onNotesChange} />
+          <RichTextEditor content={state.notes} onChange={onNotesChange} onBlur={onNotesBlur} />
         </Block>
         <Block>
           <Label>List</Label>
