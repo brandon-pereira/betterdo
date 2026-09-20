@@ -3,9 +3,6 @@
   "workspaces": {
     "app": {
       "entry": ["./src/service-worker.ts"]
-    },
-    "api": {
-      "entry": ["jest-mongodb-config.js", "./types/**.d.ts"]
     }
   },
   "rules": {
