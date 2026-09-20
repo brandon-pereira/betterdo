@@ -7,6 +7,7 @@
 - Automatically save notes on change to match other inputs
 - automatically save notes when closing modal
 - fix several bugs when editing notes
+- improve auth/account settings ux
 
 ## v8.0.0
 
