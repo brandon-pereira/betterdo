@@ -12,7 +12,7 @@ export const Container = styled.div`
   position: relative;
   grid-row: 1;
   grid-column: 1;
-  z-index: 10;
+  z-index: var(--z-logo);
   transition: background 0.6s;
   ${({ theme }) => theme.queries.medium} {
     transform: none;
@@ -28,6 +28,7 @@ export const ProfilePicture = styled(_ProfilePicture)`
 
 export const Content = styled.div`
   height: 100%;
+  box-sizing: border-box;
   overflow: hidden;
   cursor: pointer;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.3)), ${({ theme }) => theme.colors.navigation.background};

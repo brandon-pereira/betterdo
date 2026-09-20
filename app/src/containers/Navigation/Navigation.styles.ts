@@ -18,7 +18,7 @@ export const Container = styled.nav<{ $isMobileNavVisible?: boolean }>`
     inset 0 1px rgba(255, 255, 255, 0.15),
     0 1px 2px rgba(0, 0, 0, 0.9);
   position: relative;
-  z-index: 5;
+  z-index: var(--z-navigation);
   grid-column: 1;
   grid-row: 2;
   max-height: 100%;

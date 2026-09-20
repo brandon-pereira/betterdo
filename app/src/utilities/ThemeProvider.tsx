@@ -23,6 +23,15 @@ export function ThemeProvider({ children }: { children: React.ReactChild }) {
 }
 
 export const GlobalStyles = createGlobalStyle`    
+    :root {
+        /* Global stacking order for app chrome. Spaced to leave room between
+           layers. Local stacking contexts (modal internals, individual tasks,
+           list items) keep their own small, self-contained values. */
+        --z-navigation: 10;
+        --z-logo: 30;
+        --z-header: 40;
+        --z-modal-overlay: 100;
+    }
     html {
         overflow: hidden;
     }

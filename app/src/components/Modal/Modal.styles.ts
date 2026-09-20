@@ -13,7 +13,8 @@ export const Overlay = styled.div<{ $isVisible: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
+  /* Above all app chrome (title bar, header, logo, nav). */
+  z-index: var(--z-modal-overlay);
   background: ${({ theme }) => theme.colors.modals.overlayBackground};
   backdrop-filter: blur(3px);
   ${props =>
