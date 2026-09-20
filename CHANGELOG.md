@@ -3,6 +3,7 @@
 ## v8.1.0
 
 - Add Web Haptics
+- Added ability to link Google account to Password account (enabling easier migration to new auth system)
 - Make cmd+s save forms automatically
 - Automatically save notes on change to match other inputs
 - automatically save notes when closing modal
