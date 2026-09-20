@@ -65,20 +65,24 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
     [modifyTask, setUnsavedChanges, state.listId, taskId]
   );
 
-  const onSaveButtonPressed = useCallback(() => {
-    if (task) {
-      onSaveTask({
-        title: state.title,
-        priority: state.priority,
-        dueDate: state.dueDate,
-        notes: state.notes,
-        subtasks: state.subtasks,
-        // we only mutate list if changed, or else we automatically
-        // redirect which isn't ideal (custom lists)
-        ...(state.listId !== task.listId ? { listId: state.listId } : {})
-      });
-    }
-  }, [state, task, onSaveTask]);
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (task) {
+        onSaveTask({
+          title: state.title,
+          priority: state.priority,
+          dueDate: state.dueDate,
+          notes: state.notes,
+          subtasks: state.subtasks,
+          // we only mutate list if changed, or else we automatically
+          // redirect which isn't ideal (custom lists)
+          ...(state.listId !== task.listId ? { listId: state.listId } : {})
+        });
+      }
+    },
+    [state, task, onSaveTask]
+  );
 
   const onDeleteTask = useCallback(async () => {
     const result = confirm(`Are you sure you want to delete the task "${state.title}"? This can't be undone.`);
@@ -106,16 +110,6 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
     _setValues({ [id]: e.target.value });
   };
 
-  const onInputKeyPress = (id: string) => (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const updatedProps = { [id]: e.currentTarget.value };
-      // Set state for fast re-render
-      _setValues(updatedProps);
-      // Trigger save to server
-      onSaveTask(updatedProps);
-    }
-  };
-
   const onValueChange = (updatedProps: Partial<Task>) => {
     setUnsavedChanges(true);
     _setValues(updatedProps);
@@ -137,7 +131,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
   }
 
   return (
-    <Container>
+    <Container onSubmit={onSubmit}>
       <Content>
         <HeaderBar>
           <HeaderTitle>Edit Task</HeaderTitle>
@@ -145,7 +139,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
         {_error && <Error>{_error}</Error>}
         <Block>
           <Label>Title</Label>
-          <Input value={state.title} onKeyPress={onInputKeyPress("title")} onChange={onInputChange("title")} />
+          <Input value={state.title} onChange={onInputChange("title")} />
         </Block>
         <Block>
           <Label>Priority</Label>
@@ -187,10 +181,10 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
         {task && <CreatorBlock createdBy={task.createdBy} creationDate={task.creationDate} />}
       </Content>
       <ButtonContainer>
-        <Button onClick={onSaveButtonPressed} isLoading={isSaving} loadingText="Saving">
+        <Button type="submit" isLoading={isSaving} loadingText="Saving">
           Save
         </Button>
-        <Button color={"red"} onClick={onDeleteTask} isLoading={isDeleting} loadingText="Deleting">
+        <Button type="button" color={"red"} onClick={onDeleteTask} isLoading={isDeleting} loadingText="Deleting">
           Delete
         </Button>
       </ButtonContainer>
