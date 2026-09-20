@@ -61,6 +61,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (
+      typeof PublicKeyCredential === "undefined" ||
       !PublicKeyCredential.isConditionalMediationAvailable ||
       !PublicKeyCredential.isConditionalMediationAvailable()
     ) {
