@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 
 import { Container, Content, Block, ButtonContainer, HeaderBar, HeaderTitle } from "./EditTask.styles";
 import CreatorBlock from "./CreatorBlock";
@@ -110,10 +110,13 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
     _setValues({ [id]: e.target.value });
   };
 
-  const onValueChange = (updatedProps: Partial<Task>) => {
-    setUnsavedChanges(true);
-    _setValues(updatedProps);
-  };
+  const onValueChange = useCallback(
+    (updatedProps: Partial<Task>) => {
+      setUnsavedChanges(true);
+      _setValues(updatedProps);
+    },
+    [setUnsavedChanges]
+  );
 
   const _setValues = (updatedProps: Partial<Task>) => {
     _setState(state => ({
@@ -121,6 +124,29 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
       ...updatedProps
     }));
   };
+
+  const notesSaveTimeout = useRef<ReturnType<typeof setTimeout>>();
+
+  const onNotesChange = useCallback(
+    (notes: string) => {
+      onValueChange({ notes });
+      if (notesSaveTimeout.current) {
+        clearTimeout(notesSaveTimeout.current);
+      }
+      notesSaveTimeout.current = setTimeout(() => {
+        onSaveTask({ notes });
+      }, 1000);
+    },
+    [onSaveTask, onValueChange]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (notesSaveTimeout.current) {
+        clearTimeout(notesSaveTimeout.current);
+      }
+    };
+  }, []);
 
   if (loading || !state.id) {
     return <Loader />;
@@ -161,14 +187,7 @@ function EditTaskContent({ setUnsavedChanges }: Props) {
         </Block>
         <Block>
           <Label>Notes</Label>
-          <RichTextEditor
-            content={state.notes}
-            onChange={v => {
-              onValueChange({
-                notes: v
-              });
-            }}
-          />
+          <RichTextEditor content={state.notes} onChange={onNotesChange} />
         </Block>
         <Block>
           <Label>List</Label>

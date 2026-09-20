@@ -3,6 +3,7 @@
 ## v8.0.1
 
 - Make cmd+s save forms automatically
+- Automatically save notes on change to match other inputs
 
 ## v8.0.0
 
