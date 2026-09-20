@@ -54,6 +54,10 @@ function Subtasks({ subtasks, onChange }: Props) {
   };
 
   const onKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      // Prevent Enter from submitting a surrounding <form> (e.g. the Edit Task modal)
+      e.preventDefault();
+    }
     if (e.key === "Enter" && value) {
       const _temp = Array.from(_subtasks);
       _temp.push({

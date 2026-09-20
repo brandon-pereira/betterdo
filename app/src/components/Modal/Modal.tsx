@@ -2,6 +2,7 @@ import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { Transition, Variant } from "framer-motion";
 
 import useEscapeKey from "./useEscapeKey";
+import useSaveShortcut from "./useSaveShortcut";
 import { Overlay, FocusLock, Content, Arrow, Container, ModalClose, ContentContainer } from "./Modal.styles";
 
 import x from "@components/Icon/svgs/x.svg";
@@ -62,6 +63,23 @@ const Modal = forwardRef<HTMLDivElement, Props>(
     );
 
     useEscapeKey(visible ? closeModal : undefined);
+
+    // Cmd/Ctrl+S submits the modal's form, mirroring what the Save/submit
+    // button does. Modals that render a <form> get this behavior for free.
+    // For modals with multiple forms (e.g. tabbed settings), submit the form
+    // that owns the currently focused element, falling back to the first form.
+    const onSaveShortcut = useCallback(() => {
+      const container = contentRef.current;
+      if (!container) {
+        return;
+      }
+      const active = document.activeElement;
+      const focusedForm = active instanceof HTMLElement ? active.closest("form") : null;
+      const form = focusedForm && container.contains(focusedForm) ? focusedForm : container.querySelector("form");
+      form?.requestSubmit();
+    }, []);
+
+    useSaveShortcut(visible ? onSaveShortcut : undefined);
 
     const onContainerResize = useCallback(() => {
       if (!disableHeightAnimation && contentRef.current) {

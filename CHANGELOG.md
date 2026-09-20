@@ -1,5 +1,9 @@
 # Changelog
 
+## v8.0.1
+
+- Make cmd+s save forms automatically
+
 ## v8.0.0
 
 - Rebuilt the API from the ground up on Hono, Drizzle, and Postgres (dropping Express and MongoDB)

@@ -33,7 +33,7 @@ export const Modal = styled(_Modal)`
   }
 `;
 
-export const Container = styled.div`
+export const Container = styled.form`
   display: flex;
   flex-direction: column;
   height: 100%;
