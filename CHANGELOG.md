@@ -1,6 +1,6 @@
 # Changelog
 
-## v8.1.0
+## v8.1.0 (2026-10-01)
 
 - Ditch mantine in favor of custom-built components
 - Added ability to link Google account to Password account (enabling easier migration to new auth system)
@@ -12,7 +12,7 @@
 - Improve auth/account settings ux
 - Fix custom list toggles clobbering each other when switched rapidly
 
-## v8.0.0
+## v8.0.0 (2026-09-01)
 
 - Rebuilt the API from the ground up on Hono, Drizzle, and Postgres (dropping Express and MongoDB)
 - Migrated authentication to Better Auth
@@ -24,15 +24,15 @@
 - Use Gravatar for default profile pictures
 - [Internal] Introduced end-to-end test coverage for the new API using Vitest
 
-## v7.1.0
+## v7.1.0 (2026-01-10)
 
 - Migrate rich text editor from basic text area to rich text editor (via TipTap)
 
-## 7.0.1
+## v7.0.1 (2025-12-28)
 
 - Add Monochrome icon to manifest for better PWA support on some platforms
 
-## 7.0.0
+## v7.0.0 (2025-07-20)
 
 - Moved to a monorepo structure
 - Dropped `@loadable/component` in favour of `React.lazy`
@@ -44,56 +44,56 @@
 - Added `knip` to catch and eliminate dead code
 - Leverage Docker for local development
 
-## v6.5.1
+## v6.5.1 (2025-06-19)
 
 - Improve performance of large lists by using `content-visibility: auto`
 
-## 6.5.0
+## v6.5.0 (2024-02-16)
 
 - Add support for Safari "Add to Dock" feature
 - Add support for themed Safari colors
 - Bump Dependencies
 
-## v6.4.0
+## v6.4.0 (2023-10-28)
 
 - [Internal] Change Hosting Provider
 - [Internal] Update Dependencies
 - [Internal] Remove Babel from build process
 - [Internal] Bump node to 18
 
-## v6.3.0
+## v6.3.0 (2023-10-09)
 
 - Fix bugs when timezone banner active
 - Ability to suppress timezone notifications
 - Better confetti
 
-## v6.2.0
+## v6.2.0 (2023-03-11)
 
 - Swipe the hamburger nav left or right to quickly change lists on mobile
 
-## v6.1.0
+## v6.1.0 (2023-03-03)
 
 - Add confetti animation when clearing lists (Thanks for the suggestion Emma!)
 
-## v6.0.6
+## v6.0.6 (2023-03-03)
 
 - Fix layout animation bug
 
-## v6.0.5
+## v6.0.5 (2023-02-24)
 
 - Upgrade Dependencies
 
-## v6.0.4
+## v6.0.4 (2022-11-28)
 
 - App now defaults to loading last viewed list
 
-## v6.0.3
+## v6.0.3 (2022-11-11)
 
 - Reduce core bundle size by 25%, increasing initial load time
 - Enable gzip compression for faster page loads
 - Initial site SEO/A11Y improvements, more could be done on color contrast
 
-## v6.0.2
+## v6.0.2 (2022-11-05)
 
 - Fix missing notification icons in Vite migrations
 - Use `showPicker` api on DueDate component in Task
@@ -101,7 +101,7 @@
 - Fix some relative import issues during Vite upgrade
 - Use React 17 jsx runtime, and removed need to import React from components
 
-## v6.0.1
+## v6.0.1 (2022-11-01)
 
 - Fix subtask UX on mobile
 
@@ -111,13 +111,13 @@
 - Upgrade to React 18
 - Spring Cleaning
 
-## v5.5.2
+## v5.5.2 (2022-06-17)
 
 - Fix small bug where "Next Week" due date would set to Tuesday if near end of the day.
 - Sync subtask max-length with server
 - Add back missing Input invalid styling
 
-## v5.5.1
+## v5.5.1 (2022-03-14)
 
 - [Accessibility] Measure color contrast to ensure screens are always visible & accessible
 
@@ -128,7 +128,7 @@
 - Added ability to deeplink to modals
 - Added animation to nav when switching lists
 
-## v5.4.1
+## v5.4.1 (2022-01-14)
 
 - We're now 100% Typescript!
 - Minor bug fixes throughout app
@@ -141,17 +141,17 @@
 - Migrate various legacy animations to Framer Motion
 - Upgrade `web-notifier` dependency to v2
 
-## v5.3.2
+## v5.3.2 (2022-01-05)
 
 - More improvements to animations when completing tasks
 - Fixed gap issue on main task container
 - Various perceived performance gains
 
-## v5.3.1
+## v5.3.1 (2021-12-29)
 
 - Improvements to animations on switching lists and adding/completing tasks
 
-## 5.3.0 (2022-01-03)
+## v5.3.0 (2022-01-03)
 
 - Fixed issues with this week list
 - Switched animation engines, added animations to tasks load/switching
@@ -159,7 +159,7 @@
 - Fix issue which broke dark mode logic
 - Slowly migrating codebase to TypeScript
 
-## v5.2.1
+## v5.2.1 (2021-12-17)
 
 - Added animation to completed tasks counter when incrementing
 
@@ -171,14 +171,14 @@
 - Added timezone setting to improve reliability of date based custom lists
 - Fix bug when editing task details from custom lists would navigate to original list
 
-## v5.1.2
+## v5.1.2 (2021-11-20)
 
 - Improve DX when running app locally
 - Improve notification handling
 - Dark mode improvements
 - Accessibility improvements
 
-## v5.1.1
+## v5.1.1 (2021-10-20)
 
 - Fix notification icon being broken
 
@@ -230,7 +230,7 @@
 - Improve "Completed Tasks" button styling
 - Began implementing changelog injection
 
-## 4.0.0 (2021-02-14)
+## v4.0.0 (2021-02-14)
 
 - Initial v4 release.
 - Features redesigned frontend infrastructure and styling.
