@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { mutate } from "swr";
 
-import { getListsUrl, getProfileUrl } from "./internal/urls";
+import { getListsUrl } from "./internal/urls";
 
 import { _UpdateUserPayload, UpdateUserObject } from "@customTypes/user";
-import { updateProfile, UpdateProfilePayload } from "@utilities/auth";
+import { authClient, updateProfile, UpdateProfilePayload } from "@utilities/auth";
 
 function useModifyProfile() {
   return useCallback(async (updatedProps: UpdateUserObject) => {
@@ -14,7 +14,8 @@ function useModifyProfile() {
       formattedProps.lists = updatedProps.lists.filter(t => t.type === "default").map(t => t.id);
     }
     await updateProfile(getProfilePropsFromUpdatePayload(formattedProps));
-    await mutate(getProfileUrl());
+    // Refresh the session so consumers re-render with the persisted values.
+    await authClient.getSession();
     if (updatedProps.lists || updatedProps?.customLists) {
       await mutate(getListsUrl());
     }

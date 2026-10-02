@@ -9,6 +9,7 @@
 - automatically save notes when closing modal
 - fix several bugs when editing notes
 - improve auth/account settings ux
+- fix custom list toggles clobbering each other when switched rapidly
 
 ## v8.0.0
 

@@ -8,6 +8,4 @@ export const getListDetailUrl = (listId: string, includeCompleted?: boolean) =>
 
 export const getTaskDetailUrl = (taskId: string) => `${SERVER_URL}/api/tasks/${taskId}`;
 
-export const getProfileUrl = () => `${SERVER_URL}/api/user`;
-
 export const getConfigUrl = () => `${SERVER_URL}/api/config`;

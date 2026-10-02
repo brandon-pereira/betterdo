@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback } from "react";
 
 import { CustomListsContainer, CustomListItem, Title, IconHolder } from "./CustomLists.styles";
 
@@ -10,29 +10,21 @@ import useProfile from "@hooks/useProfile";
 import useModifyProfile from "@hooks/useModifyProfile";
 
 function CustomListSettings() {
-  const { profile, loading, error } = useProfile();
-  const [customLists, setCustomLists] = useState(profile?.customLists);
+  const { profile, error } = useProfile();
   const modifyProfile = useModifyProfile();
-  useEffect(() => {
-    if (!loading && !error) {
-      setCustomLists(profile?.customLists);
-    }
-  }, [loading, error, profile]);
+  // The better-auth session (via useProfile) is the single source of truth.
+  // We send only the toggled key; the server merges it into existing values, so
+  // overlapping toggles can't clobber each other.
+  const customLists = profile?.customLists ?? {};
   const onCustomListToggle = useCallback(
     async (id: string, bool: boolean) => {
       try {
-        await modifyProfile({
-          customLists: {
-            ...customLists,
-            [id]: bool
-          }
-        });
+        await modifyProfile({ customLists: { [id]: bool } });
       } catch (err) {
         console.error(err);
-        return;
       }
     },
-    [customLists, modifyProfile]
+    [modifyProfile]
   );
 
   return (
@@ -46,7 +38,7 @@ function CustomListSettings() {
             <Title>{list.title}</Title>
             <Toggle
               onChange={(e, bool) => onCustomListToggle(list.id, bool)}
-              value={customLists ? customLists[list.id as keyof typeof customLists] || false : false}
+              value={customLists[list.id as keyof typeof customLists] || false}
             />
           </CustomListItem>
         ))}
