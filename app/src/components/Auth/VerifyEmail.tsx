@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Alert, Center, Loader, Stack, Text } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
 import { authClient } from "@utilities/auth";
-import { AuthButtons } from "./Auth.styles";
+import { AuthButtons, Center, Stack, Alert, AlertTitle, DimmedText } from "./Auth.styles";
+import Loader from "@components/Loader";
 import Link from "@components/Link";
 
 type Status = "verifying" | "success" | "error" | "invalid";
@@ -53,7 +53,8 @@ const VerifyEmail = () => {
   if (status === "invalid") {
     return (
       <AuthContainer title="Invalid Link">
-        <Alert color="red" title="Error">
+        <Alert $color="red">
+          <AlertTitle>Error</AlertTitle>
           This verification link is invalid or has expired.
         </Alert>
         <AuthButtons>
@@ -66,7 +67,8 @@ const VerifyEmail = () => {
   if (status === "error") {
     return (
       <AuthContainer title="Verification Failed">
-        <Alert color="red" title="Error">
+        <Alert $color="red">
+          <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
         <AuthButtons>
@@ -80,9 +82,9 @@ const VerifyEmail = () => {
     return (
       <AuthContainer title="Email Verified">
         <Center>
-          <Stack align="center" gap="sm">
-            <Loader />
-            <Text c="dimmed">Email verified. Signing you in...</Text>
+          <Stack $align="center" $gap="0.75rem">
+            <Loader isVisible color="currentColor" size="2.5rem" />
+            <DimmedText>Email verified. Signing you in...</DimmedText>
           </Stack>
         </Center>
       </AuthContainer>
@@ -92,9 +94,9 @@ const VerifyEmail = () => {
   return (
     <AuthContainer title="Verifying Your Email">
       <Center>
-        <Stack align="center" gap="sm">
-          <Loader />
-          <Text c="dimmed">Please wait while we verify your email address...</Text>
+        <Stack $align="center" $gap="0.75rem">
+          <Loader isVisible color="currentColor" size="2.5rem" />
+          <DimmedText>Please wait while we verify your email address...</DimmedText>
         </Stack>
       </Center>
     </AuthContainer>

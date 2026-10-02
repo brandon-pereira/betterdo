@@ -56,8 +56,10 @@ export const Container = styled.header<{ $isDarkColor: boolean }>`
 export const SettingsButton = styled(Button)`
   color: currentColor;
   margin-left: 0.35rem;
-  border-radius: 2rem;
+  border-radius: 50%;
   user-select: none;
+  height: auto;
+  width: auto;
   padding: 0.6rem;
   display: flex;
   align-items: center;

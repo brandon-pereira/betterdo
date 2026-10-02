@@ -7,37 +7,54 @@ export const StyledButton = styled.button.attrs(({ color, theme }) => {
     "--color": theme.colors.general[color as keyof typeof theme.colors.general] || color || theme.colors.general.blue
   } as CSSProperties;
   return { style };
-})<{ isLoading?: boolean; $variant?: "primary" | "secondary" }>`
-  border: none;
+})<{ isLoading?: boolean; $variant?: "primary" | "secondary"; $fullWidth?: boolean }>`
+  border: 1px solid transparent;
   background-color: var(--color);
   color: #fff;
-  border-radius: 50px;
-  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  padding: 0 1.125rem;
+  height: 2.5rem;
   text-align: center;
   font: inherit;
-  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
-  font-size: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   outline: none;
   display: ${({ hidden }) => (hidden ? "none" : "inline-flex")};
+  width: ${({ $fullWidth }) => ($fullWidth ? "100%" : "auto")};
+  justify-content: center;
   align-items: center;
-  box-shadow:
-    0 3px 6px rgba(0, 0, 0, 0.16),
-    0 3px 6px rgba(0, 0, 0, 0.23);
+  gap: 0.5rem;
+  transition:
+    background-color 0.1s ease,
+    border-color 0.1s ease,
+    color 0.1s ease;
   &:hover {
-    filter: brightness(0.9);
+    background-color: color-mix(in srgb, var(--color) 88%, #000);
+  }
+  &:active {
+    transform: translateY(1px);
   }
   &:focus-visible {
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.general.blue};
+    outline: 2px solid ${({ theme }) => theme.colors.general.blue};
+    outline-offset: 2px;
   }
-  ${({ $variant }) =>
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  ${({ theme, $variant }) =>
     $variant === "secondary" &&
     `
-    color: var(--color);
-    border: 1px solid var(--color);
-    background: none;
+    color: ${theme.colors.forms.input.color};
+    border: 1px solid ${theme.colors.forms.input.borderColor};
+    background: ${theme.colors.forms.input.background};
+    &:hover {
+      background: ${theme.isDarkMode ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.04)"};
+    }
   `}
   ${props =>
     props.isLoading &&
@@ -54,6 +71,4 @@ export const StyledButton = styled.button.attrs(({ color, theme }) => {
   }
 `;
 
-export const Loader = styled(_Loader)`
-  margin-right: 1rem;
-`;
+export const Loader = styled(_Loader)``;

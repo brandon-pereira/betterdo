@@ -2,14 +2,15 @@
 
 ## v8.1.0
 
-- Add Web Haptics
+- Ditch mantine in favor of custom-built components
 - Added ability to link Google account to Password account (enabling easier migration to new auth system)
-- Make cmd+s save forms automatically
-- Automatically save notes on change to match other inputs
-- automatically save notes when closing modal
-- fix several bugs when editing notes
-- improve auth/account settings ux
-- fix custom list toggles clobbering each other when switched rapidly
+- Add Web Haptics
+- Make Cmd+S save forms automatically
+- Automatically Save notes on change to match other inputs
+- Automatically save notes when closing modal
+- Fix several bugs when editing notes
+- Improve auth/account settings ux
+- Fix custom list toggles clobbering each other when switched rapidly
 
 ## v8.0.0
 

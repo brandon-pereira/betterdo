@@ -1,7 +1,18 @@
 import React, { useReducer, useState } from "react";
-import { TextInput, Divider, PasswordInput, Button, Alert, Stack, Group, Text } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
-import { AuthButtons, AuthProviders } from "./Auth.styles";
+import PasswordInput from "./PasswordInput";
+import {
+  AuthButtons,
+  AuthProviders,
+  AuthInput,
+  Stack,
+  Group,
+  Alert,
+  AlertTitle,
+  Divider,
+  DimmedText
+} from "./Auth.styles";
+import Button from "@components/Button";
 import { authClient, signIn, signUp } from "@utilities/auth";
 import { getTimeZone } from "@utilities/timezones";
 import Link from "@components/Link";
@@ -91,21 +102,29 @@ const SignUp = () => {
   if (onboarding.step === "verify-email") {
     return (
       <AuthContainer title="Check your inbox">
-        <Stack gap="md">
-          <Alert color="green" title="Account created">
+        <Stack $gap="1rem">
+          <Alert $color="green">
+            <AlertTitle>Account created</AlertTitle>
             We&apos;ve sent a verification link to <strong>{onboarding.email}</strong>. Click it to verify your email
             and finish signing in.
           </Alert>
-          <Text size="sm" c="dimmed" ta="center">
+          <DimmedText $align="center">
             Didn&apos;t get it? Check your spam folder, or resend the email below.
-          </Text>
+          </DimmedText>
           <AuthButtons>
-            <Button variant="default" onClick={handleResend} disabled={loading} loading={loading} fullWidth>
+            <Button
+              variant="secondary"
+              onClick={handleResend}
+              disabled={loading}
+              isLoading={loading}
+              loadingText="Please wait..."
+              fullWidth
+            >
               Resend verification email
             </Button>
           </AuthButtons>
         </Stack>
-        <Group justify="center" gap="xs" mt="sm">
+        <Group $justify="center" $gap="0.5rem">
           <Link to="/">Back to Login</Link>
         </Group>
       </AuthContainer>
@@ -115,14 +134,15 @@ const SignUp = () => {
   return (
     <AuthContainer title="Create your account">
       <form onSubmit={handleSubmit}>
-        <Stack gap="md">
+        <Stack $gap="1rem">
           {error && (
-            <Alert color="red" title="Error">
+            <Alert $color="red">
+              <AlertTitle>Error</AlertTitle>
               {error}
             </Alert>
           )}
 
-          <TextInput
+          <AuthInput
             type="text"
             name="given-name"
             autoComplete="given-name"
@@ -131,7 +151,7 @@ const SignUp = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
             required
           />
-          <TextInput
+          <AuthInput
             type="text"
             name="family-name"
             autoComplete="family-name"
@@ -141,7 +161,7 @@ const SignUp = () => {
             required
           />
 
-          <TextInput
+          <AuthInput
             type="email"
             name="email"
             autoComplete="username"
@@ -170,24 +190,22 @@ const SignUp = () => {
           />
 
           <AuthButtons>
-            <Button type="submit" disabled={loading} loading={loading}>
-              {loading ? "Please wait..." : "Create Account"}
+            <Button type="submit" disabled={loading} isLoading={loading} loadingText="Please wait...">
+              Create Account
             </Button>
           </AuthButtons>
         </Stack>
       </form>
 
-      <Divider label="Or Create With" />
+      <Divider>Or Create With</Divider>
       <AuthProviders>
-        <Button variant="default" onClick={handleGoogleSignIn} disabled={loading} fullWidth>
+        <Button variant="secondary" onClick={handleGoogleSignIn} disabled={loading} fullWidth>
           Google
         </Button>
       </AuthProviders>
 
-      <Group justify="center" gap="xs" mt="sm">
-        <Text size="sm" c="dimmed">
-          Already have an account?
-        </Text>
+      <Group $justify="center" $gap="0.5rem">
+        <DimmedText>Already have an account?</DimmedText>
         <Link to="/">Sign in</Link>
       </Group>
     </AuthContainer>

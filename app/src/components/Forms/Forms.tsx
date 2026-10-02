@@ -6,18 +6,19 @@ const _Input = styled.input<{ $invalid?: boolean }>`
   background: ${({ theme }) => theme.colors.forms.input.background};
   width: ${props => props.width || "100%"};
   box-sizing: border-box;
-  padding: 0.85rem 1rem;
-  border: none;
-  box-shadow: ${({ theme }) => theme.colors.forms.input.boxShadow};
+  height: 2.5rem;
+  padding: 0 0.875rem;
+  border: 1px solid ${({ theme }) => theme.colors.forms.input.borderColor};
+  box-shadow: none;
   color: ${({ theme }) => theme.colors.forms.input.color};
-  border-radius: 0.625rem;
+  border-radius: 0.5rem;
   outline: none;
   font: inherit;
-  font-size: 1rem;
+  font-size: 0.875rem;
   margin-bottom: 1rem;
   transition:
-    box-shadow 0.2s ease,
-    background-color 0.2s ease;
+    border-color 0.1s ease,
+    background-color 0.1s ease;
 
   // hack for chrome to make date picker white
   ${({ theme }) =>
@@ -28,7 +29,7 @@ const _Input = styled.input<{ $invalid?: boolean }>`
         }
     `}
   &:focus {
-    box-shadow: inset 0 0 0 2px ${({ theme }) => theme.colors.general.blue};
+    border-color: ${({ theme }) => theme.colors.general.blue};
   }
   &::placeholder {
     color: ${({ theme }) => (theme.isDarkMode ? "#888" : "#999")};
@@ -40,7 +41,7 @@ const _Input = styled.input<{ $invalid?: boolean }>`
   ${({ theme, $invalid }) =>
     $invalid &&
     `
-      box-shadow: inset 0 0 0 2px ${theme.colors.general.red} !important;
+      border-color: ${theme.colors.general.red} !important;
     `};
 `;
 

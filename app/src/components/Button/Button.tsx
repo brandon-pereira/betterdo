@@ -7,6 +7,7 @@ interface Props {
   isLoading?: boolean;
   loadingText?: string;
   variant?: "primary" | "secondary";
+  fullWidth?: boolean;
 }
 
 const Button = ({
@@ -16,6 +17,7 @@ const Button = ({
   loadingText,
   isLoading,
   variant = "primary",
+  fullWidth,
   onClick,
 
   ...props
@@ -26,7 +28,7 @@ const Button = ({
   };
 
   return (
-    <StyledButton type={type || "button"} $variant={variant} onClick={handleClick} {...props}>
+    <StyledButton type={type || "button"} $variant={variant} $fullWidth={fullWidth} onClick={handleClick} {...props}>
       {isLoading && <Loader isVisible={true} color={loaderColor} size="1rem" />}
       <span>{isLoading ? loadingText || "Loading" : children}</span>
     </StyledButton>

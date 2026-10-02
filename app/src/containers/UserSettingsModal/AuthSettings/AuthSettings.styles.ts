@@ -114,9 +114,6 @@ export const Alert = styled.div<{ $variant?: "success" | "error" }>`
       `}
 `;
 
-// Kept for backwards compatibility with existing imports.
-export const Success = styled(Alert).attrs({ $variant: "success" as const })``;
-
 export const FormRow = styled.div`
   display: grid;
   gap: 0.35rem;

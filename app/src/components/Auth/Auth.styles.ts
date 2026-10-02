@@ -1,5 +1,12 @@
 import { QUERIES } from "../../constants";
 import { styled } from "styled-components";
+import { Input } from "@components/Forms";
+
+// The shared Forms Input carries a bottom margin for stacked forms; inside the
+// auth screens spacing is handled by <Stack>, so strip it here.
+export const AuthInput = styled(Input)`
+  margin-bottom: 0;
+`;
 
 export const Container = styled.div`
   display: grid;
@@ -123,4 +130,113 @@ export const Title = styled.h2`
   font-weight: 500;
   text-align: center;
   margin: 0 0 1rem;
+`;
+
+export const Stack = styled.div<{ $gap?: string; $align?: string }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ $gap }) => $gap || "1rem"};
+  ${({ $align }) => $align && `align-items: ${$align};`}
+`;
+
+export const Group = styled.div<{ $justify?: string; $gap?: string }>`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: ${({ $justify }) => $justify || "flex-start"};
+  gap: ${({ $gap }) => $gap || "0.5rem"};
+`;
+
+export const Center = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const DimmedText = styled.p<{ $align?: string }>`
+  margin: 0;
+  font-size: 0.875rem;
+  color: ${({ theme }) => theme.colors.forms.label.color};
+  ${({ $align }) => $align && `text-align: ${$align};`}
+`;
+
+export const Alert = styled.div<{ $color?: "red" | "green" | "blue" }>`
+  --alert-color: ${({ theme, $color }) =>
+    $color === "green" ? "#2f9e44" : $color === "red" ? theme.colors.general.red : theme.colors.general.blue};
+  border: 1px solid var(--alert-color);
+  background: color-mix(in srgb, var(--alert-color) 12%, transparent);
+  color: ${({ theme }) => theme.colors.body.color};
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+`;
+
+export const AlertTitle = styled.div`
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--alert-color);
+`;
+
+export const Divider = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: ${({ theme }) => theme.colors.forms.label.color};
+  font-size: 0.875rem;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: ${({ theme }) => theme.colors.forms.input.borderColor};
+  }
+`;
+
+export const PasswordField = styled.div`
+  position: relative;
+
+  input {
+    padding-right: 3rem;
+  }
+`;
+
+export const PasswordToggle = styled.button.attrs({ type: "button" })`
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 2.5rem;
+  width: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.forms.label.color};
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.general.blue};
+    outline-offset: -2px;
+    border-radius: 0.5rem;
+  }
+`;
+
+export const VisuallyHidden = styled.div`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 `;

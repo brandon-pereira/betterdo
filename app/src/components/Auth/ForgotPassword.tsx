@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { TextInput, Button, Alert, Stack, Group, Text } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
 import { authClient } from "@utilities/auth";
-import { AuthButtons } from "./Auth.styles";
+import { AuthButtons, AuthInput, Stack, Group, Alert, AlertTitle, DimmedText } from "./Auth.styles";
+import Button from "@components/Button";
 import Link from "@components/Link";
 
 const ForgotPassword = () => {
@@ -39,7 +39,7 @@ const ForgotPassword = () => {
   if (submitted) {
     return (
       <AuthContainer title="Check Your Email">
-        <Alert>
+        <Alert $color="blue">
           If an account with the email <strong>{email}</strong> exists, we'll send a password reset link.
           <br />
           <br />
@@ -55,13 +55,14 @@ const ForgotPassword = () => {
   return (
     <AuthContainer title="Forgot Password">
       <form onSubmit={handleSubmit}>
-        <Stack gap="md">
+        <Stack $gap="1rem">
           {error && (
-            <Alert color="red" title="Error">
+            <Alert $color="red">
+              <AlertTitle>Error</AlertTitle>
               {error}
             </Alert>
           )}
-          <TextInput
+          <AuthInput
             type="email"
             name="email"
             autoComplete="username"
@@ -72,16 +73,14 @@ const ForgotPassword = () => {
           />
 
           <AuthButtons>
-            <Button type="submit" disabled={loading} loading={loading}>
-              {loading ? "Sending..." : "Send Reset Link"}
+            <Button type="submit" disabled={loading} isLoading={loading} loadingText="Sending...">
+              Send Reset Link
             </Button>
           </AuthButtons>
         </Stack>
       </form>
-      <Group justify="center" gap="xs" mt="sm">
-        <Text size="sm" c="dimmed">
-          Remember your password?
-        </Text>
+      <Group $justify="center" $gap="0.5rem">
+        <DimmedText>Remember your password?</DimmedText>
         <Link to="/">Back to Login</Link>
       </Group>
     </AuthContainer>

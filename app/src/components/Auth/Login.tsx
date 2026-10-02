@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, PasswordInput, Divider, Button, Alert, Stack, Group, Text, VisuallyHidden } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
+import PasswordInput from "./PasswordInput";
 import { authClient, signIn } from "@utilities/auth";
-import { AuthProviders, AuthButtons } from "./Auth.styles";
+import {
+  AuthProviders,
+  AuthButtons,
+  AuthInput,
+  Stack,
+  Group,
+  Alert,
+  Divider,
+  DimmedText,
+  VisuallyHidden
+} from "./Auth.styles";
+import Button from "@components/Button";
 import Link from "@components/Link";
 
 const Auth = () => {
@@ -81,9 +92,9 @@ const Auth = () => {
   return (
     <AuthContainer title="Welcome Back!">
       <form onSubmit={handleSubmit}>
-        <Stack gap="md">
-          {error && <Alert color="red">{error}</Alert>}
-          <TextInput
+        <Stack $gap="1rem">
+          {error && <Alert $color="red">{error}</Alert>}
+          <AuthInput
             type="email"
             name="email"
             autoComplete="username"
@@ -104,18 +115,18 @@ const Auth = () => {
 
           <AuthButtons>
             <Link to="/auth/forgot-password">Forgot Password?</Link>
-            <Button type="submit" disabled={loading} loading={loading}>
-              {loading ? "Logging In..." : "Log In"}
+            <Button type="submit" disabled={loading} isLoading={loading} loadingText="Logging In...">
+              Log In
             </Button>
           </AuthButtons>
         </Stack>
       </form>
-      <Divider label="Or Login With" />
+      <Divider>Or Login With</Divider>
       <AuthProviders>
-        <Button variant="default" onClick={handleGoogleSignIn} disabled={loading} fullWidth>
+        <Button variant="secondary" onClick={handleGoogleSignIn} disabled={loading} fullWidth>
           Google
         </Button>
-        <Button variant="default" onClick={handlePasskeySignIn} disabled={loading} fullWidth>
+        <Button variant="secondary" onClick={handlePasskeySignIn} disabled={loading} fullWidth>
           Passkey
         </Button>
         <VisuallyHidden>
@@ -125,10 +136,8 @@ const Auth = () => {
           <input type="password" name="password" autoComplete="current-password webauthn" />
         </VisuallyHidden>
       </AuthProviders>
-      <Group justify="center" gap="xs" mt="sm">
-        <Text size="sm" c="dimmed">
-          Don't have an account?
-        </Text>
+      <Group $justify="center" $gap="0.5rem">
+        <DimmedText>Don't have an account?</DimmedText>
         <Link to="/auth/signup">Register Here</Link>
       </Group>
     </AuthContainer>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { PasswordInput, Button, Alert, Stack, Group } from "@mantine/core";
 import AuthContainer from "./AuthContainer";
+import PasswordInput from "./PasswordInput";
 import { authClient } from "@utilities/auth";
-import { AuthButtons } from "./Auth.styles";
+import { AuthButtons, Stack, Group, Alert, AlertTitle } from "./Auth.styles";
+import Button from "@components/Button";
 import Link from "@components/Link";
 
 const ResetPassword = () => {
@@ -62,7 +63,8 @@ const ResetPassword = () => {
   if (invalidToken) {
     return (
       <AuthContainer title="Invalid Link">
-        <Alert color="red" title="Error">
+        <Alert $color="red">
+          <AlertTitle>Error</AlertTitle>
           This password reset link is invalid or has expired.
         </Alert>
         <AuthButtons>
@@ -75,7 +77,8 @@ const ResetPassword = () => {
   if (succeeded) {
     return (
       <AuthContainer title="Password Reset">
-        <Alert color="green" title="Success">
+        <Alert $color="green">
+          <AlertTitle>Success</AlertTitle>
           Your password has been reset successfully. You can now log in with your new password.
         </Alert>
         <AuthButtons>
@@ -88,9 +91,10 @@ const ResetPassword = () => {
   return (
     <AuthContainer title="Reset Your Password">
       <form onSubmit={handleSubmit}>
-        <Stack gap="md">
+        <Stack $gap="1rem">
           {error && (
-            <Alert color="red" title="Error">
+            <Alert $color="red">
+              <AlertTitle>Error</AlertTitle>
               {error}
             </Alert>
           )}
@@ -115,13 +119,13 @@ const ResetPassword = () => {
           />
 
           <AuthButtons>
-            <Button type="submit" disabled={loading} loading={loading}>
-              {loading ? "Resetting..." : "Reset Password"}
+            <Button type="submit" disabled={loading} isLoading={loading} loadingText="Resetting...">
+              Reset Password
             </Button>
           </AuthButtons>
         </Stack>
       </form>
-      <Group justify="center" gap="xs" mt="sm">
+      <Group $justify="center" $gap="0.5rem">
         <Link to="/">Back to Login</Link>
       </Group>
     </AuthContainer>

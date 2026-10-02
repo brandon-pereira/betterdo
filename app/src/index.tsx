@@ -2,7 +2,6 @@ import * as ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ResponsiveProvider } from "@hooks/useResponsive";
-import "@mantine/core/styles.css";
 
 import { ThemeProvider, GlobalStyles } from "./utilities/ThemeProvider";
 import SWRProvider from "./utilities/SWRProvider";
