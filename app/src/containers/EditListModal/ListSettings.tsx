@@ -9,6 +9,8 @@ import useModifyList from "@hooks/useModifyList";
 import useListDetails from "@hooks/useListDetails";
 import useDeleteList from "@hooks/useDeleteList";
 import { ServerError } from "@utilities/server";
+import { checkIfColorGoodContrast } from "@utilities/colors";
+import { useResolvedTheme } from "@utilities/ThemeProvider";
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -33,6 +35,8 @@ function ListSettings({ setUnsavedChanges, onRequestClose }: Props) {
     title: list.title,
     color: list.color
   });
+  const { modalContentBackground } = useResolvedTheme();
+  const isColorGoodContrast = checkIfColorGoodContrast(state.color || "#000", modalContentBackground);
 
   useEffect(() => {
     setState({
@@ -118,7 +122,12 @@ function ListSettings({ setUnsavedChanges, onRequestClose }: Props) {
         }}
       />
       <ButtonContainer>
-        <Button isLoading={isSaving} loadingText="Saving" color={state.color} type="submit">
+        <Button
+          isLoading={isSaving}
+          loadingText="Saving"
+          color={isColorGoodContrast ? state.color : undefined}
+          type="submit"
+        >
           Save
         </Button>
         <Button isLoading={isDeleting} loadingText="Deleting" onClick={deleteList} color={"red"} type="button">
