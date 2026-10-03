@@ -22,7 +22,8 @@ export default defineConfig({
     svgr({ include: "**/*.svg" }),
     react(),
     wyw({
-      include: ["**/*.{ts,tsx}"]
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["**/node_modules/**"]
     }),
     markdown({ mode: [Mode.HTML] }),
     VitePWA({
