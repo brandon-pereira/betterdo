@@ -1,5 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
 
+import { theme } from "../../theme";
 import { DEFAULT_LIST_COLOR } from "../../constants";
 
 import _ProfilePicture from "@components/ProfilePic";
@@ -7,14 +8,14 @@ import _Hamburger from "@components/Hamburger";
 
 export const Container = styled.div`
   background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
-  background-color: ${({ color }) => color || DEFAULT_LIST_COLOR};
+  background-color: var(--current-list-color, ${DEFAULT_LIST_COLOR});
   overflow: hidden;
   position: relative;
   grid-row: 1;
   grid-column: 1;
   z-index: var(--z-logo);
   transition: background 0.6s;
-  ${({ theme }) => theme.queries.medium} {
+  ${theme.queries.medium} {
     transform: none;
     grid-row: 1 / 1;
     grid-column: 1 / 1;
@@ -31,7 +32,7 @@ export const Content = styled.div`
   box-sizing: border-box;
   overflow: hidden;
   cursor: pointer;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.3)), ${({ theme }) => theme.colors.navigation.background};
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.3)), ${theme.colors.navigation.background};
   border: none;
   box-shadow: inset 0 -1px rgba(0, 0, 0, 0.9);
   color: #fff;
@@ -48,7 +49,7 @@ export const Content = styled.div`
   span {
     font-weight: 600;
   }
-  ${({ theme }) => theme.queries.medium} {
+  ${theme.queries.medium} {
     border-radius: 0 30px 0 0;
     transform: none;
     padding: 0 0.5rem;
@@ -64,7 +65,7 @@ export const Content = styled.div`
       display: none;
     }
   }
-  ${({ theme }) => theme.queries.large} {
+  ${theme.queries.large} {
     h1 {
       font-size: 1.8rem;
       margin-right: 1rem;

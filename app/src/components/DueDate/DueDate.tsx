@@ -45,19 +45,19 @@ function DueDate({ value, onChange }: Props) {
   return (
     <>
       <Container>
-        <ItemContainer selected={isToday} onClick={_onQuickActionSelect(today)}>
+        <ItemContainer data-selected={isToday ? "true" : "false"} onClick={_onQuickActionSelect(today)}>
           <DayIcon>{getCurrentDay()}</DayIcon>
           <ItemLabel>Today</ItemLabel>
         </ItemContainer>
-        <ItemContainer selected={isTomorrow} onClick={_onQuickActionSelect(tomorrow)}>
+        <ItemContainer data-selected={isTomorrow ? "true" : "false"} onClick={_onQuickActionSelect(tomorrow)}>
           <DayIcon>{getTomorrowDay()}</DayIcon>
           <ItemLabel>Tomorrow</ItemLabel>
         </ItemContainer>
-        <ItemContainer selected={isNextWeek} onClick={_onQuickActionSelect(getNextWeekDate())}>
+        <ItemContainer data-selected={isNextWeek ? "true" : "false"} onClick={_onQuickActionSelect(getNextWeekDate())}>
           <Icon size={`30px`} color="currentColor" icon={Calendar} />
           <ItemLabel>Next Week</ItemLabel>
         </ItemContainer>
-        <ItemContainer selected={Boolean(isOther)} onClick={_onCustomDateSelect}>
+        <ItemContainer data-selected={isOther ? "true" : "false"} onClick={_onCustomDateSelect}>
           <DueDateInput
             ref={dateInputRef}
             type="date"

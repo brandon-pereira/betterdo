@@ -29,7 +29,11 @@ function Selector({ value, values, onSelect }: Props) {
   return (
     <Container>
       {values.map(value => (
-        <Selection onClick={e => onChange(e, value.value)} key={value.value} selected={value.value === selectedValue}>
+        <Selection
+          onClick={e => onChange(e, value.value)}
+          key={value.value}
+          data-selected={value.value === selectedValue ? "true" : "false"}
+        >
           {value.label}
         </Selection>
       ))}

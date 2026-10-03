@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import _Icon from "@components/Icon";
 
@@ -14,14 +16,10 @@ export const Container = styled.div`
 `;
 
 export const Icon = styled(_Icon)`
-  color: ${({ theme }) => theme.colors.forms.label.color};
+  color: ${theme.colors.forms.label.color};
 `;
 
-export const Color = styled.button.attrs(props => ({
-  style: {
-    backgroundColor: props.color
-  }
-}))<{ $isCurrent?: boolean }>`
+export const Color = styled.button`
   border: none;
   outline: none;
   flex: 1;
@@ -38,11 +36,9 @@ export const Color = styled.button.attrs(props => ({
   &:last-of-type {
     border-radius: 0 50px 50px 0;
   }
-  ${props =>
-    props.$isCurrent &&
-    `
-        box-shadow: inset 0 0 0 5px ${props.theme.colors.general.blue};
-    `};
+  &[data-current="true"] {
+    box-shadow: inset 0 0 0 5px ${theme.colors.general.blue};
+  }
 `;
 
 export const TooltipContainer = styled.div`

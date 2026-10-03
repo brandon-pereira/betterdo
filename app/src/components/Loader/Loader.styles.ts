@@ -1,33 +1,30 @@
-import { styled, keyframes } from "styled-components";
-
-const rotate = keyframes`
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(270deg);
-    }
-`;
-
-const dashoffset = keyframes`
-    0% {
-        stroke-dashoffset: 184;
-    }
-    50% {
-        stroke-dashoffset: 46;
-        transform: rotate(135deg);
-    }
-    100% {
-        stroke-dashoffset: 184;
-        transform: rotate(450deg);
-    }
-`;
+import { styled } from "@linaria/react";
 
 export const Loader = styled.div<{
-  $isVisible?: boolean;
   $size?: string;
   $color: string | undefined;
 }>`
+  @keyframes loader-rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(270deg);
+    }
+  }
+  @keyframes loader-dashoffset {
+    0% {
+      stroke-dashoffset: 184;
+    }
+    50% {
+      stroke-dashoffset: 46;
+      transform: rotate(135deg);
+    }
+    100% {
+      stroke-dashoffset: 184;
+      transform: rotate(450deg);
+    }
+  }
   height: 0;
   width: 0;
   transform: scale(0);
@@ -40,7 +37,7 @@ export const Loader = styled.div<{
     left: 0;
     height: 100%;
     width: 100%;
-    animation: ${rotate} 2s linear infinite;
+    animation: loader-rotate 2s linear infinite;
   }
 
   svg circle {
@@ -49,15 +46,16 @@ export const Loader = styled.div<{
     stroke-dashoffset: 0;
     transform-origin: center;
     stroke: ${props => props.$color || "#fff"};
-    animation: ${dashoffset} 2s linear infinite;
+    animation: loader-dashoffset 2s linear infinite;
   }
-  ${({ $isVisible, $size }) =>
-    $isVisible &&
-    `
-        transition: all 0s 0s, width 0.2s !important;
-        transform: scale(1);
-        opacity: 1;
-        height: ${$size || "1rem"};
-        width: ${$size || "1rem"};
-    `};
+
+  &[data-visible="true"] {
+    transition:
+      all 0s 0s,
+      width 0.2s !important;
+    transform: scale(1);
+    opacity: 1;
+    height: ${props => props.$size || "1rem"};
+    width: ${props => props.$size || "1rem"};
+  }
 `;

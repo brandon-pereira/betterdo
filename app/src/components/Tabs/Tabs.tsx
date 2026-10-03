@@ -1,5 +1,6 @@
 import { LayoutGroup } from "framer-motion";
 import { cloneElement, Children } from "react";
+import type { CSSProperties } from "react";
 
 import { Container, TabsBody, TabBodyItem, TabsHeader, ActiveTabHeaderBackground, TabHeaderItem } from "./Tabs.styles";
 
@@ -11,20 +12,21 @@ interface Props {
   titles: string[];
 }
 function Tabs({ selectedIndex, onChange, color, children, titles }: Props) {
+  const colorStyle = color ? ({ "--tab-color": color } as CSSProperties) : undefined;
   return (
     <Container>
       <LayoutGroup>
-        <TabsHeader color={color}>
+        <TabsHeader style={colorStyle}>
           {titles.map((title, index) => (
             <TabHeaderItem
               key={index}
-              $selected={selectedIndex === index}
+              data-selected={selectedIndex === index ? "true" : "false"}
               onClick={() => onChange(index)}
-              color={color}
+              style={colorStyle}
             >
               {title}
               {selectedIndex === index && (
-                <ActiveTabHeaderBackground color={color} layout layoutId="active-tab" inherit={false} />
+                <ActiveTabHeaderBackground style={colorStyle} layout layoutId="active-tab" inherit={false} />
               )}
             </TabHeaderItem>
           ))}
@@ -32,8 +34,8 @@ function Tabs({ selectedIndex, onChange, color, children, titles }: Props) {
       </LayoutGroup>
       <TabsBody>
         {Children.map(children, (value, index) => {
-          return cloneElement(value, {
-            $selected: index === selectedIndex
+          return cloneElement(value as React.ReactElement<{ "data-selected"?: string }>, {
+            "data-selected": index === selectedIndex ? "true" : "false"
           });
         })}
       </TabsBody>

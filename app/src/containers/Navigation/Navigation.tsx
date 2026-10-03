@@ -32,7 +32,7 @@ function Navigation() {
   );
 
   return (
-    <Container $isMobileNavVisible={isMobileNavVisible}>
+    <Container data-mobile-nav={isMobileNavVisible ? "true" : "false"}>
       <ListScroller>
         <ListsContainer>
           <Suspense fallback={<Loader />}>

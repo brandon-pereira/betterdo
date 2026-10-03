@@ -1,0 +1,34 @@
+:root {
+  /* Global stacking order for app chrome. Spaced to leave room between
+     layers. Local stacking contexts (modal internals, individual tasks,
+     list items) keep their own small, self-contained values. */
+  --z-navigation: 10;
+  --z-logo: 30;
+  --z-header: 40;
+  --z-modal-overlay: 100;
+}
+
+html {
+  overflow: hidden;
+}
+
+body {
+  font-family:
+    "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+    "Helvetica Neue", sans-serif;
+  margin: 0;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.loaded .loader {
+  display: none;
+}
+
+html.app,
+.main-container,
+.app {
+  width: 100vw;
+  height: 100vh;
+}

@@ -12,6 +12,7 @@ const PasswordInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
     <PasswordField>
       <AuthInput {...props} ref={ref} type={visible ? "text" : "password"} />
       <PasswordToggle
+        type="button"
         onClick={() => setVisible(v => !v)}
         aria-label={visible ? "Hide password" : "Show password"}
         aria-pressed={visible}

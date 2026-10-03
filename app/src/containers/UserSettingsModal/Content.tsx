@@ -1,7 +1,7 @@
 import { useState, Fragment } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { LIGHT_THEME } from "../../theme";
+import { theme } from "../../theme";
 
 import ProfileSettings from "./ProfileSettings";
 import AuthSettings from "./AuthSettings";
@@ -26,14 +26,14 @@ function UserSettingsModalContent() {
 
   return (
     <Fragment>
-      <Header color={LIGHT_THEME.colors.general.blue}>Settings</Header>
+      <Header color={theme.colors.general.blue}>Settings</Header>
       <Tabs
         onChange={index => {
           navigate(generateUrl(`/profile-settings/${tabs[index]}`));
           setSelectedIndex(index);
         }}
         selectedIndex={selectedIndex}
-        color={LIGHT_THEME.colors.general.blue}
+        color={theme.colors.general.blue}
         titles={["General", "Profile", "Auth", "Custom Lists", "About"]}
       >
         <Tab>

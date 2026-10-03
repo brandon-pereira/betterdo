@@ -1,10 +1,12 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
 import { motion } from "framer-motion";
 import _FocusLock from "react-focus-lock";
 
+import { theme } from "../../theme";
+
 import Icon from "@components/Icon";
 
-export const Overlay = styled.div<{ $isVisible: boolean }>`
+export const Overlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -15,14 +17,12 @@ export const Overlay = styled.div<{ $isVisible: boolean }>`
   justify-content: center;
   /* Above all app chrome (title bar, header, logo, nav). */
   z-index: var(--z-modal-overlay);
-  background: ${({ theme }) => theme.colors.modals.overlayBackground};
+  background: ${theme.colors.modals.overlayBackground};
   backdrop-filter: blur(3px);
-  ${props =>
-    !props.$isVisible &&
-    `
-        visibility: hidden;
-        pointer-events: none;
-    `}
+  &[data-visible="false"] {
+    visibility: hidden;
+    pointer-events: none;
+  }
 `;
 
 export const FocusLock = styled(_FocusLock)`
@@ -32,24 +32,19 @@ export const FocusLock = styled(_FocusLock)`
   width: 100%;
   pointer-events: none;
 `;
-export const Container = styled(motion.div)<{
-  $visible: boolean;
-  $disableHeightAnimation?: boolean;
-}>`
+export const Container = styled(motion.div)`
   pointer-events: all;
-  background: ${({ theme }) => theme.colors.modals.contentBackground};
+  background: ${theme.colors.modals.contentBackground};
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
   position: relative;
   visibility: hidden;
   backface-visibility: hidden;
   max-width: min(500px, 100%);
   box-sizing: border-box;
-  ${props =>
-    props.$visible &&
-    `
-        visibility: visible;
-    `}
-  ${({ theme }) => theme.queries.medium} {
+  &[data-visible="true"] {
+    visibility: visible;
+  }
+  ${theme.queries.medium} {
     width: 60%;
   }
 `;
@@ -82,7 +77,7 @@ export const ModalClose = styled(Icon)`
   filter: drop-shadow(0 1px #555);
 `;
 
-export const Content = styled.div<{ $disableHeightAnimation?: boolean }>`
+export const Content = styled.div`
   position: relative;
   z-index: 2;
   padding: 1rem;
@@ -90,11 +85,9 @@ export const Content = styled.div<{ $disableHeightAnimation?: boolean }>`
   width: 100%;
   box-sizing: border-box;
   overflow: auto;
-  ${props =>
-    props.$disableHeightAnimation &&
-    `
-     height: 100%;
-    `}
+  &[data-full-height="true"] {
+    height: 100%;
+  }
 `;
 
 export const Arrow = styled.div`
@@ -105,5 +98,5 @@ export const Arrow = styled.div`
   top: 1rem;
   left: -0.6rem;
   transform: rotate(45deg);
-  background: ${({ theme }) => theme.colors.modals.contentBackground};
+  background: ${theme.colors.modals.contentBackground};
 `;

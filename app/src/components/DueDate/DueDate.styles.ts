@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import { Input } from "@components/Forms";
 
@@ -22,11 +24,11 @@ export const DayIcon = styled.div`
   box-shadow: inset 0 -1px 0 3px currentColor;
 `;
 
-export const ItemContainer = styled.button<{ selected: boolean }>`
+export const ItemContainer = styled.button`
   position: relative;
   background: none;
   border: none;
-  color: ${({ theme }) => theme.colors.forms.label.color};
+  color: ${theme.colors.forms.label.color};
   text-align: center;
   font: inherit;
   display: flex;
@@ -38,14 +40,12 @@ export const ItemContainer = styled.button<{ selected: boolean }>`
   padding: 1rem 0;
   margin: 0 1rem 1rem 0;
 
-  ${({ theme, selected }) =>
-    selected &&
-    `
-        &:hover {
-            background: ${theme.isDarkMode ? `rgba(255, 255, 255, 0.1)` : `rgba(0, 0, 0, 0.1)`};
-        }
-        background: ${theme.isDarkMode ? `rgba(255, 255, 255, 0.1)` : `rgba(0, 0, 0, 0.1)`};
-    `}
+  &[data-selected="true"] {
+    background: ${theme.effects.tintStrong};
+    &:hover {
+      background: ${theme.effects.tintStrong};
+    }
+  }
 `;
 
 export const ItemLabel = styled.label`

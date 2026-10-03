@@ -1,16 +1,18 @@
 import { forwardRef } from "react";
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
 
-const _Input = styled.input<{ $invalid?: boolean }>`
+import { theme } from "../../theme";
+
+const _Input = styled.input`
   appearance: none;
-  background: ${({ theme }) => theme.colors.forms.input.background};
+  background: ${theme.colors.forms.input.background};
   width: ${props => props.width || "100%"};
   box-sizing: border-box;
   height: 2.5rem;
   padding: 0 0.875rem;
-  border: 1px solid ${({ theme }) => theme.colors.forms.input.borderColor};
+  border: 1px solid ${theme.colors.forms.input.borderColor};
   box-shadow: none;
-  color: ${({ theme }) => theme.colors.forms.input.color};
+  color: ${theme.colors.forms.input.color};
   border-radius: 0.5rem;
   outline: none;
   font: inherit;
@@ -21,34 +23,28 @@ const _Input = styled.input<{ $invalid?: boolean }>`
     background-color 0.1s ease;
 
   // hack for chrome to make date picker white
-  ${({ theme }) =>
-    theme.isDarkMode &&
-    `
-        &::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-        }
-    `}
+  [data-theme="dark"] &::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
   &:focus {
-    border-color: ${({ theme }) => theme.colors.general.blue};
+    border-color: ${theme.colors.general.blue};
   }
   &::placeholder {
-    color: ${({ theme }) => (theme.isDarkMode ? "#888" : "#999")};
+    color: ${theme.effects.subtleText};
   }
   &[disabled] {
     opacity: 0.6;
     cursor: not-allowed;
   }
-  ${({ theme, $invalid }) =>
-    $invalid &&
-    `
-      border-color: ${theme.colors.general.red} !important;
-    `};
+  &[data-invalid="true"] {
+    border-color: ${theme.colors.general.red} !important;
+  }
 `;
 
 const Error = styled.div`
-  background: ${({ theme }) => theme.colors.general.red}15;
-  border: 1px solid ${({ theme }) => theme.colors.general.red};
-  color: ${({ theme }) => theme.colors.general.red};
+  background: color-mix(in srgb, ${theme.colors.general.red} 8%, transparent);
+  border: 1px solid ${theme.colors.general.red};
+  color: ${theme.colors.general.red};
   padding: 0.75rem 1rem;
   margin: 0 0 1rem 0;
   border-radius: 0.5rem;
@@ -57,7 +53,7 @@ const Error = styled.div`
 `;
 
 const Label = styled.label`
-  color: ${({ theme }) => theme.colors.forms.label.color};
+  color: ${theme.colors.forms.label.color};
   margin: 0 0 0.4rem;
   display: block;
 `;
@@ -83,7 +79,13 @@ const Input = forwardRef<
   HTMLInputElement,
   InputProps & React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 >(({ placeholder, invalid, ...props }, ref) => (
-  <_Input {...props} ref={ref} aria-label={placeholder} placeholder={placeholder} $invalid={invalid} />
+  <_Input
+    {...props}
+    ref={ref}
+    aria-label={placeholder}
+    placeholder={placeholder}
+    data-invalid={invalid ? "true" : "false"}
+  />
 ));
 Input.displayName = "Input";
 

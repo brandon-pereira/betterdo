@@ -1,6 +1,8 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
 
-export const IconContainer = styled.div<{ size?: string }>`
+import { theme } from "../../theme";
+
+export const IconContainer = styled.div<{ size?: string; color?: string; type?: "button"; as?: "button" | "div" }>`
   height: ${props => props.size || "1rem"};
   width: ${props => props.size || "1rem"};
   background: none;
@@ -18,7 +20,7 @@ export const IconContainer = styled.div<{ size?: string }>`
   }
   &:focus-visible {
     svg {
-      fill: ${({ theme }) => theme.colors.general.blue};
+      fill: ${theme.colors.general.blue};
     }
   }
 `;

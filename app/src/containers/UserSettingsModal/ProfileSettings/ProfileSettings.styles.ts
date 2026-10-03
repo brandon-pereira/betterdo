@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../../theme";
 
 import ProfilePic from "@components/ProfilePic";
 
@@ -13,7 +15,7 @@ export const ProfilePictureBanner = styled.div`
   border-radius: 1rem;
   &:before {
     content: "";
-    background: ${({ theme }) => theme.colors.general.blue};
+    background: ${theme.colors.general.blue};
     width: 100%;
     height: 100%;
     position: absolute;

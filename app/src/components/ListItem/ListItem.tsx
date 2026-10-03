@@ -23,11 +23,16 @@ const ListItem = forwardRef<HTMLButtonElement, Props>(({ containerProps, touchEv
   const { type, color, id } = list;
   const selected = id === currentListId || (type !== "default" && type === currentListId);
   const customList = getCustomList(type);
-  const Icon = customList?.icon || <DotIcon color={color} />;
+  const Icon = customList?.icon || <DotIcon style={{ "--dot-color": color } as React.CSSProperties} />;
   const title = customList?.title || list.title;
 
   return (
-    <Container selected={selected} {...containerProps} ref={ref} onClick={() => switchList(list)}>
+    <Container
+      data-selected={selected ? "true" : "false"}
+      {...containerProps}
+      ref={ref}
+      onClick={() => switchList(list)}
+    >
       {selected && <SelectedItemBackground layoutId="primary-nav-selected-div" />}
       <IconHolder {...touchEvents}>{Icon}</IconHolder>
       <Title>{title}</Title>

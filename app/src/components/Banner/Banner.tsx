@@ -19,7 +19,7 @@ const Banner = ({ title, body, buttonText, buttonAction, icon, className }: Prop
     }}
     className={className}
   >
-    <Icon size="30vmin" icon={icon} />
+    <Icon size="30vmin" icon={icon} data-betterdo={icon.name === "SvgBetterdo" ? "true" : "false"} />
     <Heading>{title}</Heading>
     <BodyCopy>{body}</BodyCopy>
     {buttonText && (

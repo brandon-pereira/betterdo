@@ -99,7 +99,7 @@ const Modal = forwardRef<HTMLDivElement, Props>(
     }, [onContainerResize, disableHeightAnimation, visible]);
 
     return (
-      <Overlay $isVisible={visible} onMouseDown={e => closeModal(e)}>
+      <Overlay data-visible={visible ? "true" : "false"} onMouseDown={e => closeModal(e)}>
         <FocusLock disabled={Boolean(!visible)}>
           <Container
             initial="hidden"
@@ -107,7 +107,7 @@ const Modal = forwardRef<HTMLDivElement, Props>(
             exit="hidden"
             transition={transition || { duration: 0.1, type: "easeOut" }}
             variants={variants || defaultVariant}
-            $disableHeightAnimation={disableHeightAnimation}
+            data-visible={visible ? "true" : "false"}
             onAnimationComplete={() => {
               onAnimationComplete?.();
               onContainerResize();
@@ -115,10 +115,13 @@ const Modal = forwardRef<HTMLDivElement, Props>(
             style={style}
             className={`${className || ""} ${visible ? "visible" : ""}`}
             ref={ref}
-            $visible={visible}
           >
             <ContentContainer $disableHeightAnimation={disableHeightAnimation} $height={height}>
-              <Content data-betterdo-modal-content $disableHeightAnimation={disableHeightAnimation} ref={contentRef}>
+              <Content
+                data-betterdo-modal-content
+                data-full-height={disableHeightAnimation ? "true" : "false"}
+                ref={contentRef}
+              >
                 {children}
               </Content>
             </ContentContainer>

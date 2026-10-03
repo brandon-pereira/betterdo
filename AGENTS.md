@@ -27,7 +27,9 @@ BetterDo is a Yarn workspaces monorepo: `api/` (Hono + Drizzle + Postgres), `app
 - API layers: `routes/` (Hono routers, one per resource, default-exported) → `services/` (business logic + DB) → `schema/` (Drizzle) → `db.ts`.
 - Validate with `zValidator("json", schema, errHandler)`; Zod schemas in `validators/`. Guard routes with `authMiddleware`; get user via `c.get("user")`.
 - Errors: return `c.json({ error: "..." }, statusCode)` with explicit codes; global `app.onError` → 500. Log prefix `[api]`. Services `throw new Error(...)` for invariant violations.
-- App components: own folder with `Component.tsx`, `Component.styles.ts`, `index.ts` barrel; styled-components use `$`-prefixed transient props.
+- App components: own folder with `Component.tsx`, `Component.styles.ts`, `index.ts` barrel.
+- App styling uses Linaria (`styled` from `@linaria/react`): zero-runtime, extracted to static CSS, so interpolations must be build-time resolvable. Theme is CSS-variable based (`app/src/theme.ts`): `theme.*` are `var(--...)` refs; `ThemeProvider` writes `LIGHT_VARS`/`DARK_VARS` to the root and sets `data-theme`. Dark mode via `[data-theme="dark"]` + `theme.effects.*` tokens.
+- No conditional CSS blocks (use `data-*` selectors) and no `.attrs` (use inline `style`/CSS vars). Prop *value* interpolations and `${Other} { ... }` selectors are supported.
 
 ## Testing
 

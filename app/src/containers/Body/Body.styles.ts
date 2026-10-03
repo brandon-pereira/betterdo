@@ -1,4 +1,7 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
+
 import _Banner from "@components/Banner";
 
 const Banner = styled(_Banner)``;
@@ -20,8 +23,8 @@ export const Container = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) => theme.colors.body.background};
-  ${({ theme }) => theme.queries.medium} {
+  background: ${theme.colors.body.background};
+  ${theme.queries.medium} {
     grid-row: 2;
     grid-column: 2;
     ${Banner} {

@@ -1,5 +1,9 @@
 # Changelog
 
+## v8.2.0 (2026-10-03)
+
+- Migrated styling from styled-components to Linaria (zero-runtime, build-time extracted CSS)
+
 ## v8.1.0 (2026-10-01)
 
 - Ditch mantine in favor of custom-built components

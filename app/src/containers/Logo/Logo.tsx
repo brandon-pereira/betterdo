@@ -2,12 +2,9 @@ import { useNavigate } from "react-router-dom";
 
 import { Container, Content, Hamburger, ProfilePicture } from "./Logo.styles";
 
-import useListDetails from "@hooks/useListDetails";
 import useProfile from "@hooks/useProfile";
-import useCurrentListId from "@hooks/useCurrentListId";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
 import useHamburgerNav from "@hooks/useHamburgerNav";
-import { getAccessibleAccent } from "@utilities/colors";
 
 function Logo() {
   const [isMobileNavVisible, setMobileNavVisibility] = useHamburgerNav();
@@ -15,11 +12,8 @@ function Logo() {
   const navigate = useNavigate();
 
   const { profile } = useProfile();
-  const currentListId = useCurrentListId();
-  const { list } = useListDetails(currentListId);
-  const color = getAccessibleAccent(list.color!);
   return (
-    <Container color={color.toHex()}>
+    <Container>
       <Content>
         <Hamburger
           open={isMobileNavVisible}

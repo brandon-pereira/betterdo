@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 import randomColor from "randomcolor";
-import { styled, useTheme } from "styled-components";
+import { styled } from "@linaria/react";
 
 import Button from "@components/Button";
 import { Body, Header } from "@components/Copy";
@@ -9,6 +9,7 @@ import ColorPicker from "@components/ColorPicker";
 import useCreateList from "@hooks/useCreateList";
 import { ServerError } from "@utilities/server";
 import { checkIfColorGoodContrast } from "@utilities/colors";
+import { useResolvedTheme } from "@utilities/ThemeProvider";
 
 const ButtonContainer = styled.div`
   margin-top: 1.5rem;
@@ -25,8 +26,8 @@ function AddListModalContent({ onLoad }: AddListModalProps) {
   const [title, setTitle] = useState("");
   const [color, setColor] = useState(randomColor());
   const createList = useCreateList();
-  const theme = useTheme();
-  const isColorGoodContrast = checkIfColorGoodContrast(color, theme.colors.modals.contentBackground);
+  const { modalContentBackground } = useResolvedTheme();
+  const isColorGoodContrast = checkIfColorGoodContrast(color, modalContentBackground);
 
   useEffect(() => {
     if (onLoad && typeof onLoad === "function") {

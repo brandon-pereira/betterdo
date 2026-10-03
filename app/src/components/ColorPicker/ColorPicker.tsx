@@ -116,8 +116,8 @@ function ColorPicker({ value, onChange }: Props) {
             type="button"
             key={color}
             onClick={() => onChangeColor(color)}
-            color={color}
-            $isCurrent={index === idx}
+            style={{ backgroundColor: color }}
+            data-current={index === idx ? "true" : "false"}
           />
         ))}
       </Container>

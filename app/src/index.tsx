@@ -3,7 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ResponsiveProvider } from "@hooks/useResponsive";
 
-import { ThemeProvider, GlobalStyles } from "./utilities/ThemeProvider";
+import { ThemeProvider } from "./utilities/ThemeProvider";
 import SWRProvider from "./utilities/SWRProvider";
 import App from "./App";
 
@@ -20,7 +20,6 @@ document.querySelector("#critical-css")?.remove();
 
 root.render(
   <HelmetProvider>
-    <GlobalStyles />
     <DarkModeProvider>
       <ThemeProvider>
         <ErrorBoundary>

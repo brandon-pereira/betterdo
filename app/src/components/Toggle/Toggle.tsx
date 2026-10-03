@@ -25,9 +25,9 @@ function Toggle({ value, onChange, disabled }: Props) {
   );
 
   return (
-    <Switch disabled={disabled}>
+    <Switch data-disabled={disabled ? "true" : "false"}>
       <input type="checkbox" checked={checked} onChange={_onChange} disabled={disabled} />
-      <Slider disabled={disabled} />
+      <Slider data-disabled={disabled ? "true" : "false"} />
     </Switch>
   );
 }

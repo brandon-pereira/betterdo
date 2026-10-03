@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../../theme";
 
 export const OptionGroup = styled.div`
   display: flex;
@@ -10,7 +12,7 @@ export const OptionGroup = styled.div`
     padding-top: 0.5rem;
   }
   &:nth-of-type(even) {
-    background: ${({ theme }) => theme.colors.modals.listViewAlternateBackground};
+    background: ${theme.colors.modals.listViewAlternateBackground};
   }
   select {
     max-width: 15rem;
@@ -24,5 +26,5 @@ export const OptionGroup = styled.div`
 export const Description = styled.p`
   margin-top: -0.2rem;
   font-size: 0.9rem;
-  color: ${({ theme }) => theme.colors.body.color};
+  color: ${theme.colors.body.color};
 `;

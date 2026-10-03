@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import { Input as _Input } from "@components/Forms";
 import _Icon from "@components/Icon";
@@ -8,7 +10,7 @@ export const Input = styled(_Input)`
   border-radius: 0;
   box-shadow: none;
   margin-bottom: 0;
-  box-shadow: ${({ theme }) => theme.colors.forms.input.boxShadow};
+  box-shadow: ${theme.colors.forms.input.boxShadow};
 `;
 export const Container = styled.div`
   background: #fff;
@@ -19,17 +21,15 @@ export const Container = styled.div`
   box-sizing: border-box;
   border-radius: 3px;
   overflow: hidden;
-  color: ${({ theme }) => theme.colors.forms.input.color};
-  background: ${({ theme }) => theme.colors.forms.input.background};
-  ${({ theme }) =>
-    theme.isDarkMode &&
-    `
-        border: none;
-    `};
+  color: ${theme.colors.forms.input.color};
+  background: ${theme.colors.forms.input.background};
+  [data-theme="dark"] & {
+    border: none;
+  }
 `;
 export const DeleteIcon = styled(_Icon)``;
 
-export const Task = styled.div<{ checked?: boolean }>`
+export const Task = styled.div`
   display: flex;
   align-items: center;
   padding: 0.8rem 1rem;
@@ -43,11 +43,9 @@ export const Task = styled.div<{ checked?: boolean }>`
   ${DeleteIcon} {
     display: none;
   }
-  ${props =>
-    props.checked &&
-    `
+  &[data-checked="true"] {
     text-decoration: line-through;
-`}
+  }
   &:hover {
     ${DeleteIcon} {
       display: block;
@@ -56,14 +54,10 @@ export const Task = styled.div<{ checked?: boolean }>`
   &:last-of-type {
     border-bottom: none;
   }
-  ${({ theme }) =>
-    theme.isDarkMode &&
-    `
-        && {
-            border: none;
-            border-bottom: 1px solid rgba(255,255,255,0.5);
-        }
-    `};
+  [data-theme="dark"] && {
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  }
 `;
 export const Checkbox = styled.input`
   height: 1rem;
@@ -87,6 +81,6 @@ export const Checkbox = styled.input`
   &:focus-visible {
     box-shadow:
       inset 0 0 0 2px #fff,
-      0 0 0 2px ${({ theme }) => theme.colors.general.blue};
+      0 0 0 2px ${theme.colors.general.blue};
   }
 `;

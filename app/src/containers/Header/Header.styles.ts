@@ -1,6 +1,7 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
 
 import { DEFAULT_LIST_COLOR } from "../../constants";
+import { theme } from "../../theme";
 
 import Button from "@components/Button";
 import _Icon from "@components/Icon";
@@ -9,21 +10,19 @@ import _Hamburger from "@components/Hamburger";
 
 export const Icon = styled(_Icon)``;
 
-export const Hamburger = styled(_Hamburger)<{ hidden: boolean }>`
-  ${({ hidden }) =>
-    hidden &&
-    `
-        display: none;
-    `}
+export const Hamburger = styled(_Hamburger)`
+  &[hidden] {
+    display: none;
+  }
 `;
 export const Loader = styled(_Loader)`
   margin-left: 0.5rem;
 `;
 
-export const Container = styled.header<{ $isDarkColor: boolean }>`
+export const Container = styled.header`
   grid-row: 3;
   grid-column: 1;
-  background-color: ${({ color }) => color || DEFAULT_LIST_COLOR};
+  background-color: var(--current-list-color, ${DEFAULT_LIST_COLOR});
   background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
   box-shadow: inset 0 -1px rgba(0, 0, 0, 0.3);
   color: #1f1f1f;
@@ -33,18 +32,16 @@ export const Container = styled.header<{ $isDarkColor: boolean }>`
   overflow: hidden;
   transform: translateY(0%);
   transition: background 0.6s;
-  ${({ $isDarkColor }) =>
-    $isDarkColor &&
-    `
-        color: #fff;
-    `}
+  &[data-dark-color="true"] {
+    color: #fff;
+  }
   ${Hamburger} {
     padding: 0 0.5rem 0 0.8rem;
   }
   ${Loader} {
     filter: drop-shadow(1px 1px rgba(0, 0, 0, 0.5));
   }
-  ${({ theme }) => theme.queries.medium} {
+  ${theme.queries.medium} {
     grid-row: 1;
     grid-column: 2;
     ${Hamburger} {

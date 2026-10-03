@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useTheme } from "styled-components";
 
 import ListSettings from "./ListSettings";
 import ListMembers from "./ListMembers";
@@ -11,6 +10,7 @@ import useListDetails from "@hooks/useListDetails";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
 import { checkIfColorGoodContrast } from "@utilities/colors";
+import { useResolvedTheme } from "@utilities/ThemeProvider";
 
 interface Props {
   setUnsavedChanges: (bool: boolean) => void;
@@ -30,8 +30,8 @@ function EditListModalContent({ setUnsavedChanges, onRequestClose }: Props) {
   });
   const generateUrl = useGeneratedUrl();
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isColorGoodContrast = checkIfColorGoodContrast(list.color || "#000", theme.colors.modals.contentBackground);
+  const { modalContentBackground } = useResolvedTheme();
+  const isColorGoodContrast = checkIfColorGoodContrast(list.color || "#000", modalContentBackground);
 
   return (
     <>

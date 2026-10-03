@@ -13,11 +13,10 @@ function Header() {
   const { openModal: openEditListModal } = useEditListModal();
   const currentListId = useCurrentListId();
   const { list, loading } = useListDetails(currentListId);
-  const color = getAccessibleAccent(list.color!);
-  const isDarkColor = color.isDark();
+  const isDarkColor = getAccessibleAccent(list.color!).isDark();
 
   return (
-    <Container $isDarkColor={isDarkColor} color={color.toHex()}>
+    <Container data-dark-color={isDarkColor ? "true" : "false"}>
       <Hamburger open={isMobileNavVisible} hidden={isMobileNavVisible} onClick={() => setMobileNavVisibility(true)} />
       <Loader isVisible={loading} size="2rem" />
       <Title>{list.title}</Title>

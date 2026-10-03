@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../../theme";
 
 import Button from "@components/Button";
 
@@ -6,8 +8,8 @@ export const Section = styled.section`
   margin-bottom: 1.5rem;
   padding: 1.25rem;
   border-radius: 0.875rem;
-  border: 1px solid ${({ theme }) => theme.colors.forms.input.borderColor};
-  background: ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.015)")};
+  border: 1px solid ${theme.colors.forms.input.borderColor};
+  background: ${theme.effects.settingsSectionBackground};
   display: grid;
   gap: 0.75rem;
 
@@ -22,12 +24,12 @@ export const SectionHeader = styled.div`
   gap: 0.5rem;
   font-weight: 700;
   font-size: 1.05rem;
-  color: ${({ theme }) => theme.colors.body.color};
+  color: ${theme.colors.body.color};
 `;
 
 export const SectionDescription = styled.p`
   margin: 0;
-  color: ${({ theme }) => theme.colors.forms.label.color};
+  color: ${theme.colors.forms.label.color};
   line-height: 1.5;
   font-size: 0.9rem;
 `;
@@ -50,10 +52,10 @@ export const PasskeyItem = styled.div`
   align-items: center;
   gap: 0.6rem;
   padding: 0.45rem 0.6rem;
-  border: 1px solid ${({ theme }) => theme.colors.forms.input.borderColor};
+  border: 1px solid ${theme.colors.forms.input.borderColor};
   border-radius: 0.5rem;
-  background: ${({ theme }) => theme.colors.forms.input.background};
-  color: ${({ theme }) => theme.colors.body.color};
+  background: ${theme.colors.forms.input.background};
+  color: ${theme.colors.body.color};
 `;
 
 export const PasskeyDetails = styled.div`
@@ -80,18 +82,18 @@ export const PasskeyActions = styled.div`
 export const EmptyState = styled.div`
   padding: 1rem;
   text-align: center;
-  border: 1px dashed ${({ theme }) => theme.colors.forms.input.borderColor};
+  border: 1px dashed ${theme.colors.forms.input.borderColor};
   border-radius: 0.625rem;
-  color: ${({ theme }) => theme.colors.forms.label.color};
+  color: ${theme.colors.forms.label.color};
   font-size: 0.9rem;
 `;
 
 export const Subtle = styled.span`
-  color: ${({ theme }) => theme.colors.forms.label.color};
+  color: ${theme.colors.forms.label.color};
   font-size: 0.85rem;
 `;
 
-export const Alert = styled.div<{ $variant?: "success" | "error" }>`
+export const Alert = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -100,18 +102,13 @@ export const Alert = styled.div<{ $variant?: "success" | "error" }>`
   font-size: 0.9rem;
   font-weight: 500;
   line-height: 1.4;
-  ${({ theme, $variant }) =>
-    $variant === "error"
-      ? `
-        background: ${theme.colors.general.red}15;
-        border: 1px solid ${theme.colors.general.red};
-        color: ${theme.colors.general.red};
-      `
-      : `
-        background: ${theme.colors.general.blue}15;
-        border: 1px solid ${theme.colors.general.blue};
-        color: ${theme.colors.general.blue};
-      `}
+  --alert-color: ${theme.colors.general.blue};
+  background: color-mix(in srgb, var(--alert-color) 8%, transparent);
+  border: 1px solid var(--alert-color);
+  color: var(--alert-color);
+  &[data-variant="error"] {
+    --alert-color: ${theme.colors.general.red};
+  }
 `;
 
 export const FormRow = styled.div`
@@ -137,7 +134,7 @@ export const ConfirmRow = styled.div`
 
 export const LoadingText = styled.div`
   padding: 1rem;
-  color: ${({ theme }) => theme.colors.forms.label.color};
+  color: ${theme.colors.forms.label.color};
   font-size: 0.9rem;
 `;
 

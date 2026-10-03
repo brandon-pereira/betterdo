@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import User from "@customTypes/user";
 
@@ -8,7 +10,7 @@ const Container = styled.div<{ size?: string }>`
   outline: none;
   height: ${props => props.size || "3rem"};
   width: ${props => props.size || "3rem"};
-  background: ${({ theme }) => theme.colors.general.blue};
+  background: ${theme.colors.general.blue};
   border-radius: 50%;
   overflow: hidden;
   font-size: 1.5rem;
@@ -20,7 +22,7 @@ const Container = styled.div<{ size?: string }>`
   position: relative;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
   &:focus-visible {
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.general.blue};
+    box-shadow: 0 0 0 2px ${theme.colors.general.blue};
   }
 `;
 const Img = styled.img`
@@ -39,16 +41,17 @@ const Img = styled.img`
 interface Props {
   user?: User | null;
   size?: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  className?: string;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
-const ProfilePicture = ({ user, onClick, ...props }: Props) => {
+const ProfilePicture = ({ user, onClick, className, size }: Props) => {
   const [error, setError] = useState(false);
   const firstName = user?.firstName || "A";
   const lastName = user?.lastName || "A";
   const initials = firstName.charAt(0) + lastName.charAt(0);
   return (
-    <Container as={onClick ? "button" : "div"} onClick={onClick} {...props}>
+    <Container as={onClick ? "button" : "div"} onClick={onClick} className={className} size={size}>
       {user && user.profilePicture && !error && (
         <Img
           onError={() => setError(true)}

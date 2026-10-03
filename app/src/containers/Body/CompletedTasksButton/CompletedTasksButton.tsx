@@ -38,7 +38,7 @@ function CompletedTasksButton({ onClick, isAllCaughtUp, isLoading, count, hidden
       transition={{
         type: "easeOut"
       }}
-      $isAllCaughtUp={isAllCaughtUp}
+      data-all-caught-up={isAllCaughtUp ? "true" : "false"}
     >
       <Button hidden={hidden || count === 0} isLoading={isLoading} loaderColor="#888" onClick={onClick}>
         <AnimatePresence initial={false}>

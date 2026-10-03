@@ -7,7 +7,9 @@ import { Text } from "@tiptap/extension-text";
 import { Bold } from "@tiptap/extension-bold";
 import Link from "./TipTap/Link";
 
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 const Container = styled.div`
   width: 100%;
@@ -17,22 +19,21 @@ const Toolbar = styled.div`
   display: flex;
   gap: 0.25rem;
   padding: 0.25rem;
-  background: ${({ theme }) => theme.colors.forms.input.background};
+  background: ${theme.colors.forms.input.background};
   border-radius: 3px 3px 0 0;
-  border: 2px solid ${({ theme }) => theme.colors.forms.input.borderColor};
+  border: 2px solid ${theme.colors.forms.input.borderColor};
   border-bottom: none;
 `;
 
-const ToolbarButton = styled.button<{ $isActive?: boolean }>`
-  background: ${({ theme, $isActive }) =>
-    $isActive ? (theme.isDarkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.1)") : "transparent"};
+const ToolbarButton = styled.button`
+  background: transparent;
   border: none;
-  color: ${({ theme }) => theme.colors.forms.input.color};
+  color: ${theme.colors.forms.input.color};
   padding: 0.35rem 0.5rem;
   border-radius: 3px;
   cursor: pointer;
   font-size: 0.85rem;
-  font-weight: ${({ $isActive }) => ($isActive ? "600" : "500")};
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -41,8 +42,13 @@ const ToolbarButton = styled.button<{ $isActive?: boolean }>`
   min-height: 36px;
   justify-content: center;
 
+  &[data-active="true"] {
+    background: ${theme.effects.tintActive};
+    font-weight: 600;
+  }
+
   &:hover {
-    background: ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)")};
+    background: ${theme.effects.tintMedium};
   }
 
   &:active {
@@ -58,9 +64,9 @@ const ToolbarButton = styled.button<{ $isActive?: boolean }>`
 
 const Editor = styled(EditorContent)`
   .tiptap {
-    border: 2px solid ${({ theme }) => theme.colors.forms.input.borderColor};
-    color: ${({ theme }) => theme.colors.forms.input.color};
-    background: ${({ theme }) => theme.colors.forms.input.background};
+    border: 2px solid ${theme.colors.forms.input.borderColor};
+    color: ${theme.colors.forms.input.color};
+    background: ${theme.colors.forms.input.background};
     font-family: inherit;
     font-size: 1rem;
     resize: none;
@@ -80,7 +86,7 @@ const Editor = styled(EditorContent)`
     }
 
     &:focus {
-      border-color: ${({ theme }) => theme.colors.general.blue};
+      border-color: ${theme.colors.general.blue};
     }
 
     /* Heading styles */
@@ -111,7 +117,7 @@ const Editor = styled(EditorContent)`
     }
 
     a {
-      color: ${({ theme }) => theme.colors.general.blue};
+      color: ${theme.colors.general.blue};
     }
 
     /* Task list styles */
@@ -211,7 +217,7 @@ export default function RichTextEditor({
       <Toolbar>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
-          $isActive={editor.isActive("bold")}
+          data-active={editor.isActive("bold") ? "true" : "false"}
           title="Bold (Cmd+B)"
           type="button"
         >
@@ -220,7 +226,7 @@ export default function RichTextEditor({
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          $isActive={editor.isActive("heading", { level: 2 })}
+          data-active={editor.isActive("heading", { level: 2 }) ? "true" : "false"}
           title="Heading (Cmd+Alt+2)"
           type="button"
         >
@@ -229,7 +235,7 @@ export default function RichTextEditor({
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleTaskList().run()}
-          $isActive={editor.isActive("taskList")}
+          data-active={editor.isActive("taskList") ? "true" : "false"}
           title="Subtasks (Cmd+Shift+9)"
           type="button"
         >

@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
 
 import useCurrentListId from "@hooks/useCurrentListId";
 import useLists from "@hooks/useLists";
@@ -30,35 +30,34 @@ const ClickContainer = styled.div`
   cursor: pointer;
 `;
 
-const BarContainer = styled.div<{ open: boolean }>`
+const BarContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 1.5rem;
   width: 2rem;
   filter: drop-shadow(0 1px rgba(0, 0, 0, 0.5));
-  display: ${props => (props.hidden ? "none" : "flex")};
-  ${props =>
-    props.open &&
-    `
-            ${Bar}:nth-of-type(1) {
-                transform: rotate(45deg);
-            }
-            ${Bar}:nth-of-type(2) {
-                opacity: 0;
-            }
-            ${Bar}:nth-of-type(3) {
-                transform: rotate(-45deg);
-            }
-    `}
+  display: flex;
+  &[data-open="true"] {
+    ${Bar}:nth-of-type(1) {
+      transform: rotate(45deg);
+    }
+    ${Bar}:nth-of-type(2) {
+      opacity: 0;
+    }
+    ${Bar}:nth-of-type(3) {
+      transform: rotate(-45deg);
+    }
+  }
 `;
 
 interface Props {
   className?: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   open: boolean;
+  hidden?: boolean;
 }
 
-const Hamburger = ({ open, className, onClick }: Props) => {
+const Hamburger = ({ open, className, onClick, hidden }: Props) => {
   const { lists } = useLists();
   const currentListId = useCurrentListId();
   const switchList = useSwitchList();
@@ -71,8 +70,8 @@ const Hamburger = ({ open, className, onClick }: Props) => {
   });
 
   return (
-    <ClickContainer onClick={onClick} className={className} {...swiper}>
-      <BarContainer open={open}>
+    <ClickContainer onClick={onClick} className={className} hidden={hidden} {...swiper}>
+      <BarContainer data-open={open ? "true" : "false"}>
         <Bar />
         <Bar />
         <Bar />

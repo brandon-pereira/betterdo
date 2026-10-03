@@ -197,7 +197,7 @@ function AuthSettings() {
           than passwords.
         </SectionDescription>
 
-        {passkeyFeedback && <Alert $variant={passkeyFeedback.type}>{passkeyFeedback.message}</Alert>}
+        {passkeyFeedback && <Alert data-variant={passkeyFeedback.type}>{passkeyFeedback.message}</Alert>}
 
         <form onSubmit={handleAddPasskey}>
           <FormRow>
@@ -284,7 +284,7 @@ function AuthSettings() {
             You signed in with Google and don&apos;t have a password yet. We&apos;ll email you a secure link so you can
             set one and also sign in with your email address.
           </SectionDescription>
-          {pwEmailFeedback && <Alert $variant={pwEmailFeedback.type}>{pwEmailFeedback.message}</Alert>}
+          {pwEmailFeedback && <Alert data-variant={pwEmailFeedback.type}>{pwEmailFeedback.message}</Alert>}
           <InlineActions>
             <SmallButton onClick={handleSendSetPassword} isLoading={isSendingSetPassword} loadingText="Sending">
               Email me a set-up link
@@ -297,7 +297,7 @@ function AuthSettings() {
           <SectionDescription>
             Choose a new password. Changing it will sign you out of all other devices.
           </SectionDescription>
-          {passwordFeedback && <Alert $variant={passwordFeedback.type}>{passwordFeedback.message}</Alert>}
+          {passwordFeedback && <Alert data-variant={passwordFeedback.type}>{passwordFeedback.message}</Alert>}
           <form onSubmit={handleChangePassword}>
             <FormGrid>
               <FormRow>

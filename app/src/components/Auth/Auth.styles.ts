@@ -1,5 +1,8 @@
+import { styled } from "@linaria/react";
+
 import { QUERIES } from "../../constants";
-import { styled } from "styled-components";
+import { theme } from "../../theme";
+
 import { Input } from "@components/Forms";
 
 // The shared Forms Input carries a bottom margin for stacked forms; inside the
@@ -17,8 +20,8 @@ export const Container = styled.div`
   width: 100%;
   height: 100%;
 
-  background: ${({ theme }) => theme.colors.body.background};
-  ${({ theme }) => theme.queries.large} {
+  background: ${theme.colors.body.background};
+  ${theme.queries.large} {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
   }
@@ -40,8 +43,8 @@ export const LogoSection = styled.div`
     0 0 2px rgba(0, 0, 0, 1);
   background: linear-gradient(
     -45deg,
-    ${({ theme }) => theme.colors.general.blue},
-    color-mix(in srgb, ${({ theme }) => theme.colors.general.blue}, #000)
+    ${theme.colors.general.blue},
+    color-mix(in srgb, ${theme.colors.general.blue}, #000)
   );
 
   path {
@@ -109,9 +112,9 @@ export const AuthProviders = styled.div`
 `;
 
 export const FormWrapper = styled.div`
-  --background-color: ${({ theme }) => theme.colors.modals.contentBackground};
+  --background-color: ${theme.colors.modals.contentBackground};
   background: var(--background-color);
-  color: ${({ theme }) => theme.colors.body.color};
+  color: ${theme.colors.body.color};
   border-radius: 2rem;
   padding: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -135,16 +138,16 @@ export const Title = styled.h2`
 export const Stack = styled.div<{ $gap?: string; $align?: string }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ $gap }) => $gap || "1rem"};
-  ${({ $align }) => $align && `align-items: ${$align};`}
+  gap: ${props => props.$gap || "1rem"};
+  align-items: ${props => props.$align || "stretch"};
 `;
 
 export const Group = styled.div<{ $justify?: string; $gap?: string }>`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: ${({ $justify }) => $justify || "flex-start"};
-  gap: ${({ $gap }) => $gap || "0.5rem"};
+  justify-content: ${props => props.$justify || "flex-start"};
+  gap: ${props => props.$gap || "0.5rem"};
 `;
 
 export const Center = styled.div`
@@ -156,16 +159,20 @@ export const Center = styled.div`
 export const DimmedText = styled.p<{ $align?: string }>`
   margin: 0;
   font-size: 0.875rem;
-  color: ${({ theme }) => theme.colors.forms.label.color};
-  ${({ $align }) => $align && `text-align: ${$align};`}
+  color: ${theme.colors.forms.label.color};
+  text-align: ${props => props.$align || "left"};
 `;
 
 export const Alert = styled.div<{ $color?: "red" | "green" | "blue" }>`
-  --alert-color: ${({ theme, $color }) =>
-    $color === "green" ? "#2f9e44" : $color === "red" ? theme.colors.general.red : theme.colors.general.blue};
+  --alert-color: ${props =>
+    props.$color === "green"
+      ? "#2f9e44"
+      : props.$color === "red"
+        ? "var(--colors-general-red)"
+        : "var(--colors-general-blue)"};
   border: 1px solid var(--alert-color);
   background: color-mix(in srgb, var(--alert-color) 12%, transparent);
-  color: ${({ theme }) => theme.colors.body.color};
+  color: ${theme.colors.body.color};
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   font-size: 0.9rem;
@@ -181,7 +188,7 @@ export const Divider = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: ${({ theme }) => theme.colors.forms.label.color};
+  color: ${theme.colors.forms.label.color};
   font-size: 0.875rem;
 
   &::before,
@@ -189,7 +196,7 @@ export const Divider = styled.div`
     content: "";
     flex: 1;
     height: 1px;
-    background: ${({ theme }) => theme.colors.forms.input.borderColor};
+    background: ${theme.colors.forms.input.borderColor};
   }
 `;
 
@@ -201,7 +208,7 @@ export const PasswordField = styled.div`
   }
 `;
 
-export const PasswordToggle = styled.button.attrs({ type: "button" })`
+export const PasswordToggle = styled.button`
   position: absolute;
   top: 0;
   right: 0;
@@ -215,7 +222,7 @@ export const PasswordToggle = styled.button.attrs({ type: "button" })`
   border: none;
   background: none;
   cursor: pointer;
-  color: ${({ theme }) => theme.colors.forms.label.color};
+  color: ${theme.colors.forms.label.color};
 
   svg {
     width: 1.25rem;
@@ -223,7 +230,7 @@ export const PasswordToggle = styled.button.attrs({ type: "button" })`
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.general.blue};
+    outline: 2px solid ${theme.colors.general.blue};
     outline-offset: -2px;
     border-radius: 0.5rem;
   }

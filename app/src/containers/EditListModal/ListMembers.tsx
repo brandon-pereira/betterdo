@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import Button from "@components/Button";
 import { Form, Label, Input } from "@components/Forms";
@@ -17,7 +19,7 @@ const UserList = styled.ol`
   overflow-y: auto;
 `;
 const Owner = styled.div`
-  color: ${({ theme }) => theme.colors.body.color};
+  color: ${theme.colors.body.color};
   text-transform: uppercase;
   font-weight: bold;
   &:before {
@@ -36,12 +38,12 @@ const User = styled.li`
   align-items: center;
   padding: 1rem;
   border-radius: 1rem;
-  color: ${({ theme }) => theme.colors.body.color};
+  color: ${theme.colors.body.color};
   ${ProfilePic} {
     margin-right: 1rem;
   }
   &:nth-of-type(odd) {
-    background: ${({ theme }) => theme.colors.modals.listViewAlternateBackground};
+    background: ${theme.colors.modals.listViewAlternateBackground};
   }
 `;
 

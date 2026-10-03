@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import _ProfilePic from "@components/ProfilePic";
 import _Modal from "@components/Modal";
@@ -14,13 +16,13 @@ export const Modal = styled(_Modal)`
   width: calc(100% - 1.5rem);
   will-change: transform;
   border-radius: 1.25rem;
-  background: ${({ theme }) => (theme.isDarkMode ? "rgba(30, 30, 30, 0.7)" : "#fff")};
+  background: ${theme.effects.glassBackground};
   backdrop-filter: blur(40px) saturate(1.8);
   -webkit-backdrop-filter: blur(40px) saturate(1.8);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.18),
-    inset 0 0 0 1px ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.6)")},
-    inset 0 1px 0 ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.8)")};
+    inset 0 0 0 1px ${theme.effects.glassHighlight},
+    inset 0 1px 0 ${theme.effects.glassHighlightTop};
   overflow: hidden;
   & > div {
     padding: 0;
@@ -51,8 +53,8 @@ export const HeaderBar = styled.div`
   margin: 0 -1rem 1rem;
   backdrop-filter: blur(20px) saturate(1.5);
   -webkit-backdrop-filter: blur(20px) saturate(1.5);
-  background: ${({ theme }) => (theme.isDarkMode ? "rgba(30, 30, 30, 0.5)" : "rgba(255, 255, 255, 0.4)")};
-  border-bottom: 1px solid ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)")};
+  background: ${theme.effects.editTaskHeaderBackground};
+  border-bottom: 1px solid ${theme.effects.editTaskHeaderBorder};
 `;
 
 export const HeaderTitle = styled.span`
@@ -60,7 +62,7 @@ export const HeaderTitle = styled.span`
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.4)")};
+  color: ${theme.effects.editTaskMutedText};
 `;
 
 export const Content = styled.div`
@@ -73,17 +75,15 @@ export const CreatorBlock = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 0;
-  background: ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.04)")};
+  background: ${theme.effects.editTaskFieldBackground};
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  box-shadow: inset 0 0 0 1px ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)")};
+  box-shadow: inset 0 0 0 1px ${theme.effects.editTaskFieldBorder};
   padding: 1rem;
   border-radius: 0.75rem;
-  ${({ theme }) =>
-    theme.isDarkMode &&
-    `
-        color: ${theme.colors.body.color};
-        `}
+  [data-theme="dark"] & {
+    color: ${theme.colors.body.color};
+  }
   ${ProfilePic} {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
@@ -109,6 +109,6 @@ export const ButtonContainer = styled.div`
   box-sizing: border-box;
   backdrop-filter: blur(20px) saturate(1.5);
   -webkit-backdrop-filter: blur(20px) saturate(1.5);
-  background: ${({ theme }) => (theme.isDarkMode ? "rgba(20, 20, 20, 0.5)" : "rgba(255, 255, 255, 0.45)")};
-  border-top: 1px solid ${({ theme }) => (theme.isDarkMode ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.5)")};
+  background: ${theme.effects.editTaskFooterBackground};
+  border-top: 1px solid ${theme.effects.editTaskFooterBorder};
 `;

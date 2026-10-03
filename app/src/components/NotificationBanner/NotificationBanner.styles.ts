@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import _Button from "@components/Button";
 
@@ -26,7 +28,7 @@ export const SecondaryButton = styled(Button)`
   }
 `;
 export const Container = styled.div`
-  background: ${({ theme }) => theme.colors.general.blue};
+  background: ${theme.colors.general.blue};
   box-shadow: inset 0 -1px rgba(0, 0, 0, 0.3);
   color: #fff;
   padding: 1rem;
@@ -37,7 +39,7 @@ export const Container = styled.div`
     margin-top: 1rem;
     margin-right: 0.5rem;
   }
-  ${({ theme }) => theme.queries.medium} {
+  ${theme.queries.medium} {
     display: flex;
     justify-content: center;
     align-items: center;

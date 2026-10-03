@@ -1,13 +1,12 @@
-import { styled, CSSProperties } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import _Loader from "@components/Loader";
 
-export const StyledButton = styled.button.attrs(({ color, theme }) => {
-  const style = {
-    "--color": theme.colors.general[color as keyof typeof theme.colors.general] || color || theme.colors.general.blue
-  } as CSSProperties;
-  return { style };
-})<{ isLoading?: boolean; $variant?: "primary" | "secondary"; $fullWidth?: boolean }>`
+export const StyledButton = styled.button<{
+  $fullWidth?: boolean;
+}>`
   border: 1px solid transparent;
   background-color: var(--color);
   color: #fff;
@@ -23,8 +22,8 @@ export const StyledButton = styled.button.attrs(({ color, theme }) => {
   position: relative;
   overflow: hidden;
   outline: none;
-  display: ${({ hidden }) => (hidden ? "none" : "inline-flex")};
-  width: ${({ $fullWidth }) => ($fullWidth ? "100%" : "auto")};
+  display: ${props => (props.hidden ? "none" : "inline-flex")};
+  width: ${props => (props.$fullWidth ? "100%" : "auto")};
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
@@ -39,32 +38,28 @@ export const StyledButton = styled.button.attrs(({ color, theme }) => {
     transform: translateY(1px);
   }
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.general.blue};
+    outline: 2px solid ${theme.colors.general.blue};
     outline-offset: 2px;
   }
   &:disabled {
     opacity: 0.5;
     pointer-events: none;
   }
-  ${({ theme, $variant }) =>
-    $variant === "secondary" &&
-    `
+  &[data-variant="secondary"] {
     color: ${theme.colors.forms.input.color};
     border: 1px solid ${theme.colors.forms.input.borderColor};
     background: ${theme.colors.forms.input.background};
     &:hover {
-      background: ${theme.isDarkMode ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.04)"};
+      background: ${theme.effects.hoverOverlay};
     }
-  `}
-  ${props =>
-    props.isLoading &&
-    `
-            pointer-events: none;
-            &:before {
-                opacity: 1;
-                background: rgba(255, 255, 255, 0.3);
-            }
-        `};
+  }
+  &[data-loading="true"] {
+    pointer-events: none;
+    &:before {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
 
   span {
     flex: 1;

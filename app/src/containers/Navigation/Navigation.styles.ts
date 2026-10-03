@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 export const NavigationModalOverlay = styled.div`
   background: rgba(0, 0, 0, 0.5);
@@ -10,9 +12,9 @@ export const NavigationModalOverlay = styled.div`
   opacity: 0;
 `;
 
-export const Container = styled.nav<{ $isMobileNavVisible?: boolean }>`
+export const Container = styled.nav`
   display: flex;
-  background: ${({ theme }) => theme.colors.navigation.background};
+  background: ${theme.colors.navigation.background};
   flex-direction: column;
   box-shadow:
     inset 0 1px rgba(255, 255, 255, 0.15),
@@ -23,15 +25,13 @@ export const Container = styled.nav<{ $isMobileNavVisible?: boolean }>`
   grid-row: 2;
   max-height: 100%;
   pointer-events: none;
-  ${({ $isMobileNavVisible }) =>
-    $isMobileNavVisible &&
-    `
-        pointer-events: all;
-        ${NavigationModalOverlay} {
-            opacity: 1;
-        }
-    `}
-  ${({ theme }) => theme.queries.medium} {
+  &[data-mobile-nav="true"] {
+    pointer-events: all;
+    ${NavigationModalOverlay} {
+      opacity: 1;
+    }
+  }
+  ${theme.queries.medium} {
     display: flex;
     position: static;
     opacity: 1;

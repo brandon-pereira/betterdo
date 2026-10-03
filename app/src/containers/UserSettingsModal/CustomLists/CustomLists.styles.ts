@@ -1,11 +1,13 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../../theme";
 
 export const CustomListsContainer = styled.ol`
   position: relative;
   padding: 0;
   margin: 0 -1rem;
   border-radius: 1rem;
-  background: ${({ theme }) => theme.colors.navigation.background};
+  background: ${theme.colors.navigation.background};
 `;
 export const CustomListItem = styled.li`
   color: #fff;

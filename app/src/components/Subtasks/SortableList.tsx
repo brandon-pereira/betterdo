@@ -41,7 +41,14 @@ const SortableItem = ({ id, onDelete, onToggleCompleted, value }: Props) => {
   } as CSSProperties;
 
   return (
-    <Task ref={setNodeRef} style={style} {...attributes} {...listeners} {...value} checked={value.isComplete}>
+    <Task
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      {...value}
+      data-checked={value.isComplete ? "true" : "false"}
+    >
       <Checkbox
         type="checkbox"
         onClick={e => e.stopPropagation()}

@@ -29,7 +29,13 @@ const Task = forwardRef<HTMLButtonElement, Props>(
     }, [id, modifyTask, isCompleted, listId]);
 
     return (
-      <Container ref={ref} $isLoading={isLoading} onClick={onEditTask} $priority={priority} {...containerProps}>
+      <Container
+        ref={ref}
+        data-loading={isLoading ? "true" : "false"}
+        onClick={onEditTask}
+        data-priority={priority}
+        {...containerProps}
+      >
         {isLoading ? (
           <Loader color="#202020" size="1.7rem" isVisible={true} />
         ) : (

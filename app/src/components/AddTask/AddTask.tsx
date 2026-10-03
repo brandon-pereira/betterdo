@@ -43,7 +43,11 @@ const AddTask = function ({ isHidden, isAbsolute }: Props) {
   );
 
   return (
-    <Container $isAbsolute={isAbsolute} $isHidden={isHidden} onSubmit={onSubmit}>
+    <Container
+      data-absolute={isAbsolute ? "true" : "false"}
+      data-hidden={isHidden ? "true" : "false"}
+      onSubmit={onSubmit}
+    >
       <Input ref={inputRef} invalid={invalid} disabled={isHidden} placeholder="Add Task" />
     </Container>
   );

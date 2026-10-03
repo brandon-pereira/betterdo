@@ -1,7 +1,10 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+import type { CSSProperties, ReactNode } from "react";
 
-const Header = styled.h2`
-  color: ${props => props.color || props.theme.colors.general.blue};
+import { theme } from "../../theme";
+
+const StyledHeader = styled.h2`
+  color: var(--accent-color, ${theme.colors.general.blue});
   font-weight: 100;
   font-size: 2rem;
   margin: 0 0 1rem;
@@ -9,8 +12,17 @@ const Header = styled.h2`
   letter-spacing: -2px;
 `;
 
+interface HeaderProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  color?: string;
+  children?: ReactNode;
+}
+
+const Header = ({ color, style, ...props }: HeaderProps) => (
+  <StyledHeader style={color ? ({ "--accent-color": color, ...style } as CSSProperties) : style} {...props} />
+);
+
 const Body = styled.p`
-  color: ${({ theme }) => theme.colors.body.color};
+  color: ${theme.colors.body.color};
   margin: 0 0 1rem;
 `;
 

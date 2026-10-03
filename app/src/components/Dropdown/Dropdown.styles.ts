@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import _Icon from "@components/Icon";
 
@@ -25,13 +27,13 @@ export const SelectContainer = styled.label`
 
 export const Select = styled.select<{ width?: string }>`
   appearance: none;
-  background: ${({ theme }) => theme.colors.forms.input.background};
-  color: ${({ theme }) => theme.colors.forms.input.color};
+  background: ${theme.colors.forms.input.background};
+  color: ${theme.colors.forms.input.color};
   width: ${props => props.width || "100%"};
   box-sizing: border-box;
   padding: 0.8rem 1rem;
   border: none;
-  box-shadow: ${({ theme }) => theme.colors.forms.input.boxShadow};
+  box-shadow: ${theme.colors.forms.input.boxShadow};
   border-radius: 3px;
   outline: none;
   font: inherit;
@@ -39,6 +41,6 @@ export const Select = styled.select<{ width?: string }>`
   padding: 1rem;
   padding-right: 2.8rem;
   &:focus {
-    box-shadow: inset 0 0 0 2px ${({ theme }) => theme.colors.general.blue};
+    box-shadow: inset 0 0 0 2px ${theme.colors.general.blue};
   }
 `;

@@ -11,7 +11,7 @@ type Props = {
 
 function Loader({ className, isVisible, color, size }: Props) {
   return (
-    <_Loader className={className} $color={color} $size={size} $isVisible={isVisible}>
+    <_Loader className={className} $color={color} $size={size} data-visible={isVisible ? "true" : "false"}>
       <LoaderSvg />
     </_Loader>
   );

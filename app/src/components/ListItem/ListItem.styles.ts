@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
 
 import { DEFAULT_LIST_COLOR } from "../../constants";
+import { theme } from "../../theme";
 
-export const Container = styled.button<{ selected?: boolean }>`
+export const Container = styled.button`
   border: none;
   display: block;
   font: inherit;
@@ -17,15 +18,13 @@ export const Container = styled.button<{ selected?: boolean }>`
   color: #fff;
   display: flex;
   align-items: center;
-  background: ${({ theme }) => theme.colors.navigation.background};
+  background: ${theme.colors.navigation.background};
   box-shadow: inset 0 -1px rgba(255, 255, 255, 0.15);
-  ${({ selected }) =>
-    selected &&
-    `
-        z-index: 6;
-    `}
+  &[data-selected="true"] {
+    z-index: 6;
+  }
   &:focus-visible,
-    &:hover {
+  &:hover {
     background: rgba(255, 255, 255, 0.05);
   }
 `;
@@ -43,7 +42,7 @@ export const SelectedItemBackground = styled(motion.div)`
 export const DotIcon = styled.div`
   height: 1rem;
   width: 1rem;
-  background-color: ${props => (props.color ? props.color : DEFAULT_LIST_COLOR)};
+  background-color: var(--dot-color, ${DEFAULT_LIST_COLOR});
   background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
   box-shadow:
     inset 0 0 0 1px rgba(0, 0, 0, 0.5),

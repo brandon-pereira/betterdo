@@ -6,13 +6,24 @@ import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
 import { plugin as markdown, Mode } from "vite-plugin-markdown";
 import { VitePWA } from "vite-plugin-pwa";
+import wyw from "@wyw-in-js/vite";
 
 import rootPackage from "../package.json";
+
+const aliases = {
+  "@components": path.resolve(__dirname, "src/components"),
+  "@hooks": path.resolve(__dirname, "src/hooks"),
+  "@utilities": path.resolve(__dirname, "src/utilities"),
+  "@customTypes": path.resolve(__dirname, "src/customTypes")
+};
 
 export default defineConfig({
   plugins: [
     svgr({ include: "**/*.svg" }),
     react(),
+    wyw({
+      include: ["**/*.{ts,tsx}"]
+    }),
     markdown({ mode: [Mode.HTML] }),
     VitePWA({
       strategies: "injectManifest",
@@ -27,12 +38,7 @@ export default defineConfig({
     })
   ],
   resolve: {
-    alias: {
-      "@components": path.resolve(__dirname, "/src/components"),
-      "@hooks": path.resolve(__dirname, "/src/hooks"),
-      "@utilities": path.resolve(__dirname, "/src/utilities"),
-      "@customTypes": path.resolve(__dirname, "/src/customTypes")
-    }
+    alias: aliases
   },
   esbuild: {
     logOverride: { "this-is-undefined-in-esm": "silent" }

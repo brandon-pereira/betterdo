@@ -1,46 +1,41 @@
-import { createGlobalStyle, ThemeProvider as _ThemeProvider } from "styled-components";
+import { useLayoutEffect } from "react";
 
-import { LIGHT_THEME, DARK_THEME } from "../theme";
+import { LIGHT_VARS, DARK_VARS } from "../theme";
 
 import useDarkMode from "@hooks/useDarkMode";
 
+import "./globalStyles.css";
+
+/**
+ * Applies the active theme by writing its CSS custom properties onto the
+ * document root. Linaria styles reference these via `var(--...)`, so toggling
+ * dark mode simply swaps the values here — no re-render of styled components
+ * required.
+ */
 export function ThemeProvider({ children }: { children: React.ReactChild }) {
   const [isDarkMode] = useDarkMode();
 
-  return <_ThemeProvider theme={isDarkMode ? DARK_THEME : LIGHT_THEME}>{children}</_ThemeProvider>;
+  useLayoutEffect(() => {
+    const vars = isDarkMode ? DARK_VARS : LIGHT_VARS;
+    const root = document.documentElement;
+    for (const [name, value] of Object.entries(vars)) {
+      root.style.setProperty(`--${name}`, value);
+    }
+    root.dataset.theme = isDarkMode ? "dark" : "light";
+  }, [isDarkMode]);
+
+  return <>{children}</>;
 }
 
-export const GlobalStyles = createGlobalStyle`    
-    :root {
-        /* Global stacking order for app chrome. Spaced to leave room between
-           layers. Local stacking contexts (modal internals, individual tasks,
-           list items) keep their own small, self-contained values. */
-        --z-navigation: 10;
-        --z-logo: 30;
-        --z-header: 40;
-        --z-modal-overlay: 100;
-    }
-    html {
-        overflow: hidden;
-    }
-    body {
-        font-family:  'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-            Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-        margin: 0;
-        overflow: hidden;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        &.loaded {
-            .loader {
-                display: none;
-            }
-        }
-    }
-
-    html.app,
-    .main-container,
-    .app {
-        width: 100vw;
-        height: 100vh;
-    }
-`;
+/**
+ * Returns concrete (resolved) theme values for the active mode. Use this when a
+ * value is needed in JS at runtime — e.g. for color-contrast math — rather than
+ * as a CSS `var(--...)` reference.
+ */
+export function useResolvedTheme() {
+  const [isDarkMode] = useDarkMode();
+  const vars = isDarkMode ? DARK_VARS : LIGHT_VARS;
+  return {
+    modalContentBackground: vars["colors-modals-content-background"]
+  };
+}

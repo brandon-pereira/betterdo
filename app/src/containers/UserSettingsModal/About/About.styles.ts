@@ -1,10 +1,12 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../../theme";
 
 import _BetterDo from "@components/Icon/svgs/betterdo.svg";
 
 export const Container = styled.div`
   text-align: center;
-  color: ${({ theme }) => theme.colors.body.color};
+  color: ${theme.colors.body.color};
   h1,
   h2 {
     margin: 0;
@@ -39,6 +41,6 @@ export const ChangeLog = styled.div`
     font-weight: bold;
   }
   a {
-    color: ${({ theme }) => theme.colors.general.blue};
+    color: ${theme.colors.general.blue};
   }
 `;

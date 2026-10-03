@@ -1,4 +1,6 @@
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
+
+import { theme } from "../../theme";
 
 import _Loader from "@components/Loader";
 
@@ -13,8 +15,8 @@ export const Checkbox = styled.input`
   border-radius: 50%;
   display: inline-block;
   appearance: none;
-  background: ${({ theme }) => theme.colors.task.checkbox.background};
-  box-shadow: ${({ theme }) => theme.colors.task.checkbox.boxShadow};
+  background: ${theme.colors.task.checkbox.background};
+  box-shadow: ${theme.colors.task.checkbox.boxShadow};
   border: none;
   display: flex;
   align-items: center;
@@ -28,7 +30,7 @@ export const Checkbox = styled.input`
     border-radius: 50%;
     height: 1rem;
     width: 1rem;
-    background: ${({ theme }) => theme.colors.task.checkboxDot.background};
+    background: ${theme.colors.task.checkboxDot.background};
     display: block;
     transform: scale(0);
     transition: transform 0.2s;
@@ -38,7 +40,7 @@ export const Checkbox = styled.input`
   }
   &:focus-visible {
     box-shadow:
-      0 0 0 2px ${({ theme }) => theme.colors.general.blue},
+      0 0 0 2px ${theme.colors.general.blue},
       inset 0 0 0 1px rgba(0, 0, 0, 0.2);
   }
 `;
@@ -71,18 +73,15 @@ export const HighPriorityFlag = styled.div`
   }
 `;
 
-export const Container = styled.button<{
-  $isLoading?: boolean;
-  $priority: "low" | "normal" | "high";
-}>`
+export const Container = styled.button`
   display: block;
   border: none;
   font: inherit;
   box-sizing: border-box;
   padding: 0;
-  background: ${({ theme }) => theme.colors.task.background};
-  color: ${({ theme }) => theme.colors.task.color};
-  box-shadow: ${({ theme }) => theme.colors.task.boxShadow};
+  background: ${theme.colors.task.background};
+  color: ${theme.colors.task.color};
+  box-shadow: ${theme.colors.task.boxShadow};
   margin: 0 0 0.5rem 0;
   border-radius: 50px;
   width: 100%;
@@ -94,20 +93,16 @@ export const Container = styled.button<{
   z-index: 0;
   position: relative;
   content-visibility: auto;
-  ${props =>
-    props.$isLoading &&
-    `
-        opacity: 0.5;
-        pointer-events: none;
-    `}
-  ${({ $priority, theme }) =>
-    $priority === "low" &&
-    `
-        background: ${theme.colors.task.lowPriority.background};
-        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
-    `}
-    &:focus-visible {
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.general.blue};
+  &[data-loading="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  &[data-priority="low"] {
+    background: ${theme.colors.task.lowPriority.background};
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  }
+  &:focus-visible {
+    box-shadow: 0 0 0 2px ${theme.colors.general.blue};
   }
 `;
 
