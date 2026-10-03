@@ -44,6 +44,7 @@ interface CustomListTask {
   title: string;
   listId: string;
   isCompleted: boolean;
+  completedAt: Date | null;
   priority: "low" | "normal" | "high" | null;
   dueDate: Date | null;
   creationDate: Date | null;
@@ -187,6 +188,7 @@ async function fetchTasksByPredicate(whereClause: SQL<unknown>, router: RouterOp
       title: tasks.title,
       listId: tasks.listId,
       isCompleted: tasks.isCompleted,
+      completedAt: tasks.completedAt,
       priority: tasks.priority,
       dueDate: tasks.dueDate,
       creationDate: tasks.createdAt,
@@ -209,6 +211,7 @@ async function fetchTasksByPredicate(whereClause: SQL<unknown>, router: RouterOp
       title: row.title,
       listId: row.listId,
       isCompleted: row.isCompleted ?? false,
+      completedAt: row.completedAt ?? null,
       priority: (row.priority as CustomListTask["priority"]) ?? null,
       dueDate: row.dueDate ?? null,
       creationDate: row.creationDate ?? null,
@@ -226,7 +229,7 @@ async function fetchTasksByPredicate(whereClause: SQL<unknown>, router: RouterOp
 }
 
 function sortTasks(unsortedTasks: CustomListTask[]): SortedTasks {
-  return unsortedTasks.reduce(
+  const sorted = unsortedTasks.reduce(
     (acc: SortedTasks, curr) => {
       if (curr.isCompleted) {
         acc.completedTasks.push(curr);
@@ -237,6 +240,11 @@ function sortTasks(unsortedTasks: CustomListTask[]): SortedTasks {
     },
     { completedTasks: [], tasks: [] }
   );
+
+  // Completed tasks are shown most-recently-completed first
+  sorted.completedTasks.sort((a, b) => (b.completedAt?.getTime() ?? 0) - (a.completedAt?.getTime() ?? 0));
+
+  return sorted;
 }
 
 function resolveCustomListConfig(user: SessionUser): Required<CustomListConfig> {

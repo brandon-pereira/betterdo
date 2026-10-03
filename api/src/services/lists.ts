@@ -106,7 +106,8 @@ export async function getListById({
         id: true,
         title: true,
         isCompleted: true,
-        priority: true
+        priority: true,
+        completedAt: true
       }
     }),
     db.query.listMembers.findMany({
@@ -127,7 +128,10 @@ export async function getListById({
 
   // Split completed tasks out of the main `tasks` array (matches v1 behavior)
   const activeTasks = _tasks.filter(task => !task.isCompleted);
-  const completedTasks = _tasks.filter(task => task.isCompleted);
+  // Completed tasks are shown most-recently-completed first
+  const completedTasks = _tasks
+    .filter(task => task.isCompleted)
+    .sort((a, b) => (b.completedAt?.getTime() ?? 0) - (a.completedAt?.getTime() ?? 0));
 
   return {
     ...result,
