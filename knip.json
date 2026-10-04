@@ -1,12 +1,7 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
-  "workspaces": {
-    "app": {
-      "entry": ["./src/service-worker.ts"]
-    }
-  },
+  "$schema": "https://unpkg.com/knip@6/schema.json",
   "rules": {
     "unlisted": "off"
   },
-  "ignoreDependencies": ["esbuild", "prettier-plugin-astro", "@tiptap/starter-kit", "auth"]
+  "ignoreDependencies": ["esbuild", "prettier-plugin-astro", "@tiptap/starter-kit"]
 }

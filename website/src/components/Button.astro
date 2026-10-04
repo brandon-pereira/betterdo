@@ -4,7 +4,9 @@ interface Props {
 }
 ---
 
-<a href={Astro.props.href} class="button cta"><slot /></a>
+<a href={Astro.props.href} class="button cta">
+  <slot />
+</a>
 
 <style>
   button,

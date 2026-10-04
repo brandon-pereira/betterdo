@@ -7,7 +7,9 @@ interface Props {
 const { text, delay } = Astro.props;
 ---
 
-<span data-scroll-text-delay={delay} data-scroll-text={text.join("|")}>{text.at(0)}</span>
+<span data-scroll-text-delay={delay} data-scroll-text={text.join("|")}>
+  {text.at(0)}
+</span>
 
 <style is:global>
   [data-scroll-text] {

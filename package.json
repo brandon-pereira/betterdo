@@ -24,7 +24,7 @@
   "author": "Brandon Pereira",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^9.2.1",
-    "knip": "^5.83.1"
+    "concurrently": "^10.0.5",
+    "knip": "^6.39.0"
   }
 }

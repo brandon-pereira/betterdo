@@ -12,6 +12,10 @@ export const updateListSchema = z.object({
   tasks: z.array(z.string()).optional()
 });
 
+/**
+ * Zod schema kept for the inferred CustomListConfig type below.
+ * @public
+ */
 export const customListConfigSchema = z.object({
   highPriority: z.boolean().optional().default(false),
   today: z.boolean().optional().default(false),
