@@ -40,24 +40,13 @@ export default tseslint.config(
   },
   {
     // TODO: eslint-plugin-react-hooks 7 enabled the React Compiler rules by
-    // default. Demote the newly-introduced rules to warnings for now so we can
-    // address them incrementally; keep the two classic rules at their defaults.
+    // default. Demote the two that currently have violations to warnings so we
+    // can address them incrementally; all other new rules stay at their
+    // recommended-latest severity.
     files: ["src/**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}"],
     rules: {
-      "react-hooks/static-components": "warn",
-      "react-hooks/use-memo": "warn",
-      "react-hooks/preserve-manual-memoization": "warn",
-      "react-hooks/incompatible-library": "warn",
-      "react-hooks/globals": "warn",
       "react-hooks/refs": "warn",
-      "react-hooks/set-state-in-effect": "warn",
-      "react-hooks/error-boundaries": "warn",
-      "react-hooks/purity": "warn",
-      "react-hooks/set-state-in-render": "warn",
-      "react-hooks/unsupported-syntax": "warn",
-      "react-hooks/config": "warn",
-      "react-hooks/gating": "warn",
-      "react-hooks/void-use-memo": "warn"
+      "react-hooks/set-state-in-effect": "warn"
     }
   }
 );
