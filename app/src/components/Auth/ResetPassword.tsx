@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import AuthContainer from "./AuthContainer";
 import PasswordInput from "./PasswordInput";
@@ -14,15 +14,9 @@ const ResetPassword = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
-  const [invalidToken, setInvalidToken] = useState(false);
 
   const token = searchParams.get("token");
-
-  useEffect(() => {
-    if (!token) {
-      setInvalidToken(true);
-    }
-  }, [token]);
+  const invalidToken = !token;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

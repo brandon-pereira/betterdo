@@ -1,4 +1,4 @@
-import { CSSProperties, useCallback } from "react";
+import { CSSProperties, useCallback, useMemo } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import {
   DndContext,
@@ -51,7 +51,8 @@ interface SortableListProps {
   lists: List[];
   onSortEnd: (params: { oldIndex: number; newIndex: number }) => void;
 }
-function SortableList({ lists, onSortEnd }: SortableListProps) {
+function SortableList({ lists: listsProp, onSortEnd }: SortableListProps) {
+  const lists = useMemo(() => listsProp || [], [listsProp]);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -63,8 +64,6 @@ function SortableList({ lists, onSortEnd }: SortableListProps) {
       coordinateGetter: sortableKeyboardCoordinates
     })
   );
-
-  lists = lists || [];
 
   const onDragEnd = useCallback(
     (event: DragEndEvent) => {

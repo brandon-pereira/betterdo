@@ -136,6 +136,13 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
     }
   }, [taskId, deleteTask, state.title]);
 
+  const _setValues = (updatedProps: Partial<Task>) => {
+    _setState(state => ({
+      ...state,
+      ...updatedProps
+    }));
+  };
+
   const onInputChange = (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     // Mark content as dirty
     markDirty(true);
@@ -150,13 +157,6 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
     },
     [markDirty]
   );
-
-  const _setValues = (updatedProps: Partial<Task>) => {
-    _setState(state => ({
-      ...state,
-      ...updatedProps
-    }));
-  };
 
   // Notes update local state live (marking the form dirty) and persist when the
   // editor loses focus. Saving on blur keeps the save logic simple (no debounce

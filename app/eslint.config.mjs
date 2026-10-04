@@ -11,13 +11,6 @@ export default tseslint.config(
   tseslint.configs.recommended,
   prettier,
   {
-    // TODO: eslint 10 added `no-useless-assignment` to the recommended set.
-    // Demote to a warning for now so dep bumps don't require code changes.
-    rules: {
-      "no-useless-assignment": "warn"
-    }
-  },
-  {
     files: ["src/**/*.{ts,tsx}"],
     extends: [imports.flatConfigs.recommended, imports.flatConfigs.typescript],
     settings: {
@@ -55,7 +48,6 @@ export default tseslint.config(
       "react-hooks/use-memo": "warn",
       "react-hooks/preserve-manual-memoization": "warn",
       "react-hooks/incompatible-library": "warn",
-      "react-hooks/immutability": "warn",
       "react-hooks/globals": "warn",
       "react-hooks/refs": "warn",
       "react-hooks/set-state-in-effect": "warn",

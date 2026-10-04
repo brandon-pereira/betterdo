@@ -39,7 +39,7 @@ export default function AllCaughtUpBanner() {
   // the list hasn't changed and tasks went from not 0 to 0
   useEffect(() => {
     if (prevListId.current === list.id && list?.tasks?.length === 0 && prevTaskLength.current !== 0) {
-      setState(s => ++s);
+      setState(s => s + 1);
     }
     prevListId.current = list?.id;
     prevTaskLength.current = list?.tasks?.length || 0;

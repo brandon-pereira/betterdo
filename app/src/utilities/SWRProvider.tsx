@@ -9,7 +9,7 @@ function SWRProvider({ children }: { children: React.ReactChild }) {
             credentials: "include"
           });
           if (res.status >= 400) {
-            let error = "Unexpected Error";
+            let error: string;
             try {
               const data = await res.json();
               error = data.error;

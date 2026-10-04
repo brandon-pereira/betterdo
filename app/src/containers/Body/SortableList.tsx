@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
@@ -116,10 +116,12 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
   // tracking of previous list length for when
   // bouncing from 'all caught up' to tasks list
   // for smoother transition
-  const prevLength = useRef(tasks.length);
-  useEffect(() => {
-    prevLength.current = tasks.length;
-  }, [tasks.length]);
+  const [prevLength, setPrevLength] = useState(tasks.length);
+  const [lastSeenLength, setLastSeenLength] = useState(tasks.length);
+  if (lastSeenLength !== tasks.length) {
+    setPrevLength(lastSeenLength);
+    setLastSeenLength(tasks.length);
+  }
 
   return (
     <DndContext
@@ -133,7 +135,7 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
         items={tasks.map((task, index) => (typeof task === "object" ? task.id : `${index}`))}
         strategy={verticalListSortingStrategy}
       >
-        <AnimatePresence mode={prevLength.current === 0 ? "sync" : "wait"} custom={{ newListLength: tasks.length }}>
+        <AnimatePresence mode={prevLength === 0 ? "sync" : "wait"} custom={{ newListLength: tasks.length }}>
           <motion.div
             key={listId}
             initial="beforeEnter"
