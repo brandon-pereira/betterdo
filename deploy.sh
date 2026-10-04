@@ -4,12 +4,6 @@ set -e
 
 cd /home/www/betterdo
 
-# The app's Linaria build peaks above V8's default heap, which is auto-sized
-# from physical RAM (~256-512MB on this 1GB host) and ignores swap. Raise the
-# limit so the build can use the available RAM + swap and avoid
-# "Array buffer allocation failed" during the Vite/PWA build.
-export NODE_OPTIONS="--max-old-space-size=1024"
-
 # Fetch and compare changes
 git fetch
 CHANGED=$(git diff --name-only HEAD origin/main)
