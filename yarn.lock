@@ -2250,7 +2250,7 @@
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.6.0.tgz#f4c663e862f06dc98ca4d453862c46902789a18d"
   integrity sha512-T7jf+5zgsZHwNJ4lvQ7/aezbyk0nNX+zJVWpmHA7VYsEx7a7qr5Rg5IbtJFqkgze5Y2sruq1RUY8Q837Od7iFw==
 
-"@jridgewell/trace-mapping@0.3.31", "@jridgewell/trace-mapping@^0.3.24", "@jridgewell/trace-mapping@^0.3.25", "@jridgewell/trace-mapping@^0.3.28", "@jridgewell/trace-mapping@^0.3.31":
+"@jridgewell/trace-mapping@0.3.31", "@jridgewell/trace-mapping@^0.3.24", "@jridgewell/trace-mapping@^0.3.25", "@jridgewell/trace-mapping@^0.3.28":
   version "0.3.31"
   resolved "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz"
   integrity sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==
@@ -4155,12 +4155,12 @@
   resolved "https://registry.yarnpkg.com/@vvo/tzdb/-/tzdb-6.198.0.tgz#bcb33c581aec4f1258ad96c963ac96327ce960e3"
   integrity sha512-bNRWBhWYl0edVgyX6AYbhoCM2tk2lXJjGCyO2VDc2xn6Dw8dLd7WGj2DDXkVOkmOIQTNjEAcxrEpIzz5pWVwFg==
 
-"@wyw-in-js/processor-utils@2.5.0":
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/@wyw-in-js/processor-utils/-/processor-utils-2.5.0.tgz#95434a0966c8094c8484c02a36b79e7f54d462d6"
-  integrity sha512-2R7qFO4lPfe4QnrHQtg+VVD5teM2X8rLOxPhNuUThYMy02jMETEhl0uBUGxvwQmOiCMa0NkQro6PTMkVbcbo7w==
+"@wyw-in-js/processor-utils@2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@wyw-in-js/processor-utils/-/processor-utils-2.4.1.tgz#78969ca726d822bfa972329647046e011dfd2095"
+  integrity sha512-mkZ59WMkrDj/UNVlZ3zYUpcg1iUtvapqjfezCizP7DqeGRTRX5m7AvLcwYIY+ki8o8DbQIjiHe3Z9+yKv7BopA==
   dependencies:
-    "@wyw-in-js/shared" "2.5.0"
+    "@wyw-in-js/shared" "2.4.0"
 
 "@wyw-in-js/processor-utils@^0.6.0":
   version "0.6.0"
@@ -4179,24 +4179,23 @@
     find-up "^5.0.0"
     minimatch "^9.0.3"
 
-"@wyw-in-js/shared@2.5.0":
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/@wyw-in-js/shared/-/shared-2.5.0.tgz#041cb1a16674455be28bb56db2cb3ca863992684"
-  integrity sha512-0r+cSP6sHuB6sl0N9gkjhSJ/BI0g9tiwsRV0F+TJivJVKw8kn9Mdilkez0gzlL7L8yGoy7hKsHGCsSddM1ctcw==
+"@wyw-in-js/shared@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@wyw-in-js/shared/-/shared-2.4.0.tgz#c9c89e5e19f2afbcec5b6db8e1bc30421b934f86"
+  integrity sha512-yWYAg2LkuCRxp3wSpubFnPMiLEt0HUNq0Sdt5LKUKs0vdegCAK6dmAkBCh3A//8PP75N6XZ7eJ5FXxKae/bByw==
   dependencies:
     debug "^4.3.4"
     find-up "^5.0.0"
     minimatch "^9.0.3"
 
-"@wyw-in-js/transform@2.5.1":
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/@wyw-in-js/transform/-/transform-2.5.1.tgz#d98fa72059b15ccc1e749fafa5d4ae96dc3e1ae8"
-  integrity sha512-6aWtIPAb17Vz3FbowshZ81a46ZjLwUPDao9N2fHAXlawdNJ7f5nwMeThkl4U/1ZJAKY4WMw+gSXx6C8nuu0c4g==
+"@wyw-in-js/transform@2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@wyw-in-js/transform/-/transform-2.4.4.tgz#92b0c42a6b6a630ef83e7776be8da25a4e169dad"
+  integrity sha512-Kj0gnfTs/38tiM/cloE12xPMNG9ZQckiFcgkpOOsSeURzlbUhoFM5ZN/T2bgFeJ5NhAmgQOaxEWsM3GGNhFHeg==
   dependencies:
     "@jridgewell/remapping" "^2.3.5"
-    "@jridgewell/trace-mapping" "^0.3.31"
-    "@wyw-in-js/processor-utils" "2.5.0"
-    "@wyw-in-js/shared" "2.5.0"
+    "@wyw-in-js/processor-utils" "2.4.1"
+    "@wyw-in-js/shared" "2.4.0"
     cosmiconfig "^8.0.0"
     happy-dom "^20.1.0"
     minimatch "^9.0.5"
@@ -4207,13 +4206,13 @@
     stylis "^4.3.0"
     ts-invariant "^0.10.3"
 
-"@wyw-in-js/vite@2.5.1":
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/@wyw-in-js/vite/-/vite-2.5.1.tgz#6b36895ae649e8ec94afbea06b539fd78bf4d090"
-  integrity sha512-zZM76bAHmGNihCsdn0Ke2Fe+uMUWKi/rBlvedXidG7MM/6bUb3g+VrWmqAFiC9Ed7Rp6tOcz0egeesBmvj2wVg==
+"@wyw-in-js/vite@2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@wyw-in-js/vite/-/vite-2.4.4.tgz#052ba562515e2e7817019997012c218c6d857cc4"
+  integrity sha512-UOctTUcKphzJ1r/66zTzTWSaPuQy5Q3tjNLeyOZI1nCCio2NQD0rmdI6c+0iX2Autn+KbKKbptEpkoMdOuwbZw==
   dependencies:
-    "@wyw-in-js/shared" "2.5.0"
-    "@wyw-in-js/transform" "2.5.1"
+    "@wyw-in-js/shared" "2.4.0"
+    "@wyw-in-js/transform" "2.4.4"
 
 acorn-jsx@^5.3.2:
   version "5.3.2"
