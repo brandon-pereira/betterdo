@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useForm } from "@tanstack/react-form";
 import { useSearchParams } from "react-router-dom";
 import AuthContainer from "./AuthContainer";
 import PasswordInput from "./PasswordInput";
@@ -6,11 +7,11 @@ import { authClient } from "@utilities/auth";
 import { AuthButtons, Stack, Group, Alert, AlertTitle } from "./Auth.styles";
 import Button from "@components/Button";
 import Link from "@components/Link";
+import { resetPasswordSchema } from "@utilities/validation/auth";
+import { fieldError, getErrorMessage } from "@utilities/forms";
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
@@ -18,41 +19,29 @@ const ResetPassword = () => {
   const token = searchParams.get("token");
   const invalidToken = !token;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
-      return;
-    }
-
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const { error } = await authClient.resetPassword({
-        newPassword: password,
-        token: token!
-      });
-
-      setLoading(false);
-
-      if (error) {
-        setError(error?.message ?? "An error occurred. The link may have expired.");
-      } else {
-        setSucceeded(true);
+  const form = useForm({
+    defaultValues: { password: "", confirmPassword: "" },
+    validators: { onChange: resetPasswordSchema },
+    onSubmit: async ({ value }) => {
+      setError(null);
+      setLoading(true);
+      try {
+        const { error } = await authClient.resetPassword({
+          newPassword: value.password,
+          token: token!
+        });
+        setLoading(false);
+        if (error) {
+          setError(getErrorMessage(error, "An error occurred. The link may have expired."));
+        } else {
+          setSucceeded(true);
+        }
+      } catch (err: unknown) {
+        setLoading(false);
+        setError(getErrorMessage(err));
       }
-    } catch (err: unknown) {
-      setLoading(false);
-      const errorMessage = err instanceof Error ? err.message : "An error occurred";
-      setError(errorMessage);
     }
-  };
+  });
 
   if (invalidToken) {
     return (
@@ -84,7 +73,13 @@ const ResetPassword = () => {
 
   return (
     <AuthContainer title="Reset Your Password">
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
         <Stack $gap="1rem">
           {error && (
             <Alert $color="red">
@@ -92,25 +87,33 @@ const ResetPassword = () => {
               {error}
             </Alert>
           )}
-          <PasswordInput
-            name="new-password"
-            autoComplete="new-password"
-            placeholder="New Password"
-            value={password}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            required
-            minLength={8}
-          />
+          <form.Field name="password">
+            {field => (
+              <PasswordInput
+                name="new-password"
+                autoComplete="new-password"
+                placeholder="New Password"
+                value={field.state.value}
+                errorMessage={fieldError(field.state.meta)}
+                onBlur={field.handleBlur}
+                onChange={e => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
 
-          <PasswordInput
-            name="confirm-password"
-            autoComplete="new-password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
-            required
-            minLength={8}
-          />
+          <form.Field name="confirmPassword">
+            {field => (
+              <PasswordInput
+                name="confirm-password"
+                autoComplete="new-password"
+                placeholder="Confirm Password"
+                value={field.state.value}
+                errorMessage={fieldError(field.state.meta)}
+                onBlur={field.handleBlur}
+                onChange={e => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
 
           <AuthButtons>
             <Button type="submit" disabled={loading} isLoading={loading} loadingText="Resetting...">

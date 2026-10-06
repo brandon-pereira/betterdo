@@ -9,6 +9,7 @@
     "@dnd-kit/modifiers": "^7.0.0",
     "@dnd-kit/sortable": "^8.0.0",
     "@linaria/react": "^6",
+    "@tanstack/react-form": "^1.33.5",
     "@tiptap/extension-list": "^3.14.0",
     "@tiptap/pm": "^3.14.0",
     "@tiptap/react": "^3.14.0",
@@ -29,7 +30,8 @@
     "react-helmet-async": "^2.0.4",
     "react-router-dom": "^6.22.1",
     "swr": "^2.2.5",
-    "workbox-window": "^7.4.1"
+    "workbox-window": "^7.4.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/react": "18.2.55",

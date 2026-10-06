@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "@tanstack/react-form";
 import AuthContainer from "./AuthContainer";
 import PasswordInput from "./PasswordInput";
 import { authClient, signIn } from "@utilities/auth";
@@ -15,27 +16,29 @@ import {
 } from "./Auth.styles";
 import Button from "@components/Button";
 import Link from "@components/Link";
+import { loginSchema } from "@utilities/validation/auth";
+import { fieldError, getErrorMessage } from "@utilities/forms";
 
 const Auth = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    const { error } = await signIn.email({
-      email,
-      password
-    });
-    if (error) {
-      setLoading(false);
-      setError(error.message ?? "An error occurred");
-      return;
+  const form = useForm({
+    defaultValues: { email: "", password: "" },
+    validators: { onChange: loginSchema },
+    onSubmit: async ({ value }) => {
+      setError(null);
+      setLoading(true);
+      const { error } = await signIn.email({
+        email: value.email.trim(),
+        password: value.password
+      });
+      if (error) {
+        setLoading(false);
+        setError(getErrorMessage(error));
+      }
     }
-  };
+  });
 
   const handleGoogleSignIn = async () => {
     setError("");
@@ -47,7 +50,7 @@ const Auth = () => {
     });
     setLoading(false);
     if (error) {
-      setError(error.message ?? "An error occurred");
+      setError(getErrorMessage(error));
     }
   };
 
@@ -57,7 +60,7 @@ const Auth = () => {
     const res = await signIn.passkey();
     if (res?.error) {
       setLoading(false);
-      setError(res.error.message ?? "An error occurred");
+      setError(getErrorMessage(res.error));
       return;
     }
     // signIn.passkey() already flips "$sessionSignal" internally, which triggers
@@ -91,27 +94,43 @@ const Auth = () => {
 
   return (
     <AuthContainer title="Welcome Back!">
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
         <Stack $gap="1rem">
           {error && <Alert $color="red">{error}</Alert>}
-          <AuthInput
-            type="email"
-            name="email"
-            autoComplete="username"
-            placeholder="Email"
-            value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-            required
-          />
+          <form.Field name="email">
+            {field => (
+              <AuthInput
+                type="email"
+                name="email"
+                autoComplete="username"
+                placeholder="Email"
+                value={field.state.value}
+                errorMessage={fieldError(field.state.meta)}
+                onBlur={field.handleBlur}
+                onChange={e => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
 
-          <PasswordInput
-            name="password"
-            autoComplete="current-password"
-            placeholder="Password"
-            value={password}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            required
-          />
+          <form.Field name="password">
+            {field => (
+              <PasswordInput
+                name="password"
+                autoComplete="current-password"
+                placeholder="Password"
+                value={field.state.value}
+                errorMessage={fieldError(field.state.meta)}
+                onBlur={field.handleBlur}
+                onChange={e => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
 
           <AuthButtons>
             <Link to="/auth/forgot-password">Forgot Password?</Link>

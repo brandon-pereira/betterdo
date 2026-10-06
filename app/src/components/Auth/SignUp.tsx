@@ -1,4 +1,5 @@
-import React, { useReducer, useState } from "react";
+import { useReducer, useState } from "react";
+import { useForm } from "@tanstack/react-form";
 import AuthContainer from "./AuthContainer";
 import PasswordInput from "./PasswordInput";
 import {
@@ -15,6 +16,8 @@ import {
 import Button from "@components/Button";
 import { authClient, signIn, signUp } from "@utilities/auth";
 import { getTimeZone } from "@utilities/timezones";
+import { signUpSchema } from "@utilities/validation/auth";
+import { fieldError, getErrorMessage } from "@utilities/forms";
 import Link from "@components/Link";
 
 // The signup flow is a small step machine: fill out the form, then (once an
@@ -32,45 +35,44 @@ const onboardingReducer = (_state: OnboardingState, action: OnboardingAction): O
 };
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [onboarding, dispatch] = useReducer(onboardingReducer, { step: "sign-up" });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      if (password !== confirmPassword) {
-        setError("Passwords don't match");
+  const form = useForm({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: ""
+    },
+    validators: {
+      onChange: signUpSchema
+    },
+    onSubmit: async ({ value }) => {
+      setError("");
+      setLoading(true);
+      try {
+        const localTimeZone = getTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone).name;
+        const { error } = await signUp.email({
+          email: value.email.trim(),
+          password: value.password,
+          name: `${value.firstName} ${value.lastName}`.trim(),
+          timeZone: localTimeZone
+        });
+        if (error) {
+          setError(getErrorMessage(error));
+        } else {
+          dispatch({ type: "emailSubmitted", email: value.email.trim() });
+        }
+      } catch (err: unknown) {
+        setError(getErrorMessage(err));
+      } finally {
         setLoading(false);
-        return;
       }
-      const localTimeZone = getTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone).name;
-      const { error } = await signUp.email({
-        email,
-        password,
-        name: `${firstName} ${lastName}`.trim(),
-        timeZone: localTimeZone
-      });
-      if (error) {
-        setError(error.message ?? "An error occurred");
-      } else {
-        dispatch({ type: "emailSubmitted", email });
-      }
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "An error occurred";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
     }
-  };
+  });
 
   const handleResend = async () => {
     if (onboarding.step !== "verify-email") return;
@@ -133,7 +135,13 @@ const SignUp = () => {
 
   return (
     <AuthContainer title="Create your account">
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
         <Stack $gap="1rem">
           {error && (
             <Alert $color="red">
@@ -142,52 +150,77 @@ const SignUp = () => {
             </Alert>
           )}
 
-          <AuthInput
-            type="text"
-            name="given-name"
-            autoComplete="given-name"
-            placeholder="First Name"
-            value={firstName}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
-            required
-          />
-          <AuthInput
-            type="text"
-            name="family-name"
-            autoComplete="family-name"
-            placeholder="Last Name"
-            value={lastName}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastName(e.target.value)}
-            required
-          />
+          <form.Field name="firstName">
+            {field => (
+              <AuthInput
+                type="text"
+                name="given-name"
+                autoComplete="given-name"
+                placeholder="First Name"
+                value={field.state.value}
+                errorMessage={fieldError(field.state.meta)}
+                onBlur={field.handleBlur}
+                onChange={e => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
 
-          <AuthInput
-            type="email"
-            name="email"
-            autoComplete="username"
-            placeholder="Email"
-            value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-            required
-          />
+          <form.Field name="lastName">
+            {field => (
+              <AuthInput
+                type="text"
+                name="family-name"
+                autoComplete="family-name"
+                placeholder="Last Name"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={e => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
 
-          <PasswordInput
-            name="new-password"
-            autoComplete="new-password"
-            placeholder="Password"
-            value={password}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            required
-          />
+          <form.Field name="email">
+            {field => (
+              <AuthInput
+                type="email"
+                name="email"
+                autoComplete="username"
+                placeholder="Email"
+                value={field.state.value}
+                errorMessage={fieldError(field.state.meta)}
+                onBlur={field.handleBlur}
+                onChange={e => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
 
-          <PasswordInput
-            name="confirm-password"
-            autoComplete="new-password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
-            required
-          />
+          <form.Field name="password">
+            {field => (
+              <PasswordInput
+                name="new-password"
+                autoComplete="new-password"
+                placeholder="Password"
+                value={field.state.value}
+                errorMessage={fieldError(field.state.meta)}
+                onBlur={field.handleBlur}
+                onChange={e => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
+
+          <form.Field name="confirmPassword">
+            {field => (
+              <PasswordInput
+                name="confirm-password"
+                autoComplete="new-password"
+                placeholder="Confirm Password"
+                value={field.state.value}
+                errorMessage={fieldError(field.state.meta)}
+                onBlur={field.handleBlur}
+                onChange={e => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
 
           <AuthButtons>
             <Button type="submit" disabled={loading} isLoading={loading} loadingText="Please wait...">

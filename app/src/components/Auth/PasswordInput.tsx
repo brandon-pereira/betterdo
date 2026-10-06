@@ -3,7 +3,10 @@ import { AuthInput, PasswordField, PasswordToggle } from "./Auth.styles";
 import EyeIcon from "@components/Icon/svgs/eye.svg";
 import EyeOffIcon from "@components/Icon/svgs/eye-off.svg";
 
-type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
+  invalid?: boolean;
+  errorMessage?: string;
+};
 
 const PasswordInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
   const [visible, setVisible] = useState(false);

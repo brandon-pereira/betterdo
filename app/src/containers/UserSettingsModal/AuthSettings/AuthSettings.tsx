@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useForm } from "@tanstack/react-form";
 import { formatDistanceToNow } from "date-fns";
 
 import {
@@ -23,6 +24,8 @@ import {
 
 import { Input, Label } from "@components/Forms";
 import { authClient, useSession } from "@utilities/auth";
+import { changePasswordSchema } from "@utilities/validation/auth";
+import { fieldError, getErrorMessage } from "@utilities/forms";
 
 interface Feedback {
   type: "success" | "error";
@@ -41,15 +44,11 @@ function AuthSettings() {
   const [isSendingSetPassword, setIsSendingSetPassword] = useState(false);
   const [pwEmailFeedback, setPwEmailFeedback] = useState<Feedback | null>(null);
 
-  const [passkeyName, setPasskeyName] = useState("");
   const [passkeyFeedback, setPasskeyFeedback] = useState<Feedback | null>(null);
   const [isAddingPasskey, setIsAddingPasskey] = useState(false);
   const [isDeletingPasskeyId, setIsDeletingPasskeyId] = useState<string | null>(null);
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
 
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordFeedback, setPasswordFeedback] = useState<Feedback | null>(null);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
@@ -78,60 +77,54 @@ function AuthSettings() {
     };
   }, []);
 
-  const handleAddPasskey = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setPasskeyFeedback(null);
-    if (!authClient.passkey?.addPasskey) {
-      setPasskeyFeedback({ type: "error", message: "Passkey registration is unavailable." });
-      return;
-    }
-    setIsAddingPasskey(true);
-    const res = await authClient.passkey.addPasskey({
-      name: passkeyName.trim() || undefined
-    });
+  const passkeyForm = useForm({
+    defaultValues: { passkeyName: "" },
+    onSubmit: async ({ value, formApi }) => {
+      setPasskeyFeedback(null);
+      if (!authClient.passkey?.addPasskey) {
+        setPasskeyFeedback({ type: "error", message: "Passkey registration is unavailable." });
+        return;
+      }
+      setIsAddingPasskey(true);
+      const res = await authClient.passkey.addPasskey({
+        name: value.passkeyName.trim() || undefined
+      });
 
-    setIsAddingPasskey(false);
-    if (res?.error) {
-      setPasskeyFeedback({ type: "error", message: res.error.message ?? "Unable to add passkey." });
-      return;
+      setIsAddingPasskey(false);
+      if (res?.error) {
+        setPasskeyFeedback({ type: "error", message: getErrorMessage(res.error, "Unable to add passkey.") });
+        return;
+      }
+      setPasskeyFeedback({ type: "success", message: "Passkey registered." });
+      formApi.reset();
+      passkeyList?.refetch?.();
     }
-    setPasskeyFeedback({ type: "success", message: "Passkey registered." });
-    setPasskeyName("");
-    passkeyList?.refetch?.();
-  };
+  });
 
-  const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setPasswordFeedback(null);
-
-    if (newPassword.length < 8) {
-      setPasswordFeedback({ type: "error", message: "New password must be at least 8 characters." });
-      return;
+  const passwordForm = useForm({
+    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
+    validators: { onChange: changePasswordSchema },
+    onSubmit: async ({ value, formApi }) => {
+      setPasswordFeedback(null);
+      if (!authClient.changePassword) {
+        setPasswordFeedback({ type: "error", message: "Password change is unavailable." });
+        return;
+      }
+      setIsChangingPassword(true);
+      const res = await authClient.changePassword({
+        currentPassword: value.currentPassword,
+        newPassword: value.newPassword,
+        revokeOtherSessions: true
+      });
+      setIsChangingPassword(false);
+      if (res?.error) {
+        setPasswordFeedback({ type: "error", message: getErrorMessage(res.error, "Unable to change password.") });
+        return;
+      }
+      setPasswordFeedback({ type: "success", message: "Password updated. Other sessions were signed out." });
+      formApi.reset();
     }
-    if (newPassword !== confirmPassword) {
-      setPasswordFeedback({ type: "error", message: "New passwords do not match." });
-      return;
-    }
-    if (!authClient.changePassword) {
-      setPasswordFeedback({ type: "error", message: "Password change is unavailable." });
-      return;
-    }
-    setIsChangingPassword(true);
-    const res = await authClient.changePassword({
-      currentPassword,
-      newPassword,
-      revokeOtherSessions: true
-    });
-    setIsChangingPassword(false);
-    if (res?.error) {
-      setPasswordFeedback({ type: "error", message: res.error.message ?? "Unable to change password." });
-      return;
-    }
-    setPasswordFeedback({ type: "success", message: "Password updated. Other sessions were signed out." });
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-  };
+  });
 
   // Google-only users have no password to supply, so we can't use the
   // change-password flow. Instead we email them a reset link that lets them set
@@ -199,16 +192,27 @@ function AuthSettings() {
 
         {passkeyFeedback && <Alert data-variant={passkeyFeedback.type}>{passkeyFeedback.message}</Alert>}
 
-        <form onSubmit={handleAddPasskey}>
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            passkeyForm.handleSubmit();
+          }}
+        >
           <FormRow>
             <Label htmlFor="passkey-name">Passkey name</Label>
-            <Input
-              id="passkey-name"
-              name="passkey-name"
-              value={passkeyName}
-              onChange={evt => setPasskeyName(evt.target.value)}
-              placeholder="e.g. MacBook, iPhone, YubiKey"
-            />
+            <passkeyForm.Field name="passkeyName">
+              {field => (
+                <Input
+                  id="passkey-name"
+                  name="passkey-name"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={evt => field.handleChange(evt.target.value)}
+                  placeholder="e.g. MacBook, iPhone, YubiKey"
+                />
+              )}
+            </passkeyForm.Field>
           </FormRow>
           <InlineActions style={{ marginTop: "0.75rem" }}>
             <SmallButton type="submit" isLoading={isAddingPasskey} loadingText="Adding">
@@ -298,43 +302,67 @@ function AuthSettings() {
             Choose a new password. Changing it will sign you out of all other devices.
           </SectionDescription>
           {passwordFeedback && <Alert data-variant={passwordFeedback.type}>{passwordFeedback.message}</Alert>}
-          <form onSubmit={handleChangePassword}>
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              passwordForm.handleSubmit();
+            }}
+          >
             <FormGrid>
               <FormRow>
                 <Label htmlFor="currentPassword">Current password</Label>
-                <Input
-                  id="currentPassword"
-                  name="currentPassword"
-                  type="password"
-                  autoComplete="current-password"
-                  value={currentPassword}
-                  onChange={evt => setCurrentPassword(evt.target.value)}
-                  placeholder="Enter current password"
-                />
+                <passwordForm.Field name="currentPassword">
+                  {field => (
+                    <Input
+                      id="currentPassword"
+                      name="currentPassword"
+                      type="password"
+                      autoComplete="current-password"
+                      value={field.state.value}
+                      errorMessage={fieldError(field.state.meta)}
+                      onBlur={field.handleBlur}
+                      onChange={evt => field.handleChange(evt.target.value)}
+                      placeholder="Enter current password"
+                    />
+                  )}
+                </passwordForm.Field>
               </FormRow>
               <FormRow>
                 <Label htmlFor="newPassword">New password</Label>
-                <Input
-                  id="newPassword"
-                  name="newPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  value={newPassword}
-                  onChange={evt => setNewPassword(evt.target.value)}
-                  placeholder="At least 8 characters"
-                />
+                <passwordForm.Field name="newPassword">
+                  {field => (
+                    <Input
+                      id="newPassword"
+                      name="newPassword"
+                      type="password"
+                      autoComplete="new-password"
+                      value={field.state.value}
+                      errorMessage={fieldError(field.state.meta)}
+                      onBlur={field.handleBlur}
+                      onChange={evt => field.handleChange(evt.target.value)}
+                      placeholder="At least 8 characters"
+                    />
+                  )}
+                </passwordForm.Field>
               </FormRow>
               <FormRow>
                 <Label htmlFor="confirmPassword">Confirm new password</Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  value={confirmPassword}
-                  onChange={evt => setConfirmPassword(evt.target.value)}
-                  placeholder="Re-enter new password"
-                />
+                <passwordForm.Field name="confirmPassword">
+                  {field => (
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      autoComplete="new-password"
+                      value={field.state.value}
+                      errorMessage={fieldError(field.state.meta)}
+                      onBlur={field.handleBlur}
+                      onChange={evt => field.handleChange(evt.target.value)}
+                      placeholder="Re-enter new password"
+                    />
+                  )}
+                </passwordForm.Field>
               </FormRow>
             </FormGrid>
             <InlineActions style={{ marginTop: "1rem" }}>

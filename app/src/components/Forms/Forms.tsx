@@ -58,6 +58,15 @@ const Label = styled.label`
   display: block;
 `;
 
+// Inline, per-field validation message shown beneath an input. The shared Input
+// renders this automatically when given an `errorMessage`.
+const FieldError = styled.div`
+  color: ${theme.colors.general.red};
+  font-size: 0.8rem;
+  margin-top: 0.1rem;
+  margin-left: 0.2rem;
+`;
+
 const Form = ({
   children,
   errorMessage,
@@ -73,20 +82,33 @@ const Form = ({
 );
 
 type InputProps = {
+  // Validation message for this field. When present the input is marked invalid
+  // and the message is rendered beneath it. Prefer this over `invalid` so error
+  // styling and messaging stay in sync.
+  errorMessage?: string;
+  // Escape hatch to force the invalid style without a message.
   invalid?: boolean;
 };
 const Input = forwardRef<
   HTMLInputElement,
   InputProps & React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
->(({ placeholder, invalid, ...props }, ref) => (
-  <_Input
-    {...props}
-    ref={ref}
-    aria-label={placeholder}
-    placeholder={placeholder}
-    data-invalid={invalid ? "true" : "false"}
-  />
-));
+>(({ placeholder, errorMessage, invalid, ...props }, ref) => {
+  const isInvalid = invalid || Boolean(errorMessage);
+  return (
+    <div>
+      <_Input
+        {...props}
+        ref={ref}
+        aria-label={placeholder}
+        placeholder={placeholder}
+        aria-invalid={isInvalid ? "true" : undefined}
+        data-invalid={isInvalid ? "true" : "false"}
+        data-has-error={errorMessage ? "true" : "false"}
+      />
+      {errorMessage ? <FieldError role="alert">{errorMessage}</FieldError> : null}
+    </div>
+  );
+});
 Input.displayName = "Input";
 
-export { Input, Label, Form, Error };
+export { Input, Label, Form, Error, FieldError };
