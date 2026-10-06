@@ -4,16 +4,14 @@
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "typeRoots": ["./types", "./node_modules/@types"],
-    "baseUrl": ".",
     "paths": {
-      "@utilities/*": ["src/utilities/*"],
-      "@components/*": ["src/components/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@customTypes/*": ["src/customTypes/*"]
+      "@utilities/*": ["./src/utilities/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@customTypes/*": ["./src/customTypes/*"]
     },
     "allowJs": false,
     "skipLibCheck": true,
-    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
