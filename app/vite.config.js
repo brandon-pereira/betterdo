@@ -21,10 +21,7 @@ export default defineConfig({
   plugins: [
     svgr({ include: "**/*.svg" }),
     react(),
-    wyw({
-      include: ["src/**/*.{ts,tsx}"],
-      exclude: ["**/node_modules/**"]
-    }),
+    wyw(),
     markdown({ mode: [Mode.HTML] }),
     VitePWA({
       strategies: "injectManifest",
