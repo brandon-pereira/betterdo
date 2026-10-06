@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import { Container, Selection } from "./Selector.styles";
 
@@ -14,11 +14,8 @@ interface Props {
 }
 
 function Selector({ value, values, onSelect }: Props) {
-  const [selectedValue, setSelectedValue] = useState<string>(value || values[0].value);
-
   const onChange = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, value: string) => {
-      setSelectedValue(value);
       if (onSelect) {
         onSelect(value);
       }
@@ -28,13 +25,13 @@ function Selector({ value, values, onSelect }: Props) {
 
   return (
     <Container>
-      {values.map(value => (
+      {values.map(option => (
         <Selection
-          onClick={e => onChange(e, value.value)}
-          key={value.value}
-          data-selected={value.value === selectedValue ? "true" : "false"}
+          onClick={e => onChange(e, option.value)}
+          key={option.value}
+          data-selected={option.value === value ? "true" : "false"}
         >
-          {value.label}
+          {option.label}
         </Selection>
       ))}
     </Container>

@@ -39,7 +39,13 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
 
+  const isDirty = useRef(false);
+
   useEffect(() => {
+    // Only sync local state from the server when there are no unsaved changes.
+    if (isDirty.current) {
+      return;
+    }
     _setState({ ...(task || {}), priority: task?.priority ?? "normal" });
   }, [task]);
 
@@ -47,7 +53,6 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
   // container on close) can read current values without stale closures.
   const stateRef = useRef(state);
   stateRef.current = state;
-  const isDirty = useRef(false);
   const markDirty = useCallback(
     (dirty: boolean) => {
       isDirty.current = dirty;
