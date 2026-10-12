@@ -6,7 +6,8 @@
   "workspaces": [
     "app",
     "api",
-    "website"
+    "website",
+    "shared"
   ],
   "scripts": {
     "start": "docker compose up -d && concurrently \"yarn workspace  app start\" \"yarn workspace api start\" \"yarn workspace website start\" && docker compose down",

@@ -1,3 +1,4 @@
+import type { Priority } from "@betterdo/shared/types";
 import User from "./user";
 
 export interface Subtask {
@@ -17,7 +18,7 @@ interface Task {
   subtasks: Subtask[];
   dueDate: string;
   creationDate: string;
-  priority: "low" | "normal" | "high";
+  priority: Priority;
   isLoading?: boolean;
   isTemporaryTask?: boolean;
 }

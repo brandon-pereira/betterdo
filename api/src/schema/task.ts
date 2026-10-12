@@ -1,4 +1,5 @@
 import { pgTable, uuid, varchar, boolean, jsonb, timestamp, text, integer } from "drizzle-orm/pg-core";
+import { PRIORITIES } from "@betterdo/shared/constants";
 import { lists } from "./list.js";
 import { user } from "./auth.js";
 
@@ -19,7 +20,7 @@ export const tasks = pgTable("tasks", {
   notes: text("notes"),
   subtasks: jsonb("subtasks"),
   priority: text("priority", {
-    enum: ["low", "normal", "high"]
+    enum: PRIORITIES
   }).default("normal"),
   position: integer("position").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),

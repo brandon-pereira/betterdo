@@ -111,4 +111,4 @@ const Input = forwardRef<
 });
 Input.displayName = "Input";
 
-export { Input, Label, Form, Error, FieldError };
+export { Input, Label, Form, Error };

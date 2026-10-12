@@ -5,6 +5,8 @@ import CreatorBlock from "./CreatorBlock";
 import ListsDropdown from "./ListsDropdown";
 import Loader from "./Loader";
 
+import { PRIORITY_OPTIONS } from "@betterdo/shared/constants";
+
 import Task from "@customTypes/task";
 import Selector from "@components/Selector";
 import { Label, Input, Error } from "@components/Forms";
@@ -17,12 +19,6 @@ import useModifyTask from "@hooks/useModifyTask";
 import useDeleteTask from "@hooks/useDeleteTask";
 import { ServerError } from "@utilities/server";
 import RichTextEditor from "@components/Forms/RichText";
-
-const PRIORITIES = [
-  { value: "low", label: "Low" },
-  { value: "normal", label: "Normal" },
-  { value: "high", label: "High" }
-];
 
 interface Props {
   setUnsavedChanges: (bool: boolean) => void;
@@ -202,7 +198,7 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
         <Block>
           <Label>Priority</Label>
           <Selector
-            values={PRIORITIES}
+            values={PRIORITY_OPTIONS}
             onSelect={(priority: Task["priority"]) => onValueChange({ priority })}
             value={state.priority}
           />

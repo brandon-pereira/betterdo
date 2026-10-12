@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "lib": ["es2024"],
+    "module": "nodenext",
+    "target": "es2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "moduleResolution": "nodenext",
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  }
+}

@@ -10,6 +10,8 @@
     "strictNullChecks": true,
     "moduleResolution": "nodenext",
     "outDir": "dist",
-    "isolatedModules": true
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true
   }
 }

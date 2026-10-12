@@ -1,16 +1,9 @@
 import z from "zod";
+import { dateStringSchema, prioritySchema } from "@betterdo/shared/validation";
 
-// The frontend sends dueDate as a UTC date string (via Date.prototype.toUTCString),
-// which is RFC-1123 rather than strict ISO-8601. Accept any string that Date can
-// parse and leave it as a string so the route handler can apply the user's timezone
-// (the validator has no access to the authenticated user's timeZone).
-const dueDateSchema = z
-  .string()
-  .refine(value => !Number.isNaN(new Date(value).getTime()), {
-    message: "Invalid date"
-  })
-  .optional()
-  .nullable();
+// Kept as a string so the route handler can apply the user's timezone (the
+// validator has no access to the authenticated user).
+const dueDateSchema = dateStringSchema.optional().nullable();
 
 export const createTaskSchema = z.object({
   listId: z.string().min(1, "List ID is required"),
@@ -21,7 +14,7 @@ export const createTaskSchema = z.object({
 export const updateTaskSchema = z.object({
   title: z.string().min(1, "Title is required").optional(),
   isCompleted: z.boolean().optional(),
-  priority: z.enum(["low", "normal", "high"]).optional().nullable(),
+  priority: prioritySchema.optional().nullable(),
   dueDate: dueDateSchema,
   listId: z.uuid("List ID").optional(),
   notes: z.string().optional().nullable(),

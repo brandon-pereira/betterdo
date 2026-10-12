@@ -6,6 +6,7 @@ import { tasks } from "../schema/task.js";
 import { user as userTable } from "../schema/auth.js";
 import { timezone } from "../utils/timezone.js";
 import { CustomListConfig } from "../validators/lists.js";
+import type { Priority } from "@betterdo/shared/types";
 
 const CUSTOM_LISTS = ["highPriority", "today", "tomorrow", "overdue", "week"] as const;
 type CustomListId = (typeof CUSTOM_LISTS)[number];
@@ -45,7 +46,7 @@ interface CustomListTask {
   listId: string;
   isCompleted: boolean;
   completedAt: Date | null;
-  priority: "low" | "normal" | "high" | null;
+  priority: Priority | null;
   dueDate: Date | null;
   creationDate: Date | null;
   notes: string | null;
