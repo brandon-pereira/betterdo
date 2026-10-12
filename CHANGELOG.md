@@ -5,6 +5,7 @@
 - Migrated styling from styled-components to Linaria (zero-runtime, build-time extracted CSS)
 - Fix bug when editing task on mobile
 - Bump several dependencies to latest versions
+- Add a shared package for constants, types, and validation utilities
 
 ## v8.1.0 (2026-10-01)
 
