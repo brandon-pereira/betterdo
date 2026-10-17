@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useId } from "react";
 import randomColor from "randomcolor";
 
 import { Icon, Container, Color, LabelContainer, TooltipContainer } from "./ColorPicker.styles";
@@ -18,6 +18,7 @@ interface Props {
 }
 
 function ColorPicker({ value, onChange }: Props) {
+  const formId = useId();
   const inputColorRef = useRef<HTMLInputElement>(null);
   const colorPaletteRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -79,9 +80,9 @@ function ColorPicker({ value, onChange }: Props) {
   }, [onRefreshPalette]);
 
   return (
-    <>
+    <div>
       <LabelContainer>
-        <Label>List Colour</Label>
+        <Label htmlFor={formId}>List Colour</Label>
         <Icon size="1rem" icon={Refresh} color="currentColor" onClick={onRefreshPalette}>
           Refresh Palette
         </Icon>
@@ -90,6 +91,7 @@ function ColorPicker({ value, onChange }: Props) {
             Pick a colour
           </Icon>
           <input
+            id={formId}
             ref={inputColorRef}
             value={palette[index]}
             onChange={e => {
@@ -121,7 +123,7 @@ function ColorPicker({ value, onChange }: Props) {
           />
         ))}
       </Container>
-    </>
+    </div>
   );
 }
 

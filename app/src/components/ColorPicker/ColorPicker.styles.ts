@@ -8,7 +8,7 @@ export const Container = styled.div`
   display: flex;
   height: 3rem;
   overflow: hidden;
-  border-radius: 50px;
+  border-radius: 0.5rem;
   box-shadow:
     0 3px 4px 0 rgba(0, 0, 0, 0.14),
     0 3px 3px -2px rgba(0, 0, 0, 0.12),
@@ -31,10 +31,10 @@ export const Color = styled.button`
     box-shadow: inset 0 0 0 5px #fff;
   }
   &:first-of-type {
-    border-radius: 50px 0 0 50px;
+    border-radius: 0.5rem 0 0 0.5rem;
   }
   &:last-of-type {
-    border-radius: 0 50px 50px 0;
+    border-radius: 0 0.5rem 0.5rem 0;
   }
   &[data-current="true"] {
     box-shadow: inset 0 0 0 5px ${theme.colors.general.blue};
@@ -51,7 +51,7 @@ export const TooltipContainer = styled.div`
 
 export const LabelContainer = styled.div`
   display: flex;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
   label {
     margin-bottom: 0;
   }
