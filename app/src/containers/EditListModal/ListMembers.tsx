@@ -1,20 +1,23 @@
 import { useState, useCallback } from "react";
+import { useForm } from "@tanstack/react-form";
 import { styled } from "@linaria/react";
 
 import { theme } from "../../theme";
 
 import Button from "@components/Button";
-import { Form, Label, Input } from "@components/Forms";
+import { Form, Label, Field, Input } from "@components/Forms";
 import ProfilePic from "@components/ProfilePic";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useListDetails from "@hooks/useListDetails";
 import { getUserByEmail, ServerError } from "@utilities/server";
 import useModifyList from "@hooks/useModifyList";
+import { addMemberSchema } from "@utilities/validation/list";
+import { fieldError } from "@utilities/forms";
 
 const UserList = styled.ol`
   list-style: none;
   padding: 0;
-  margin: 0 0 1rem;
+  margin: 0;
   max-height: 12.5rem;
   overflow-y: auto;
 `;
@@ -48,10 +51,7 @@ const User = styled.li`
 `;
 
 function ListMembers() {
-  const [loading, setLoading] = useState(false);
-  const [isInvalid, setInvalid] = useState(false);
   const [error, setError] = useState<string | undefined>();
-  const [input, setInput] = useState("");
   const currentListId = useCurrentListId();
   const modifyList = useModifyList();
   const { list } = useListDetails(currentListId);
@@ -69,81 +69,75 @@ function ListMembers() {
     },
     [members, currentListId, modifyList]
   );
-  const onSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      // Validate
-      if (!input) {
-        setInvalid(true);
-        return;
-      }
-      // Update UI to loading state
-      setLoading(true);
-      setInvalid(false);
+
+  const form = useForm({
+    defaultValues: { email: "" },
+    validators: { onChange: addMemberSchema },
+    onSubmit: async ({ value, formApi }) => {
       setError(undefined);
-      // Get user details from server
       try {
-        // See if member exists
-        const user = await getUserByEmail(input);
+        const user = await getUserByEmail(value.email.trim());
         if (members.find(m => m.id === user.id)) {
-          setLoading(false);
-          setInvalid(true);
           setError("User already exists on list");
           return;
         }
-        // Clone members array, add new member
-        // const _members = new Set(members);
-        members.push(user);
-        setMembers(members);
-        // Update the list with the new member
-        modifyList(currentListId, {
-          members
-        });
-        // Update UI with response from server
-        setLoading(false);
-        setInvalid(false);
-        setError(undefined);
+        const nextMembers = [...members, user];
+        setMembers(nextMembers);
+        await modifyList(currentListId, { members: nextMembers });
+        formApi.reset();
       } catch (err) {
         console.error(err);
-        setLoading(false);
-        setInvalid(true);
-        if (err instanceof ServerError) {
-          setError(err.formattedMessage);
-        } else {
-          setError(ServerError.defaultError);
-        }
-        return;
+        setError(err instanceof ServerError ? err.formattedMessage : ServerError.defaultError);
       }
-    },
-    [members, currentListId, modifyList, input]
-  );
+    }
+  });
 
   return (
-    <Form onSubmit={e => onSubmit(e)} errorMessage={error}>
-      <Label>Current Members</Label>
-      <UserList>
-        {list.members?.map((user, index) => (
-          <User key={index}>
-            <ProfilePic user={user} />
-            <UsersName>
-              {user.firstName} {user.lastName}
-            </UsersName>
-            {user.id === list.owner ? <Owner /> : <Button onClick={() => removeMember(user.id)}>Remove</Button>}
-          </User>
-        ))}
-      </UserList>
-      <Label htmlFor="email">Add Member</Label>
-      <Input
-        value={input}
-        name="email"
-        id="email"
-        invalid={Boolean(isInvalid)}
-        onChange={evt => setInput(evt.target.value)}
-        placeholder="hello@world.com"
-      />
-      <Button isLoading={loading} loadingText="Adding" color={list.color} type="submit">
-        Add
-      </Button>
+    <Form
+      errorMessage={error}
+      onSubmit={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
+      <Field>
+        <Label>Current Members</Label>
+        <UserList>
+          {list.members?.map((user, index) => (
+            <User key={index}>
+              <ProfilePic user={user} />
+              <UsersName>
+                {user.firstName} {user.lastName}
+              </UsersName>
+              {user.id === list.owner ? <Owner /> : <Button onClick={() => removeMember(user.id)}>Remove</Button>}
+            </User>
+          ))}
+        </UserList>
+      </Field>
+      <Field>
+        <Label htmlFor="email">Add Member</Label>
+        <form.Field name="email">
+          {field => (
+            <Input
+              value={field.state.value}
+              name="email"
+              id="email"
+              errorMessage={fieldError(field.state.meta)}
+              onBlur={field.handleBlur}
+              onChange={evt => field.handleChange(evt.target.value)}
+              placeholder="hello@world.com"
+            />
+          )}
+        </form.Field>
+      </Field>
+      <form.Subscribe selector={state => state.isSubmitting}>
+        {isSubmitting => (
+          <Button isLoading={isSubmitting} loadingText="Adding" color={list.color} type="submit">
+            Add
+          </Button>
+        )}
+      </form.Subscribe>
     </Form>
   );
 }

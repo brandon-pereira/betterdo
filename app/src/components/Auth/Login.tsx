@@ -3,18 +3,9 @@ import { useForm } from "@tanstack/react-form";
 import AuthContainer from "./AuthContainer";
 import PasswordInput from "./PasswordInput";
 import { authClient, signIn } from "@utilities/auth";
-import {
-  AuthProviders,
-  AuthButtons,
-  AuthInput,
-  Stack,
-  Group,
-  Alert,
-  Divider,
-  DimmedText,
-  VisuallyHidden
-} from "./Auth.styles";
+import { AuthProviders, AuthButtons, Stack, Group, Alert, Divider, DimmedText, VisuallyHidden } from "./Auth.styles";
 import Button from "@components/Button";
+import { Input } from "@components/Forms";
 import Link from "@components/Link";
 import { loginSchema } from "@utilities/validation/auth";
 import { fieldError, getErrorMessage } from "@utilities/forms";
@@ -105,7 +96,7 @@ const Auth = () => {
           {error && <Alert $color="red">{error}</Alert>}
           <form.Field name="email">
             {field => (
-              <AuthInput
+              <Input
                 type="email"
                 name="email"
                 autoComplete="username"

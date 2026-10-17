@@ -1,123 +1,101 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
+import { useForm } from "@tanstack/react-form";
 
 import { ButtonContainer, ProfilePictureBackground, ProfilePictureBanner } from "./ProfileSettings.styles";
 
 import Button from "@components/Button";
-import { Form, Label, Input } from "@components/Forms";
+import { Form, Label, Field, Input } from "@components/Forms";
 import ProfilePic, { FormatProfilePictureUrl } from "@components/ProfilePic";
 import useProfile from "@hooks/useProfile";
 import useModifyProfile from "@hooks/useModifyProfile";
 import { ServerError } from "@utilities/server";
+import { profileSchema } from "@utilities/validation/profile";
+import { fieldError } from "@utilities/forms";
 
 function ProfileSettings() {
   const { profile, logout, loading } = useProfile();
-  const [state, setState] = useState({
-    firstName: profile?.firstName || "",
-    lastName: profile?.lastName || "",
-    email: profile?.email || ""
-  });
   const modifyProfile = useModifyProfile();
-  const [isSaving, setSaving] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [invalid, setInvalid] = useState<keyof typeof state | null>(null);
 
-  const validate = useCallback(() => {
-    if (!state.firstName) {
-      setInvalid("firstName");
-      return false;
-    } else if (!state.email) {
-      setInvalid("email");
-      return false;
-    }
-    return true;
-  }, [state]);
-
-  const onSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      if (isSaving) {
-        return;
-      }
-      if (validate()) {
-        setSaving(true);
-        setError(undefined);
-        setInvalid(null);
-        try {
-          await modifyProfile({
-            firstName: state.firstName,
-            lastName: state.lastName
-          });
-        } catch (err) {
-          setSaving(false);
-          if (err instanceof ServerError) {
-            setError(err.formattedMessage);
-          } else {
-            setError(ServerError.defaultError);
-          }
-          return;
-        }
-        setSaving(false);
-      }
+  const form = useForm({
+    defaultValues: {
+      firstName: profile?.firstName || "",
+      lastName: profile?.lastName || "",
+      email: profile?.email || ""
     },
-    [isSaving, modifyProfile, state, validate]
-  );
+    validators: { onChange: profileSchema },
+    onSubmit: async ({ value }) => {
+      setError(undefined);
+      try {
+        await modifyProfile({
+          firstName: value.firstName.trim(),
+          lastName: value.lastName.trim()
+        });
+      } catch (err) {
+        setError(err instanceof ServerError ? err.formattedMessage : ServerError.defaultError);
+      }
+    }
+  });
 
   if (loading) {
     return <>Loading</>;
   }
   return (
-    <Form onSubmit={onSubmit} errorMessage={error}>
+    <Form
+      errorMessage={error}
+      onSubmit={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
       <ProfilePictureBanner>
         <ProfilePictureBackground src={FormatProfilePictureUrl(profile?.profilePicture)} />
         <ProfilePic size="8rem" user={profile} />
       </ProfilePictureBanner>
-      <Label htmlFor="firstName">First Name</Label>
-      <Input
-        value={state.firstName}
-        name="firstName"
-        id="firstName"
-        invalid={Boolean(invalid === "firstName")}
-        onChange={evt =>
-          setState(state => ({
-            ...state,
-            firstName: evt.target.value
-          }))
-        }
-        placeholder="John"
-      />
-      <Label htmlFor="lastName">Last Name</Label>
-      <Input
-        value={state.lastName}
-        name="lastName"
-        id="lastName"
-        invalid={Boolean(invalid === "lastName")}
-        onChange={evt =>
-          setState(state => ({
-            ...state,
-            lastName: evt.target.value
-          }))
-        }
-        placeholder="Doe"
-      />
-      <Label htmlFor="email">Email</Label>
-      <Input
-        value={state.email}
-        name="email"
-        id="email"
-        disabled
-        invalid={Boolean(invalid === "email")}
-        onChange={evt =>
-          setState(state => ({
-            ...state,
-            email: evt.target.value
-          }))
-        }
-        placeholder="hello@world.com"
-      />
+      <Field>
+        <Label htmlFor="firstName">First Name</Label>
+        <form.Field name="firstName">
+          {field => (
+            <Input
+              value={field.state.value}
+              name="firstName"
+              id="firstName"
+              errorMessage={fieldError(field.state.meta)}
+              onBlur={field.handleBlur}
+              onChange={evt => field.handleChange(evt.target.value)}
+              placeholder="John"
+            />
+          )}
+        </form.Field>
+      </Field>
+      <Field>
+        <Label htmlFor="lastName">Last Name</Label>
+        <form.Field name="lastName">
+          {field => (
+            <Input
+              value={field.state.value}
+              name="lastName"
+              id="lastName"
+              onBlur={field.handleBlur}
+              onChange={evt => field.handleChange(evt.target.value)}
+              placeholder="Doe"
+            />
+          )}
+        </form.Field>
+      </Field>
+      <Field>
+        <Label htmlFor="email">Email</Label>
+        <Input value={form.state.values.email} name="email" id="email" disabled placeholder="hello@world.com" />
+      </Field>
       <ButtonContainer>
-        <Button isLoading={isSaving} loadingText="Saving" type="submit">
-          Save
-        </Button>
+        <form.Subscribe selector={state => state.isSubmitting}>
+          {isSubmitting => (
+            <Button isLoading={isSubmitting} loadingText="Saving" type="submit">
+              Save
+            </Button>
+          )}
+        </form.Subscribe>
         <Button onClick={logout} color={"red"}>
           Logout
         </Button>

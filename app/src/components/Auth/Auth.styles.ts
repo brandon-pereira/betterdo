@@ -3,14 +3,6 @@ import { styled } from "@linaria/react";
 import { QUERIES } from "../../constants";
 import { theme } from "../../theme";
 
-import { Input } from "@components/Forms";
-
-// The shared Forms Input carries a bottom margin for stacked forms; inside the
-// auth screens spacing is handled by <Stack>, so strip it here.
-export const AuthInput = styled(Input)`
-  margin-bottom: 0;
-`;
-
 export const Container = styled.div`
   display: grid;
   overflow: auto;

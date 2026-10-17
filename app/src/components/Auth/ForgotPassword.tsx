@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import AuthContainer from "./AuthContainer";
 import { authClient } from "@utilities/auth";
-import { AuthButtons, AuthInput, Stack, Group, Alert, AlertTitle, DimmedText } from "./Auth.styles";
+import { AuthButtons, Stack, Group, Alert, AlertTitle, DimmedText } from "./Auth.styles";
 import Button from "@components/Button";
+import { Input } from "@components/Forms";
 import Link from "@components/Link";
 import { forgotPasswordSchema } from "@utilities/validation/auth";
 import { fieldError, getErrorMessage } from "@utilities/forms";
@@ -74,7 +75,7 @@ const ForgotPassword = () => {
           )}
           <form.Field name="email">
             {field => (
-              <AuthInput
+              <Input
                 type="email"
                 name="email"
                 autoComplete="username"

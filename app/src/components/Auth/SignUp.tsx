@@ -2,18 +2,9 @@ import { useReducer, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import AuthContainer from "./AuthContainer";
 import PasswordInput from "./PasswordInput";
-import {
-  AuthButtons,
-  AuthProviders,
-  AuthInput,
-  Stack,
-  Group,
-  Alert,
-  AlertTitle,
-  Divider,
-  DimmedText
-} from "./Auth.styles";
+import { AuthButtons, AuthProviders, Stack, Group, Alert, AlertTitle, Divider, DimmedText } from "./Auth.styles";
 import Button from "@components/Button";
+import { Input } from "@components/Forms";
 import { authClient, signIn, signUp } from "@utilities/auth";
 import { getTimeZone } from "@utilities/timezones";
 import { signUpSchema } from "@utilities/validation/auth";
@@ -152,7 +143,7 @@ const SignUp = () => {
 
           <form.Field name="firstName">
             {field => (
-              <AuthInput
+              <Input
                 type="text"
                 name="given-name"
                 autoComplete="given-name"
@@ -167,7 +158,7 @@ const SignUp = () => {
 
           <form.Field name="lastName">
             {field => (
-              <AuthInput
+              <Input
                 type="text"
                 name="family-name"
                 autoComplete="family-name"
@@ -181,7 +172,7 @@ const SignUp = () => {
 
           <form.Field name="email">
             {field => (
-              <AuthInput
+              <Input
                 type="email"
                 name="email"
                 autoComplete="username"

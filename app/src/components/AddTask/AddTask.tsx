@@ -1,10 +1,11 @@
-import { useState, useCallback, useRef } from "react";
+import { useForm } from "@tanstack/react-form";
 
 import { Container, Input } from "./AddTask.styles";
 
 import useCreateTask from "@hooks/useCreateTask";
 import useCurrentListId from "@hooks/useCurrentListId";
 import { vibrate } from "@utilities/haptics";
+import { addTaskSchema } from "@utilities/validation/list";
 
 interface Props {
   isHidden: boolean;
@@ -13,42 +14,48 @@ interface Props {
 
 const AddTask = function ({ isHidden, isAbsolute }: Props) {
   const currentListId = useCurrentListId();
-  const [invalid, setInvalid] = useState(false);
   const createTask = useCreateTask();
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  const onSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const title = inputRef.current?.value;
-      if (!title || !inputRef.current) {
-        vibrate("error");
-        setInvalid(true);
-        return;
-      }
-      inputRef.current.value = "";
+  const form = useForm({
+    defaultValues: { title: "" },
+    validators: { onSubmit: addTaskSchema },
+    onSubmitInvalid: () => vibrate("error"),
+    onSubmit: async ({ value, formApi }) => {
+      const title = value.title.trim();
+      formApi.reset();
       try {
         await createTask(currentListId, title);
         vibrate("success");
       } catch (err) {
         console.error(err);
-        // restore title for easy re-adding
-        inputRef.current.value = title;
+        // Restore the title for easy re-adding.
+        formApi.setFieldValue("title", value.title);
         vibrate("error");
-        setInvalid(true);
       }
-      setInvalid(false);
-    },
-    [currentListId, createTask]
-  );
+    }
+  });
 
   return (
     <Container
       data-absolute={isAbsolute ? "true" : "false"}
       data-hidden={isHidden ? "true" : "false"}
-      onSubmit={onSubmit}
+      onSubmit={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
     >
-      <Input ref={inputRef} invalid={invalid} disabled={isHidden} placeholder="Add Task" />
+      <form.Field name="title">
+        {field => (
+          <Input
+            value={field.state.value}
+            invalid={field.state.meta.isTouched && !field.state.meta.isValid}
+            disabled={isHidden}
+            onChange={evt => field.handleChange(evt.target.value)}
+            placeholder="Add Task"
+          />
+        )}
+      </form.Field>
     </Container>
   );
 };

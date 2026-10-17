@@ -17,7 +17,6 @@ const _Input = styled.input`
   outline: none;
   font: inherit;
   font-size: 0.875rem;
-  margin-bottom: 1rem;
   transition:
     border-color 0.1s ease,
     background-color 0.1s ease;
@@ -58,6 +57,13 @@ const Label = styled.label`
   display: block;
 `;
 
+// Groups a Label with its input as a single stack item so the Form's gap spaces
+// fields apart while the Label stays tight to its own input.
+const Field = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 // Inline, per-field validation message shown beneath an input. The shared Input
 // renders this automatically when given an `errorMessage`.
 const FieldError = styled.div`
@@ -65,6 +71,15 @@ const FieldError = styled.div`
   font-size: 0.8rem;
   margin-top: 0.1rem;
   margin-left: 0.2rem;
+`;
+
+// Forms lay out their children as a vertical stack. Spacing between fields is
+// owned here (gap) rather than by per-input margins, so inputs stay layout-free
+// and composable. Label carries its own small margin to sit tight to its input.
+const _Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const Form = ({
@@ -75,10 +90,10 @@ const Form = ({
   children: React.ReactNode;
   errorMessage?: string;
 } & React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormElement>, HTMLFormElement>) => (
-  <form {...props}>
+  <_Form {...props}>
     {errorMessage ? <Error>{errorMessage}</Error> : null}
     {children}
-  </form>
+  </_Form>
 );
 
 type InputProps = {
@@ -111,4 +126,4 @@ const Input = forwardRef<
 });
 Input.displayName = "Input";
 
-export { Input, Label, Form, Error };
+export { Input, Label, Field, Form, Error };

@@ -1,5 +1,6 @@
 import { forwardRef, useState } from "react";
-import { AuthInput, PasswordField, PasswordToggle } from "./Auth.styles";
+import { PasswordField, PasswordToggle } from "./Auth.styles";
+import { Input } from "@components/Forms";
 import EyeIcon from "@components/Icon/svgs/eye.svg";
 import EyeOffIcon from "@components/Icon/svgs/eye-off.svg";
 
@@ -13,7 +14,7 @@ const PasswordInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
 
   return (
     <PasswordField>
-      <AuthInput {...props} ref={ref} type={visible ? "text" : "password"} />
+      <Input {...props} ref={ref} type={visible ? "text" : "password"} />
       <PasswordToggle
         type="button"
         onClick={() => setVisible(v => !v)}
