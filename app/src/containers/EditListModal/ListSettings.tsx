@@ -9,16 +9,15 @@ import useCurrentListId from "@hooks/useCurrentListId";
 import useModifyList from "@hooks/useModifyList";
 import useListDetails from "@hooks/useListDetails";
 import useDeleteList from "@hooks/useDeleteList";
+import usePreviewListColor from "@hooks/usePreviewListColor";
+import useAccessibleAccent from "@hooks/useAccessibleAccent";
 import { ServerError } from "@utilities/server";
-import { checkIfColorGoodContrast } from "@utilities/colors";
-import { useResolvedTheme } from "@utilities/ThemeProvider";
 import { listSettingsSchema } from "@utilities/validation/list";
 import { fieldError } from "@utilities/forms";
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 1.5rem;
 `;
 
 interface Props {
@@ -30,9 +29,10 @@ function ListSettings({ setUnsavedChanges, onRequestClose }: Props) {
   const { list } = useListDetails(currentListId);
   const modifyList = useModifyList();
   const _deleteList = useDeleteList();
+  const { preview, commit } = usePreviewListColor(currentListId);
+  const getAccessibleAccent = useAccessibleAccent();
   const [isDeleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | undefined>();
-  const { modalContentBackground } = useResolvedTheme();
 
   const form = useForm({
     defaultValues: { title: list.title, color: list.color },
@@ -46,6 +46,7 @@ function ListSettings({ setUnsavedChanges, onRequestClose }: Props) {
         setError(err instanceof ServerError ? err.formattedMessage : ServerError.defaultError);
         return;
       }
+      commit();
       setUnsavedChanges(false);
       onRequestClose?.();
     }
@@ -109,6 +110,7 @@ function ListSettings({ setUnsavedChanges, onRequestClose }: Props) {
             onChange={color => {
               setUnsavedChanges(true);
               field.handleChange(color);
+              preview(color);
             }}
           />
         )}
@@ -119,7 +121,7 @@ function ListSettings({ setUnsavedChanges, onRequestClose }: Props) {
             <Button
               isLoading={isSubmitting}
               loadingText="Saving"
-              color={checkIfColorGoodContrast(color || "#000", modalContentBackground) ? color : undefined}
+              color={color ? getAccessibleAccent(color).toHex() : undefined}
               type="submit"
             >
               Save

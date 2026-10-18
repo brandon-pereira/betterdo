@@ -38,7 +38,7 @@ export const TabHeaderItem = styled.button`
   color: var(--tab-color, ${theme.colors.general.blue});
   outline: none;
   &[data-selected="true"] {
-    color: #fff;
+    color: var(--tab-selected-text, #fff);
     cursor: default;
   }
   &:focus-visible {

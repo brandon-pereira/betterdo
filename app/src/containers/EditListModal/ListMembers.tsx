@@ -13,6 +13,7 @@ import { getUserByEmail, ServerError } from "@utilities/server";
 import useModifyList from "@hooks/useModifyList";
 import { addMemberSchema } from "@utilities/validation/list";
 import { fieldError } from "@utilities/forms";
+import { ButtonContainer } from "@components/NotificationBanner/NotificationBanner.styles";
 
 const UserList = styled.ol`
   list-style: none;
@@ -131,13 +132,15 @@ function ListMembers() {
           )}
         </form.Field>
       </Field>
-      <form.Subscribe selector={state => state.isSubmitting}>
-        {isSubmitting => (
-          <Button isLoading={isSubmitting} loadingText="Adding" color={list.color} type="submit">
-            Add
-          </Button>
-        )}
-      </form.Subscribe>
+      <ButtonContainer>
+        <form.Subscribe selector={state => state.isSubmitting}>
+          {isSubmitting => (
+            <Button isLoading={isSubmitting} loadingText="Adding" color={list.color} type="submit">
+              Add
+            </Button>
+          )}
+        </form.Subscribe>
+      </ButtonContainer>
     </Form>
   );
 }

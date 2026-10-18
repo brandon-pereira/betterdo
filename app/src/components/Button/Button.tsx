@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 
 import { StyledButton, Loader } from "./Button.styles";
 import { vibrate } from "@utilities/haptics";
+import { getContrastingTextColor } from "@utilities/colors";
 
 interface Props {
   children: React.ReactNode;
@@ -36,8 +37,6 @@ const Button = ({
     onClick?.(e);
   };
 
-  const resolvedColor = (color && THEME_COLORS[color]) || color || "var(--colors-general-blue)";
-
   return (
     <StyledButton
       type={type || "button"}
@@ -45,7 +44,13 @@ const Button = ({
       data-variant={variant}
       data-loading={isLoading ? "true" : "false"}
       onClick={handleClick}
-      style={{ "--color": resolvedColor, ...style } as CSSProperties}
+      style={
+        {
+          "--color": (color && THEME_COLORS[color]) || color || "var(--colors-general-blue)",
+          "--text-color": getContrastingTextColor(color),
+          ...style
+        } as CSSProperties
+      }
       {...props}
     >
       {isLoading && <Loader isVisible={true} color={loaderColor} size="1rem" />}

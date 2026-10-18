@@ -9,8 +9,7 @@ import { Header } from "@components/Copy";
 import useListDetails from "@hooks/useListDetails";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
-import { checkIfColorGoodContrast } from "@utilities/colors";
-import { useResolvedTheme } from "@utilities/ThemeProvider";
+import useAccessibleAccent from "@hooks/useAccessibleAccent";
 
 interface Props {
   setUnsavedChanges: (bool: boolean) => void;
@@ -22,6 +21,7 @@ const tabs = ["general", "members"];
 function EditListModalContent({ setUnsavedChanges, onRequestClose }: Props) {
   const currentListId = useCurrentListId();
   const { list } = useListDetails(currentListId);
+  const getAccessibleAccent = useAccessibleAccent();
 
   const { section } = useParams();
   const [selectedIndex, setSelectedIndex] = useState(() => {
@@ -30,14 +30,13 @@ function EditListModalContent({ setUnsavedChanges, onRequestClose }: Props) {
   });
   const generateUrl = useGeneratedUrl();
   const navigate = useNavigate();
-  const { modalContentBackground } = useResolvedTheme();
-  const isColorGoodContrast = checkIfColorGoodContrast(list.color || "#000", modalContentBackground);
+  const accentColor = list.color ? getAccessibleAccent(list.color).toHex() : undefined;
 
   return (
     <>
-      <Header color={isColorGoodContrast ? list.color : undefined}>List Settings</Header>
+      <Header color={accentColor}>List Settings</Header>
       <Tabs
-        color={isColorGoodContrast ? list.color : undefined}
+        color={accentColor}
         selectedIndex={selectedIndex}
         onChange={index => {
           navigate(generateUrl(`/edit-list/${tabs[index]}`));

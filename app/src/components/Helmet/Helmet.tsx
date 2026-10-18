@@ -5,9 +5,10 @@ import { DEFAULT_LIST_COLOR } from "../../constants";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useListDetails from "@hooks/useListDetails";
 import useHamburgerNav from "@hooks/useHamburgerNav";
-import { getAccessibleAccent } from "@utilities/colors";
+import useSafariChromeAccent from "@hooks/useSafariChromeAccent";
 
 function Helmet() {
+  const getSafariChromeAccent = useSafariChromeAccent();
   const currentListId = useCurrentListId();
   const { list, error } = useListDetails(currentListId);
   const [isNavOpen] = useHamburgerNav();
@@ -23,7 +24,7 @@ function Helmet() {
     );
   }
 
-  const listColor = getAccessibleAccent(list.color!).toHex();
+  const listColor = getSafariChromeAccent(list.color!).toHex();
 
   return (
     <CoreHelmet>

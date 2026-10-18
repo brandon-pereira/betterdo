@@ -7,9 +7,8 @@ import { Body, Header } from "@components/Copy";
 import { Form, Label, Field, Input } from "@components/Forms";
 import ColorPicker from "@components/ColorPicker";
 import useCreateList from "@hooks/useCreateList";
+import useAccessibleAccent from "@hooks/useAccessibleAccent";
 import { ServerError } from "@utilities/server";
-import { checkIfColorGoodContrast } from "@utilities/colors";
-import { useResolvedTheme } from "@utilities/ThemeProvider";
 import { listSettingsSchema } from "@utilities/validation/list";
 import { fieldError } from "@utilities/forms";
 
@@ -20,7 +19,7 @@ interface AddListModalProps {
 function AddListModalContent({ onLoad }: AddListModalProps) {
   const [error, setError] = useState<string | false>(false);
   const createList = useCreateList();
-  const { modalContentBackground } = useResolvedTheme();
+  const getAccessibleAccent = useAccessibleAccent();
 
   const form = useForm({
     defaultValues: { title: "", color: randomColor() },
@@ -48,10 +47,10 @@ function AddListModalContent({ onLoad }: AddListModalProps) {
     <Fragment>
       <form.Subscribe selector={state => [state.values.color, state.isSubmitting] as const}>
         {([color, isSubmitting]) => {
-          const isColorGoodContrast = checkIfColorGoodContrast(color, modalContentBackground);
+          const accentColor = color ? getAccessibleAccent(color).toHex() : undefined;
           return (
             <Fragment>
-              <Header color={isColorGoodContrast ? color : undefined}>Create List</Header>
+              <Header color={accentColor}>Create List</Header>
               <Body>
                 Lists allow you to organize your tasks with even more detail. You can create lists for almost anything.
               </Body>
@@ -83,12 +82,7 @@ function AddListModalContent({ onLoad }: AddListModalProps) {
                   {field => <ColorPicker value={field.state.value} onChange={c => field.handleChange(c)} />}
                 </form.Field>
                 <div>
-                  <Button
-                    type="submit"
-                    loadingText="Creating"
-                    isLoading={isSubmitting}
-                    color={isColorGoodContrast ? color : undefined}
-                  >
+                  <Button type="submit" loadingText="Creating" isLoading={isSubmitting} color={accentColor}>
                     Create
                   </Button>
                 </div>

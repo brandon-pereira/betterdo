@@ -3,6 +3,7 @@ import { cloneElement, Children } from "react";
 import type { CSSProperties } from "react";
 
 import { Container, TabsBody, TabBodyItem, TabsHeader, ActiveTabHeaderBackground, TabHeaderItem } from "./Tabs.styles";
+import { getContrastingTextColor } from "@utilities/colors";
 
 interface Props {
   selectedIndex?: number;
@@ -12,7 +13,11 @@ interface Props {
   titles: string[];
 }
 function Tabs({ selectedIndex, onChange, color, children, titles }: Props) {
-  const colorStyle = color ? ({ "--tab-color": color } as CSSProperties) : undefined;
+  // Pick a legible selected-tab text color: dark when the accent is light,
+  // otherwise white. Falls back to white against the default (dark) theme blue.
+  const colorStyle = color
+    ? ({ "--tab-color": color, "--tab-selected-text": getContrastingTextColor(color) } as CSSProperties)
+    : undefined;
   return (
     <Container>
       <LayoutGroup>

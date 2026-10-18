@@ -9,7 +9,7 @@ export const StyledButton = styled.button<{
 }>`
   border: 1px solid transparent;
   background-color: var(--color);
-  color: #fff;
+  color: var(--text-color, #fff);
   border-radius: 0.5rem;
   padding: 0 1.125rem;
   height: 2.5rem;

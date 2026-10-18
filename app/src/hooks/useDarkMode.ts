@@ -1,19 +1,13 @@
-import { useEffect, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 import createSharedHook from "./internal/createSharedHook";
+import useOsDarkMode from "./useOsDarkMode";
 
 const localStorageKey = "doesBetterDoPreferDarkMode";
 
 function useDarkModeOnce(): [boolean, (bool: boolean) => void] {
-  const [isOSinDarkMode, setOSinDarkMode] = useState(window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const isOSinDarkMode = useOsDarkMode();
   const [doesUserPreferDarkMode, setUserDarkPreference] = useState(parseValue(localStorage.getItem(localStorageKey)));
-
-  useEffect(() => {
-    const matcher = window.matchMedia("(prefers-color-scheme: dark)");
-    const fn = (e: MediaQueryListEvent) => setOSinDarkMode(Boolean(e.matches));
-    matcher.addEventListener("change", fn);
-    return () => matcher.removeEventListener("change", fn);
-  }, []);
 
   const shouldUseDarkMode = isOSinDarkMode && doesUserPreferDarkMode ? true : false;
 
