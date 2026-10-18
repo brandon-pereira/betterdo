@@ -7,6 +7,7 @@
 - Bump several dependencies to latest versions
 - Added a form validation library for improved form handling
 - Add a shared package for constants, types, and validation utilities
+- Improved automatic color a11y, including safari changes
 
 ## v8.1.0 (2026-10-01)
 
