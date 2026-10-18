@@ -26,16 +26,3 @@ export function ThemeProvider({ children }: { children: React.ReactChild }) {
 
   return <>{children}</>;
 }
-
-/**
- * Returns concrete (resolved) theme values for the active mode. Use this when a
- * value is needed in JS at runtime — e.g. for color-contrast math — rather than
- * as a CSS `var(--...)` reference.
- */
-export function useResolvedTheme() {
-  const [isDarkMode] = useDarkMode();
-  const vars = isDarkMode ? DARK_VARS : LIGHT_VARS;
-  return {
-    modalContentBackground: vars["colors-modals-content-background"]
-  };
-}

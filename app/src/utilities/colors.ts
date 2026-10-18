@@ -3,13 +3,8 @@ import a11yPlugin from "colord/plugins/a11y";
 
 import { DEFAULT_LIST_COLOR } from "../constants";
 
+// Provides `.luminance()`, used by the accent helpers below.
 extend([a11yPlugin]);
-
-export function checkIfColorGoodContrast(textColor: string, backgroundColor: string) {
-  const isColorGoodContrast = colord(textColor).isReadable(colord(backgroundColor));
-
-  return isColorGoodContrast;
-}
 
 /**
  * Returns a foreground color (dark or light) that contrasts with the given
