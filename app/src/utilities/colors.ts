@@ -61,7 +61,7 @@ export function getAccessibleAccent(color: string | Colord, isDarkMode: boolean)
  * Other browsers and non-chrome surfaces should keep the raw color.
  *
  * `isOsDarkMode` is the OS color scheme (not the app theme). In components,
- * prefer the `useSafariChromeAccent` hook so this re-runs when it changes.
+ * prefer the `useChromeColor` hook so this re-runs when it changes.
  */
 export function getSafariChromeAccent(color: string | Colord, isOsDarkMode: boolean): Colord {
   color = colord(color || DEFAULT_LIST_COLOR);
@@ -84,6 +84,18 @@ export function getSafariChromeAccent(color: string | Colord, isOsDarkMode: bool
     }
   }
   return color;
+}
+
+/**
+ * Returns the opaque color you'd see with a translucent overlay (e.g. the
+ * modal backdrop) composited on top of `color`. Used to tint the browser
+ * chrome so it matches the dimmed page while a modal is open.
+ */
+export function getColorUnderOverlay(color: string | Colord, overlay: string | Colord): Colord {
+  const base = colord(color).toRgb();
+  const top = colord(overlay).toRgb();
+  const blend = (b: number, t: number) => Math.round(t * top.a + b * (1 - top.a));
+  return colord({ r: blend(base.r, top.r), g: blend(base.g, top.g), b: blend(base.b, top.b) });
 }
 
 /**

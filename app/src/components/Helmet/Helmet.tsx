@@ -4,14 +4,12 @@ import { DEFAULT_LIST_COLOR } from "../../constants";
 
 import useCurrentListId from "@hooks/useCurrentListId";
 import useListDetails from "@hooks/useListDetails";
-import useHamburgerNav from "@hooks/useHamburgerNav";
-import useSafariChromeAccent from "@hooks/useSafariChromeAccent";
+import useChromeColor from "@hooks/useChromeColor";
 
 function Helmet() {
-  const getSafariChromeAccent = useSafariChromeAccent();
+  const { chromeColor } = useChromeColor();
   const currentListId = useCurrentListId();
   const { list, error } = useListDetails(currentListId);
-  const [isNavOpen] = useHamburgerNav();
 
   if (error || !list) {
     return (
@@ -24,12 +22,10 @@ function Helmet() {
     );
   }
 
-  const listColor = getSafariChromeAccent(list.color!).toHex();
-
   return (
     <CoreHelmet>
       <title>BetterDo.{list.title ? ` - ${list.title}` : ""}</title>
-      <meta name="theme-color" content={!isNavOpen ? listColor : "#080808"} />
+      <meta name="theme-color" content={chromeColor} />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet" />

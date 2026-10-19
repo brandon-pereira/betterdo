@@ -5,18 +5,17 @@ import useEditListModal from "@hooks/useEditListModal";
 import useListDetails from "@hooks/useListDetails";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useHamburgerNav from "@hooks/useHamburgerNav";
-import useSafariChromeAccent from "@hooks/useSafariChromeAccent";
+import useChromeColor from "@hooks/useChromeColor";
 
 function Header() {
   const [isMobileNavVisible, setMobileNavVisibility] = useHamburgerNav();
-  const getSafariChromeAccent = useSafariChromeAccent();
+  // Match the background the Header actually renders (Container writes
+  // listColor to --current-list-color), so the text color stays legible.
+  const { isListColorDark: isDarkColor } = useChromeColor();
 
   const { openModal: openEditListModal } = useEditListModal();
   const currentListId = useCurrentListId();
   const { list, loading } = useListDetails(currentListId);
-  // Match the background the Header actually renders (Container writes the Safari
-  // chrome accent to --current-list-color), so the text color stays legible.
-  const isDarkColor = getSafariChromeAccent(list.color!).isDark();
 
   return (
     <Container data-dark-color={isDarkColor ? "true" : "false"}>
