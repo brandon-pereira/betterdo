@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { nextMonday, isSameDay, startOfToday, startOfTomorrow, isSameWeek } from "date-fns";
 
-import { Container, DayIcon, ItemContainer, ItemLabel, DueDateInput } from "./DueDate.styles";
+import { Wrapper, Container, DayIcon, ItemContainer, ItemLabel, DueDateInput } from "./DueDate.styles";
 
 import Calendar from "@components/Icon/svgs/calendar.svg";
 import Eyedropper from "@components/Icon/svgs/eyedropper.svg";
@@ -11,11 +11,12 @@ import { getCurrentDay, getTomorrowDay } from "@utilities/customLists";
 type Props = {
   onChange(date?: string): void;
   value?: string;
+  htmlFor?: string;
   "aria-label"?: string;
   "aria-labelledby"?: string;
 };
 
-function DueDate({ value, onChange, ...ariaProps }: Props) {
+function DueDate({ value, onChange, htmlFor, ...ariaProps }: Props) {
   // create all variables we'll need to use later
   const currentValue = new Date(value || "");
   const dateInputRef = useRef<HTMLInputElement>(null);
@@ -45,7 +46,7 @@ function DueDate({ value, onChange, ...ariaProps }: Props) {
   };
 
   return (
-    <>
+    <Wrapper>
       <Container role="group" {...ariaProps}>
         <ItemContainer
           type="button"
@@ -75,7 +76,10 @@ function DueDate({ value, onChange, ...ariaProps }: Props) {
           <ItemLabel>Next Week</ItemLabel>
         </ItemContainer>
         <ItemContainer
+          id={htmlFor}
           type="button"
+          // explicit name so an external <label htmlFor> doesn't rename this button
+          aria-label="Custom date"
           aria-pressed={isOther}
           data-selected={isOther ? "true" : "false"}
           onClick={_onCustomDateSelect}
@@ -83,6 +87,8 @@ function DueDate({ value, onChange, ...ariaProps }: Props) {
           <DueDateInput
             ref={dateInputRef}
             type="date"
+            tabIndex={-1}
+            aria-hidden="true"
             value={formatDateForInput(value)}
             onChange={e => onChange(formatDateValueToDate(e.target.value))}
           />
@@ -90,7 +96,7 @@ function DueDate({ value, onChange, ...ariaProps }: Props) {
           <ItemLabel>Custom</ItemLabel>
         </ItemContainer>
       </Container>
-    </>
+    </Wrapper>
   );
 }
 

@@ -2,18 +2,35 @@ import { styled } from "@linaria/react";
 
 import { theme } from "../../theme";
 
-import { Input } from "@components/Forms";
-
-export const DueDateInput = styled(Input)`
+// Plain input (not the Forms `Input`, which wraps itself in a div that would
+// become an extra grid row and push the Custom icon down).
+export const DueDateInput = styled.input`
   visibility: hidden;
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  pointer-events: none;
 `;
+// Size container so the options respond to the field's width (e.g. the edit
+// task panel) rather than the viewport.
+export const Wrapper = styled.div`
+  container-type: inline-size;
+`;
+
 export const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.75rem;
+
+  /* Wrap into a 2x2 grid when four columns get too cramped for the labels. */
+  @container (max-width: 26rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 `;
 
 export const DayIcon = styled.div`
@@ -65,4 +82,8 @@ export const ItemContainer = styled.button`
 
 export const ItemLabel = styled.label`
   cursor: inherit;
+  max-width: 100%;
+  padding: 0 0.25rem;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
 `;

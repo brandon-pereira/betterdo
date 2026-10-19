@@ -57,7 +57,8 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
     title: `${idPrefix}-title`,
     priority: `${idPrefix}-priority`,
     list: `${idPrefix}-list`,
-    dueDate: `${idPrefix}-due-date`
+    dueDate: `${idPrefix}-due-date`,
+    dueDateCustom: `${idPrefix}-due-date-custom`
   };
 
   const isDirty = useRef(false);
@@ -248,8 +249,12 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
             <ListsDropdown id={ids.list} onSelect={listId => onValueChange({ listId })} currentListId={state.listId} />
           </Field>
           <Field>
-            <Label id={ids.dueDate}>Due By</Label>
+            {/* Clicking the label activates the Custom button, opening the date picker. */}
+            <Label id={ids.dueDate} htmlFor={ids.dueDateCustom}>
+              Due By
+            </Label>
             <DueDate
+              htmlFor={ids.dueDateCustom}
               aria-labelledby={ids.dueDate}
               value={state.dueDate}
               onChange={dueDate => onValueChange({ dueDate })}
