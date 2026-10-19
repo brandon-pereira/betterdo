@@ -16,7 +16,6 @@ export const Container = styled.div`
   background: #fff;
   font-family: inherit;
   font-size: 1rem;
-  margin-bottom: 1rem;
   width: 100%;
   box-sizing: border-box;
   border-radius: 3px;
@@ -76,11 +75,18 @@ export const Checkbox = styled.input`
   flex-shrink: 0;
   &:checked {
     box-shadow: inset 0 0 0 2px #fff;
-    background: linear-gradient(#333, #666);
+    background: var(--accent-color, linear-gradient(#333, #666));
+    border-color: var(--accent-color, #ccc);
   }
   &:focus-visible {
-    box-shadow:
-      inset 0 0 0 2px #fff,
-      0 0 0 2px ${theme.colors.general.blue};
+    outline: 2px solid var(--accent-color, ${theme.colors.general.blue});
+    outline-offset: 2px;
+  }
+  @media (forced-colors: active) {
+    &:checked {
+      forced-color-adjust: none;
+      background: Highlight;
+      border-color: Highlight;
+    }
   }
 `;

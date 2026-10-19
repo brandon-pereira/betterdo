@@ -32,13 +32,14 @@ export const StyledButton = styled.button<{
     border-color 0.1s ease,
     color 0.1s ease;
   &:hover {
-    background-color: color-mix(in srgb, var(--color) 88%, #000);
+    /* --hover-tint lets callers lighten instead of darken when the text is dark, preserving text contrast. */
+    background-color: color-mix(in srgb, var(--color) 88%, var(--hover-tint, #000));
   }
   &:active {
     transform: translateY(1px);
   }
   &:focus-visible {
-    outline: 2px solid ${theme.colors.general.blue};
+    outline: 2px solid var(--accent-color, ${theme.colors.general.blue});
     outline-offset: 2px;
   }
   &:disabled {

@@ -3,7 +3,7 @@ import a11yPlugin from "colord/plugins/a11y";
 
 import { DEFAULT_LIST_COLOR } from "../constants";
 
-// Provides `.luminance()`, used by the accent helpers below.
+// Provides `.luminance()` and `.contrast()`, used by the accent helpers below.
 extend([a11yPlugin]);
 
 /**
@@ -84,4 +84,74 @@ export function getSafariChromeAccent(color: string | Colord, isOsDarkMode: bool
     }
   }
   return color;
+}
+
+/**
+ * Surfaces accent colors are drawn on top of, per theme. For dark mode this is
+ * the lightest dark surface (form fields / modal glass), which is the worst
+ * case for contrast against a light accent.
+ */
+const ACCENT_SURFACE = { light: "#ffffff", dark: "#1e1e1e" } as const;
+const ON_ACCENT_DARK = "#1a1a1a";
+const ON_ACCENT_LIGHT = "#ffffff";
+
+// WCAG 2.x thresholds.
+const MIN_NON_TEXT_CONTRAST = 3; // 1.4.11 Non-text Contrast (focus rings, selected fills, borders)
+const MIN_TEXT_CONTRAST = 4.5; // 1.4.3 Contrast (Minimum) for normal-size text
+
+export interface AccentPalette {
+  /** Fills, borders and focus rings. >= 3:1 against the theme surface. */
+  accent: string;
+  /** Accent used as text (e.g. links). >= 4.5:1 against the theme surface. */
+  accentText: string;
+  /** Text/icons drawn on top of `accent`. >= 4.5:1 against `accent`. */
+  onAccent: string;
+}
+
+function getOnAccentColor(accent: Colord) {
+  return accent.contrast(ON_ACCENT_LIGHT) >= accent.contrast(ON_ACCENT_DARK) ? ON_ACCENT_LIGHT : ON_ACCENT_DARK;
+}
+
+/**
+ * Pushes a color away from the theme surface (darker on light, lighter on dark)
+ * in small steps until `isAcceptable` passes. Small steps keep the result as
+ * close to the user's chosen hue as possible.
+ */
+function adjustAwayFromSurface(color: Colord, isDarkMode: boolean, isAcceptable: (color: Colord) => boolean) {
+  // Round-trip through hex at every step so the color we measure is exactly the
+  // color we emit (HSL adjustments are fractional and can shift when rounded).
+  let adjusted = colord(color.toHex());
+  // 40 * 0.025 covers the full lightness range, so this always terminates at
+  // black/white at worst, both of which pass every threshold used here.
+  for (let i = 0; i < 40 && !isAcceptable(adjusted); i++) {
+    adjusted = colord((isDarkMode ? adjusted.lighten(0.025) : adjusted.darken(0.025)).toHex());
+  }
+  return adjusted;
+}
+
+/**
+ * Derives a WCAG-compliant accent palette from an arbitrary (user-chosen) list
+ * color for the active app theme. Unlike `getAccessibleAccent`, which only
+ * applies a luminance heuristic, this measures actual contrast ratios so the
+ * accent is safe for selected states, focus indicators and text on/over it.
+ */
+export function getAccentPalette(color: string | Colord | undefined, isDarkMode: boolean): AccentPalette {
+  let base = colord(color || DEFAULT_LIST_COLOR);
+  if (!base.isValid()) {
+    base = colord(DEFAULT_LIST_COLOR);
+  }
+  const surface = isDarkMode ? ACCENT_SURFACE.dark : ACCENT_SURFACE.light;
+
+  const accent = adjustAwayFromSurface(
+    base,
+    isDarkMode,
+    c => c.contrast(surface) >= MIN_NON_TEXT_CONTRAST && c.contrast(getOnAccentColor(c)) >= MIN_TEXT_CONTRAST
+  );
+  const accentText = adjustAwayFromSurface(accent, isDarkMode, c => c.contrast(surface) >= MIN_TEXT_CONTRAST);
+
+  return {
+    accent: accent.toHex(),
+    accentText: accentText.toHex(),
+    onAccent: getOnAccentColor(accent)
+  };
 }

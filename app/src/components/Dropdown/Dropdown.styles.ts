@@ -15,7 +15,6 @@ export const Icon = styled(_Icon)`
 export const SelectContainer = styled.label`
   position: relative;
   display: block;
-  margin: 0 0 1rem;
   ${Icon} {
     pointer-events: none;
     position: absolute;
@@ -41,6 +40,8 @@ export const Select = styled.select<{ width?: string }>`
   padding: 1rem;
   padding-right: 2.8rem;
   &:focus {
-    box-shadow: inset 0 0 0 2px ${theme.colors.general.blue};
+    box-shadow: inset 0 0 0 2px var(--accent-color, ${theme.colors.general.blue});
+    /* Box shadows are removed in forced colors mode; a transparent outline becomes visible there. */
+    outline: 2px solid transparent;
   }
 `;

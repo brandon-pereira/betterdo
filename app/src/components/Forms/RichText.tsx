@@ -51,6 +51,11 @@ const ToolbarButton = styled.button`
     background: ${theme.effects.tintMedium};
   }
 
+  &:focus-visible {
+    outline: 2px solid var(--accent-color, ${theme.colors.general.blue});
+    outline-offset: 1px;
+  }
+
   &:active {
     transform: scale(0.95);
   }
@@ -86,7 +91,10 @@ const Editor = styled(EditorContent)`
     }
 
     &:focus {
-      border-color: ${theme.colors.general.blue};
+      border-color: var(--accent-color, ${theme.colors.general.blue});
+    }
+    &:focus-visible {
+      outline: 2px solid transparent; /* visible in forced colors mode */
     }
 
     /* Heading styles */
@@ -117,7 +125,9 @@ const Editor = styled(EditorContent)`
     }
 
     a {
-      color: ${theme.colors.general.blue};
+      /* Text-safe variant (>= 4.5:1). Keep the underline so links aren't identified by color alone. */
+      color: var(--accent-text-color, ${theme.colors.general.blue});
+      text-decoration: underline;
     }
 
     /* Task list styles */
@@ -148,6 +158,7 @@ const Editor = styled(EditorContent)`
           width: 20px;
           height: 20px;
           cursor: pointer;
+          accent-color: var(--accent-color, ${theme.colors.general.blue});
         }
       }
     }

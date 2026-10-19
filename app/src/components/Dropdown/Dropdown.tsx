@@ -9,9 +9,10 @@ interface Props {
     label: string;
   }[];
   onSelect: (value: string) => void;
+  id?: string;
 }
 
-function Dropdown({ onSelect, values, value }: Props) {
+function Dropdown({ onSelect, values, value, id }: Props) {
   const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     if (onSelect) {
@@ -21,7 +22,7 @@ function Dropdown({ onSelect, values, value }: Props) {
 
   return (
     <SelectContainer>
-      <Select value={value} onChange={onChange}>
+      <Select id={id} value={value} onChange={onChange}>
         {values.map(option => {
           return (
             <option key={option.value} value={option.value}>

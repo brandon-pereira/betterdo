@@ -11,9 +11,11 @@ import { getCurrentDay, getTomorrowDay } from "@utilities/customLists";
 type Props = {
   onChange(date?: string): void;
   value?: string;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
 };
 
-function DueDate({ value, onChange }: Props) {
+function DueDate({ value, onChange, ...ariaProps }: Props) {
   // create all variables we'll need to use later
   const currentValue = new Date(value || "");
   const dateInputRef = useRef<HTMLInputElement>(null);
@@ -44,20 +46,40 @@ function DueDate({ value, onChange }: Props) {
 
   return (
     <>
-      <Container>
-        <ItemContainer data-selected={isToday ? "true" : "false"} onClick={_onQuickActionSelect(today)}>
+      <Container role="group" {...ariaProps}>
+        <ItemContainer
+          type="button"
+          aria-pressed={isToday}
+          data-selected={isToday ? "true" : "false"}
+          onClick={_onQuickActionSelect(today)}
+        >
           <DayIcon>{getCurrentDay()}</DayIcon>
           <ItemLabel>Today</ItemLabel>
         </ItemContainer>
-        <ItemContainer data-selected={isTomorrow ? "true" : "false"} onClick={_onQuickActionSelect(tomorrow)}>
+        <ItemContainer
+          type="button"
+          aria-pressed={isTomorrow}
+          data-selected={isTomorrow ? "true" : "false"}
+          onClick={_onQuickActionSelect(tomorrow)}
+        >
           <DayIcon>{getTomorrowDay()}</DayIcon>
           <ItemLabel>Tomorrow</ItemLabel>
         </ItemContainer>
-        <ItemContainer data-selected={isNextWeek ? "true" : "false"} onClick={_onQuickActionSelect(getNextWeekDate())}>
+        <ItemContainer
+          type="button"
+          aria-pressed={isNextWeek}
+          data-selected={isNextWeek ? "true" : "false"}
+          onClick={_onQuickActionSelect(getNextWeekDate())}
+        >
           <Icon size={`30px`} color="currentColor" icon={Calendar} />
           <ItemLabel>Next Week</ItemLabel>
         </ItemContainer>
-        <ItemContainer data-selected={isOther ? "true" : "false"} onClick={_onCustomDateSelect}>
+        <ItemContainer
+          type="button"
+          aria-pressed={isOther}
+          data-selected={isOther ? "true" : "false"}
+          onClick={_onCustomDateSelect}
+        >
           <DueDateInput
             ref={dateInputRef}
             type="date"

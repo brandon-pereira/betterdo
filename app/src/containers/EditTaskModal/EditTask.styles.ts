@@ -35,13 +35,14 @@ export const Modal = styled(_Modal)`
   }
 `;
 
-export const Container = styled.form`
+export const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
 `;
-export const Block = styled.div`
-  margin-bottom: 1rem;
+export const CreatorDetails = styled.div``;
+export const CreationDate = styled.div`
+  font-size: 0.8rem;
 `;
 export const ProfilePic = styled(_ProfilePic)``;
 
@@ -50,7 +51,7 @@ export const HeaderBar = styled.div`
   top: 0;
   z-index: 2;
   padding: 0.75rem 1rem;
-  margin: 0 -1rem 1rem;
+  margin: 0 -1rem;
   backdrop-filter: blur(20px) saturate(1.5);
   -webkit-backdrop-filter: blur(20px) saturate(1.5);
   background: ${theme.effects.editTaskHeaderBackground};
@@ -67,14 +68,16 @@ export const HeaderTitle = styled.span`
 
 export const Content = styled.div`
   flex: 1;
-  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0 1rem 1rem;
   overflow-y: auto;
   min-height: 0;
 `;
 export const CreatorBlock = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 0;
   background: ${theme.effects.editTaskFieldBackground};
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -87,7 +90,7 @@ export const CreatorBlock = styled.div`
   ${ProfilePic} {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
-  ${Block} {
+  ${CreatorDetails} {
     flex: 1;
     padding: 0 1rem;
   }

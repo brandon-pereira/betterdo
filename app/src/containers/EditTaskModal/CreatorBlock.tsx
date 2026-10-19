@@ -1,4 +1,4 @@
-import { Block, CreatorBlock, ProfilePic } from "./EditTask.styles";
+import { CreatorBlock, CreatorDetails, ProfilePic, CreationDate } from "./EditTask.styles";
 import RelativeTime from "./RelativeTime";
 
 import User from "@customTypes/user";
@@ -15,11 +15,18 @@ function _CreatorBlock({ createdBy, creationDate }: Props) {
   return (
     <CreatorBlock>
       <ProfilePic user={createdBy} />
-      <Block>
-        Created by {createdBy.firstName} {createdBy.lastName}
-        <br />
-        Created <RelativeTime date={new Date(creationDate)} />
-      </Block>
+      <CreatorDetails>
+        Created by{" "}
+        <strong>
+          {createdBy.firstName} {createdBy.lastName}
+        </strong>
+        <CreationDate>
+          Created{" "}
+          <strong>
+            <RelativeTime date={new Date(creationDate)} />
+          </strong>
+        </CreationDate>
+      </CreatorDetails>
     </CreatorBlock>
   );
 }

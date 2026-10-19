@@ -26,7 +26,7 @@ const _Input = styled.input`
     filter: invert(1);
   }
   &:focus {
-    border-color: ${theme.colors.general.blue};
+    border-color: var(--accent-color, ${theme.colors.general.blue});
   }
   &::placeholder {
     color: ${theme.effects.subtleText};
@@ -80,6 +80,10 @@ const _Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  /* Spacing is owned by gap, so drop the standalone Error's bottom margin. */
+  & > ${Error} {
+    margin: 0;
+  }
 `;
 
 const Form = ({

@@ -1,6 +1,7 @@
-import { useEffect, useCallback, useState, useRef } from "react";
+import { useEffect, useCallback, useState, useRef, useId } from "react";
+import type { CSSProperties } from "react";
 
-import { Container, Content, Block, ButtonContainer, HeaderBar, HeaderTitle } from "./EditTask.styles";
+import { Container, Content, ButtonContainer, HeaderBar, HeaderTitle } from "./EditTask.styles";
 import CreatorBlock from "./CreatorBlock";
 import ListsDropdown from "./ListsDropdown";
 import Loader from "./Loader";
@@ -9,7 +10,7 @@ import { PRIORITY_OPTIONS } from "@betterdo/shared/constants";
 
 import Task from "@customTypes/task";
 import Selector from "@components/Selector";
-import { Label, Input, Error } from "@components/Forms";
+import { Form, Field, Label, Input, Error } from "@components/Forms";
 import Button from "@components/Button";
 import DueDate from "@components/DueDate/DueDate";
 import Subtasks from "@components/Subtasks";
@@ -17,6 +18,8 @@ import useCurrentTaskId from "@hooks/useCurrentTaskId";
 import useTaskDetails from "@hooks/useTaskDetails";
 import useModifyTask from "@hooks/useModifyTask";
 import useDeleteTask from "@hooks/useDeleteTask";
+import useLists from "@hooks/useLists";
+import useAccentPalette from "@hooks/useAccentPalette";
 import { ServerError } from "@utilities/server";
 import RichTextEditor from "@components/Forms/RichText";
 
@@ -34,6 +37,28 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
   const [_error, setError] = useState<string | undefined>();
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
+
+  // Accent the modal with the color of the list the task belongs to. Reading
+  // `state.listId` (not `task.listId`) previews the new list's color as soon as
+  // a different list is picked in the dropdown. The palette is contrast-checked
+  // for the active theme, so any user-picked color stays WCAG compliant.
+  const { lists } = useLists();
+  const listColor = lists.find(list => list.id === state.listId)?.color;
+  const { accent, accentText, onAccent } = useAccentPalette(listColor);
+  const accentStyle = {
+    "--accent-color": accent,
+    "--accent-text-color": accentText,
+    "--on-accent-color": onAccent
+  } as CSSProperties;
+
+  const idPrefix = useId();
+  const ids = {
+    form: `${idPrefix}-form`,
+    title: `${idPrefix}-title`,
+    priority: `${idPrefix}-priority`,
+    list: `${idPrefix}-list`,
+    dueDate: `${idPrefix}-due-date`
+  };
 
   const isDirty = useRef(false);
 
@@ -185,50 +210,67 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
   }
 
   return (
-    <Container onSubmit={onSubmit}>
+    <Container style={accentStyle}>
       <Content>
         <HeaderBar>
           <HeaderTitle>Edit Task</HeaderTitle>
         </HeaderBar>
-        {_error && <Error>{_error}</Error>}
-        <Block>
-          <Label>Title</Label>
-          <Input value={state.title} onChange={onInputChange("title")} />
-        </Block>
-        <Block>
-          <Label>Priority</Label>
-          <Selector
-            values={PRIORITY_OPTIONS}
-            onSelect={(priority: Task["priority"]) => onValueChange({ priority })}
-            value={state.priority}
-          />
-        </Block>
-        <Block>
-          <Label>Subtasks</Label>
-          <Subtasks
-            subtasks={state.subtasks || []}
-            onChange={subtasks => {
-              onValueChange({ subtasks });
-              onSaveTask({ subtasks });
-            }}
-          />
-        </Block>
-        <Block>
-          <Label>Notes</Label>
-          <RichTextEditor content={state.notes} onChange={onNotesChange} onBlur={onNotesBlur} />
-        </Block>
-        <Block>
-          <Label>List</Label>
-          <ListsDropdown onSelect={listId => onValueChange({ listId })} currentListId={state.listId} />
-        </Block>
-        <Block>
-          <Label>Due By</Label>
-          <DueDate value={state.dueDate} onChange={dueDate => onValueChange({ dueDate })} />
-        </Block>
-        {task && <CreatorBlock createdBy={task.createdBy} creationDate={task.creationDate} />}
+        <Form id={ids.form} onSubmit={onSubmit} errorMessage={_error}>
+          <Field>
+            <Label htmlFor={ids.title}>Title</Label>
+            <Input id={ids.title} value={state.title} onChange={onInputChange("title")} />
+          </Field>
+          <Field>
+            <Label id={ids.priority}>Priority</Label>
+            <Selector
+              aria-labelledby={ids.priority}
+              values={PRIORITY_OPTIONS}
+              onSelect={(priority: Task["priority"]) => onValueChange({ priority })}
+              value={state.priority}
+            />
+          </Field>
+          <Field>
+            <Label>Subtasks</Label>
+            <Subtasks
+              subtasks={state.subtasks || []}
+              onChange={subtasks => {
+                onValueChange({ subtasks });
+                onSaveTask({ subtasks });
+              }}
+            />
+          </Field>
+          <Field>
+            <Label>Notes</Label>
+            <RichTextEditor content={state.notes} onChange={onNotesChange} onBlur={onNotesBlur} />
+          </Field>
+          <Field>
+            <Label htmlFor={ids.list}>List</Label>
+            <ListsDropdown id={ids.list} onSelect={listId => onValueChange({ listId })} currentListId={state.listId} />
+          </Field>
+          <Field>
+            <Label id={ids.dueDate}>Due By</Label>
+            <DueDate
+              aria-labelledby={ids.dueDate}
+              value={state.dueDate}
+              onChange={dueDate => onValueChange({ dueDate })}
+            />
+          </Field>
+          {task && <CreatorBlock createdBy={task.createdBy} creationDate={task.creationDate} />}
+        </Form>
       </Content>
       <ButtonContainer>
-        <Button type="submit" isLoading={isSaving} loadingText="Saving">
+        {/* The footer sits outside the scrolling form, so associate the submit button via `form`. */}
+        <Button
+          type="submit"
+          form={ids.form}
+          color={accent}
+          style={
+            { "--text-color": onAccent, "--hover-tint": onAccent === "#ffffff" ? "#000" : "#fff" } as CSSProperties
+          }
+          loaderColor={onAccent}
+          isLoading={isSaving}
+          loadingText="Saving"
+        >
           Save
         </Button>
         <Button type="button" color={"red"} onClick={onDeleteTask} isLoading={isDeleting} loadingText="Deleting">

@@ -8,6 +8,7 @@
 - Added a form validation library for improved form handling
 - Add a shared package for constants, types, and validation utilities
 - Improved automatic color a11y, including safari changes
+- Add current list color accent to edit task modal
 
 ## v8.1.0 (2026-10-01)
 

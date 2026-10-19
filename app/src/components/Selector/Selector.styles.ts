@@ -5,7 +5,6 @@ import { theme } from "../../theme";
 export const Container = styled.div`
   display: flex;
   border-radius: 3px;
-  margin-bottom: 1rem;
 `;
 export const Selection = styled.button`
   flex: 1;
@@ -25,21 +24,29 @@ export const Selection = styled.button`
     border-right: none;
     border-radius: 0 5px 5px 0;
   }
+  cursor: pointer;
   &:focus-visible {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+    /* Offset ring sits on the surface, so it needs >= 3:1 against it (the accent palette guarantees this). */
+    outline: 2px solid var(--accent-color, ${theme.colors.general.blue});
+    outline-offset: 2px;
+    position: relative;
+    z-index: 2;
   }
   &[data-selected="true"] {
-    background-color: ${theme.colors.general.blue};
+    background-color: var(--accent-color, ${theme.colors.general.blue});
     background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
-    box-shadow:
-      inset 0 0 0 1px rgba(0, 0, 0, 0.9),
-      inset 0 -2px rgba(255, 255, 255, 0.3);
-    text-shadow: 1px 1px rgba(0, 0, 0, 0.9);
+    box-shadow: inset 0 -2px rgba(0, 0, 0, 0.2);
     position: relative;
     z-index: 1;
-    color: #fff;
-    &:focus-visible {
-      background-image: linear-gradient(rgba(0, 0, 0, 0.3), transparent);
+    color: var(--on-accent-color, #fff);
+    font-weight: 600;
+  }
+  @media (forced-colors: active) {
+    /* Backgrounds are stripped in forced colors; use system colors so the selection stays visible. */
+    &[data-selected="true"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
     }
   }
 `;

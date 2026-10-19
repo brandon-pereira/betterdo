@@ -11,9 +11,11 @@ interface Props {
   }[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSelect: (value: any) => void;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
 }
 
-function Selector({ value, values, onSelect }: Props) {
+function Selector({ value, values, onSelect, ...ariaProps }: Props) {
   const onChange = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, value: string) => {
       if (onSelect) {
@@ -24,16 +26,23 @@ function Selector({ value, values, onSelect }: Props) {
   );
 
   return (
-    <Container>
-      {values.map(option => (
-        <Selection
-          onClick={e => onChange(e, option.value)}
-          key={option.value}
-          data-selected={option.value === value ? "true" : "false"}
-        >
-          {option.label}
-        </Selection>
-      ))}
+    <Container role="group" {...ariaProps}>
+      {values.map(option => {
+        const isSelected = option.value === value;
+        return (
+          <Selection
+            // Explicit type: inside a <form> a bare <button> defaults to "submit".
+            type="button"
+            onClick={e => onChange(e, option.value)}
+            key={option.value}
+            // Exposes the selected state to assistive tech, not just via color.
+            aria-pressed={isSelected}
+            data-selected={isSelected ? "true" : "false"}
+          >
+            {option.label}
+          </Selection>
+        );
+      })}
     </Container>
   );
 }

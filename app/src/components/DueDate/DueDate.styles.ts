@@ -12,7 +12,8 @@ export const DueDateInput = styled(Input)`
 `;
 export const Container = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
 `;
 
 export const DayIcon = styled.div`
@@ -31,23 +32,37 @@ export const ItemContainer = styled.button`
   color: ${theme.colors.forms.label.color};
   text-align: center;
   font: inherit;
-  display: flex;
-  align-items: center;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.7rem;
   cursor: pointer;
-  justify-content: center;
   border-radius: 5px;
-  flex-direction: column;
   padding: 1rem 0;
-  margin: 0 1rem 1rem 0;
+  margin: 0;
 
+  outline: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent-color, ${theme.colors.general.blue});
+    outline-offset: 2px;
+  }
   &[data-selected="true"] {
-    background: ${theme.effects.tintStrong};
+    background: var(--accent-color, ${theme.effects.tintStrong});
+    color: var(--on-accent-color, ${theme.colors.forms.label.color});
     &:hover {
-      background: ${theme.effects.tintStrong};
+      background: var(--accent-color, ${theme.effects.tintStrong});
+    }
+  }
+  @media (forced-colors: active) {
+    &[data-selected="true"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
     }
   }
 `;
 
 export const ItemLabel = styled.label`
-  margin-top: 0.7rem;
+  cursor: inherit;
 `;
