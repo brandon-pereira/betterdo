@@ -19,6 +19,10 @@ export function getContrastingTextColor(backgroundColor?: string | Colord, dark 
   return parsed.isDark() ? light : dark;
 }
 
+// Luminance bounds Safari accepts for tinting its chrome per OS color scheme.
+const SAFARI_DARK_CHROME_MAX_LUMINANCE = 0.2;
+const SAFARI_LIGHT_CHROME_MIN_LUMINANCE = 0.32;
+
 function isSafari() {
   return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 }
@@ -74,16 +78,26 @@ export function getSafariChromeAccent(color: string | Colord, isOsDarkMode: bool
   const luminance = color.luminance();
   if (isOsDarkMode) {
     // Too light for the dark chrome -> darken it.
-    if (luminance > 0.2) {
+    if (luminance > SAFARI_DARK_CHROME_MAX_LUMINANCE) {
       return getSafariChromeAccent(color.darken(0.05), isOsDarkMode);
     }
   } else {
     // Too dark for the light chrome -> lighten it.
-    if (luminance < 0.32) {
+    if (luminance < SAFARI_LIGHT_CHROME_MIN_LUMINANCE) {
       return getSafariChromeAccent(color.lighten(0.01), isOsDarkMode);
     }
   }
   return color;
+}
+
+/**
+ * Whether Safari would reject `color` as a chrome tint and fall back to its
+ * default chrome color. Only applies to Safari in light OS mode, where colors
+ * that are too dark are ignored.
+ */
+export function isTooDarkForSafariChrome(color: string | Colord, isOsDarkMode: boolean): boolean {
+  if (isOsDarkMode || !isSafari()) return false;
+  return colord(color).luminance() < SAFARI_LIGHT_CHROME_MIN_LUMINANCE;
 }
 
 /**
