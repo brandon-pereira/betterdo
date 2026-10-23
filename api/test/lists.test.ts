@@ -5,6 +5,8 @@ import { createTask, reorderTasks, updateTask } from "../src/services/tasks.js";
 import { testDb } from "./helpers/setup.js";
 import { lists, listMembers } from "../src/schema/list.js";
 import { eq } from "drizzle-orm";
+import { LIST_TITLE_MAX_LENGTH } from "@betterdo/shared/constants";
+import { createListSchema, updateListSchema } from "../src/validators/lists.js";
 
 describe("Lists", () => {
   describe("Lists API", () => {
@@ -229,6 +231,27 @@ describe("Lists", () => {
           })
           .returning()
       ).rejects.toThrow();
+    });
+  });
+
+  describe("Lists Validation", () => {
+    test("Accepts a title at the max length", () => {
+      const title = "a".repeat(LIST_TITLE_MAX_LENGTH);
+      expect(createListSchema.safeParse({ title }).success).toBe(true);
+      expect(updateListSchema.safeParse({ title }).success).toBe(true);
+    });
+
+    test("Rejects a title over the max length", () => {
+      const title = "a".repeat(LIST_TITLE_MAX_LENGTH + 1);
+      expect(createListSchema.safeParse({ title }).success).toBe(false);
+      expect(updateListSchema.safeParse({ title }).success).toBe(false);
+    });
+
+    test("Database column fits a max length title", async () => {
+      const router = await createRouter();
+      const title = "a".repeat(LIST_TITLE_MAX_LENGTH);
+      const list = await createList({ title, createdById: router.user.id });
+      expect(list.title).toBe(title);
     });
   });
 });

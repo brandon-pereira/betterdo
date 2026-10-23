@@ -7,6 +7,7 @@ import ListsDropdown from "./ListsDropdown";
 import Loader from "./Loader";
 
 import { PRIORITY_OPTIONS } from "@betterdo/shared/constants";
+import { taskTitleSchema } from "@betterdo/shared/validation";
 
 import Task from "@customTypes/task";
 import Selector from "@components/Selector";
@@ -63,6 +64,9 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
 
   const isDirty = useRef(false);
 
+  const titleResult = taskTitleSchema.safeParse(state.title ?? "");
+  const titleError = titleResult.success ? undefined : titleResult.error.issues[0]?.message;
+
   useEffect(() => {
     // Only sync local state from the server when there are no unsaved changes.
     if (isDirty.current) {
@@ -113,8 +117,10 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
         return;
       }
       const s = stateRef.current;
+      // Save everything else even if the title is invalid, rather than losing all edits.
+      const isTitleValid = taskTitleSchema.safeParse(s.title).success;
       await onSaveTask({
-        title: s.title,
+        ...(isTitleValid ? { title: s.title } : {}),
         priority: s.priority,
         dueDate: s.dueDate,
         notes: s.notes,
@@ -128,6 +134,9 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      if (titleError) {
+        return;
+      }
       if (task) {
         onSaveTask({
           title: state.title,
@@ -141,7 +150,7 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
         });
       }
     },
-    [state, task, onSaveTask]
+    [state, task, onSaveTask, titleError]
   );
 
   const onDeleteTask = useCallback(async () => {
@@ -219,7 +228,13 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
         <Form id={ids.form} onSubmit={onSubmit} errorMessage={_error}>
           <Field>
             <Label htmlFor={ids.title}>Title</Label>
-            <Input id={ids.title} value={state.title} onChange={onInputChange("title")} />
+            <Input
+              id={ids.title}
+              value={state.title}
+              onChange={onInputChange("title")}
+              invalid={!!titleError}
+              errorMessage={titleError}
+            />
           </Field>
           <Field>
             <Label id={ids.priority}>Priority</Label>

@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/pglite";
 import { sql } from "drizzle-orm";
 import { vi, beforeAll, afterAll } from "vitest";
 import { relations } from "../../src/schema/relations.js";
+import { LIST_TITLE_MAX_LENGTH, TASK_TITLE_MAX_LENGTH } from "@betterdo/shared/constants";
 
 // Create PGlite client and drizzle instance
 const client = new PGlite();
@@ -116,7 +117,7 @@ beforeAll(async () => {
   await testDb.execute(sql`
     CREATE TABLE IF NOT EXISTS "tasks" (
       "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      "title" VARCHAR(100) NOT NULL,
+      "title" VARCHAR(${sql.raw(String(TASK_TITLE_MAX_LENGTH))}) NOT NULL,
       "list_id" UUID NOT NULL,
       "created_by_id" TEXT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
       "is_completed" BOOLEAN NOT NULL DEFAULT false,
@@ -134,7 +135,7 @@ beforeAll(async () => {
   await testDb.execute(sql`
     CREATE TABLE IF NOT EXISTS "list" (
       "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      "title" VARCHAR(255) NOT NULL,
+      "title" VARCHAR(${sql.raw(String(LIST_TITLE_MAX_LENGTH))}) NOT NULL,
       "type" TEXT NOT NULL DEFAULT 'default',
       "color" VARCHAR(64) NOT NULL DEFAULT '#666666',
       "created_by_id" TEXT REFERENCES "user"("id") ON DELETE SET NULL,

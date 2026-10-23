@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-
+import { fieldError } from "@utilities/forms";
 import { Container, Input } from "./AddTask.styles";
 
 import useCreateTask from "@hooks/useCreateTask";
@@ -18,7 +18,7 @@ const AddTask = function ({ isHidden, isAbsolute }: Props) {
 
   const form = useForm({
     defaultValues: { title: "" },
-    validators: { onSubmit: addTaskSchema },
+    validators: { onChange: addTaskSchema },
     onSubmitInvalid: () => vibrate("error"),
     onSubmit: async ({ value, formApi }) => {
       const title = value.title.trim();
@@ -46,15 +46,20 @@ const AddTask = function ({ isHidden, isAbsolute }: Props) {
       }}
     >
       <form.Field name="title">
-        {field => (
-          <Input
-            value={field.state.value}
-            invalid={field.state.meta.isTouched && !field.state.meta.isValid}
-            disabled={isHidden}
-            onChange={evt => field.handleChange(evt.target.value)}
-            placeholder="Add Task"
-          />
-        )}
+        {field => {
+          // An empty field isn't an error worth showing; submitting it is just a no-op.
+          const errorMessage = field.state.value ? fieldError(field.state.meta) : undefined;
+          return (
+            <Input
+              value={field.state.value}
+              invalid={!!errorMessage}
+              disabled={isHidden}
+              errorMessage={errorMessage}
+              onChange={evt => field.handleChange(evt.target.value)}
+              placeholder="Add Task"
+            />
+          );
+        }}
       </form.Field>
     </Container>
   );

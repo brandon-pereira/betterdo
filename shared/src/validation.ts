@@ -1,8 +1,15 @@
 import { z } from "zod";
-import { PRIORITIES } from "./constants.ts";
+import { LIST_TITLE_MAX_LENGTH, PRIORITIES, TASK_TITLE_MAX_LENGTH } from "./constants.ts";
 
 // Zod schema for task priority, built from the shared PRIORITIES constant.
 export const prioritySchema = z.enum(PRIORITIES);
+
+// A required, trimmed title capped at `max` characters (checked after trimming).
+const titleSchema = (max: number) =>
+  z.string().trim().min(1, "Title is required").max(max, `Title must be at most ${max} characters`);
+
+export const taskTitleSchema = titleSchema(TASK_TITLE_MAX_LENGTH);
+export const listTitleSchema = titleSchema(LIST_TITLE_MAX_LENGTH);
 
 // Minimum password length enforced on sign-up, reset, and change-password.
 export const PASSWORD_MIN_LENGTH = 8;

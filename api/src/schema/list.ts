@@ -1,11 +1,12 @@
 // drizzle/schema/list.ts
 import { pgTable, text, uuid, varchar, timestamp, primaryKey, integer } from "drizzle-orm/pg-core";
+import { LIST_TITLE_MAX_LENGTH } from "@betterdo/shared/constants";
 import { user } from "./auth.js";
 import { tasks } from "./task.js";
 
 export const lists = pgTable("list", {
   id: uuid("id").primaryKey().defaultRandom(), // or use text if you're storing Mongo _id strings
-  title: varchar("title", { length: 255 }).notNull(),
+  title: varchar("title", { length: LIST_TITLE_MAX_LENGTH }).notNull(),
   type: text("type", {
     enum: ["inbox", "default"]
   })

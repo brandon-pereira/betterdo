@@ -5,6 +5,8 @@ import { createTask, updateTask, getTaskById, getTasks } from "../src/services/t
 import { testDb } from "./helpers/setup.js";
 import { tasks } from "../src/schema/task.js";
 import { eq } from "drizzle-orm";
+import { TASK_TITLE_MAX_LENGTH } from "@betterdo/shared/constants";
+import { createTaskSchema, updateTaskSchema } from "../src/validators/tasks.js";
 
 let router: RouterOptions;
 let validListId: string;
@@ -123,5 +125,35 @@ describe("Tasks API", () => {
   test("Task tracks createdById", async () => {
     const [task] = await createTask({ listId: validListId, title: "Test", createdById: router.user.id });
     expect(task.createdById).toBe(router.user.id);
+  });
+});
+
+describe("Tasks Validation", () => {
+  test("Accepts a title at the max length", () => {
+    const title = "a".repeat(TASK_TITLE_MAX_LENGTH);
+    expect(createTaskSchema.safeParse({ listId: "inbox", title }).success).toBe(true);
+    expect(updateTaskSchema.safeParse({ title }).success).toBe(true);
+  });
+
+  test("Rejects a title over the max length", () => {
+    const title = "a".repeat(TASK_TITLE_MAX_LENGTH + 1);
+    expect(createTaskSchema.safeParse({ listId: "inbox", title }).success).toBe(false);
+    expect(updateTaskSchema.safeParse({ title }).success).toBe(false);
+  });
+
+  test("Rejects a whitespace-only title", () => {
+    expect(createTaskSchema.safeParse({ listId: "inbox", title: "   " }).success).toBe(false);
+    expect(updateTaskSchema.safeParse({ title: "   " }).success).toBe(false);
+  });
+
+  test("Trims surrounding whitespace from the title", () => {
+    const result = createTaskSchema.safeParse({ listId: "inbox", title: "  Buy milk  " });
+    expect(result.success && result.data.title).toBe("Buy milk");
+  });
+
+  test("Database column fits a max length title", async () => {
+    const title = "a".repeat(TASK_TITLE_MAX_LENGTH);
+    const [task] = await createTask({ listId: validListId, title, createdById: router.user.id });
+    expect(task.title).toBe(title);
   });
 });

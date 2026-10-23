@@ -9,6 +9,7 @@
 - Add a shared package for constants, types, and validation utilities
 - Improved automatic color a11y, including safari changes
 - Add current list color accent to edit task modal
+- Better and consistent max length of task validation
 
 ## v8.1.0 (2026-10-01)
 

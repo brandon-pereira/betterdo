@@ -15,6 +15,7 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { zValidator } from "@hono/zod-validator";
 import { db } from "../db.js";
 import { createListSchema, updateListSchema } from "../validators/lists.js";
+import { validationErrorHook } from "../utils/validationErrorHook.js";
 import { eq } from "drizzle-orm";
 
 const listsApi = new Hono();
@@ -70,7 +71,7 @@ listsApi.get("/:id", authMiddleware, async c => {
   return c.json(list);
 });
 
-listsApi.put("/", authMiddleware, zValidator("json", createListSchema), async c => {
+listsApi.put("/", authMiddleware, zValidator("json", createListSchema, validationErrorHook), async c => {
   const user = c.get("user");
   const payload = c.req.valid("json");
   const newList = await createList({
@@ -80,7 +81,7 @@ listsApi.put("/", authMiddleware, zValidator("json", createListSchema), async c 
   return c.json(newList);
 });
 
-listsApi.post("/:id", authMiddleware, zValidator("json", updateListSchema), async c => {
+listsApi.post("/:id", authMiddleware, zValidator("json", updateListSchema, validationErrorHook), async c => {
   const user = c.get("user");
   let listId = c.req.param("id");
 

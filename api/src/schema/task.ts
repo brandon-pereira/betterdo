@@ -1,11 +1,11 @@
 import { pgTable, uuid, varchar, boolean, jsonb, timestamp, text, integer } from "drizzle-orm/pg-core";
-import { PRIORITIES } from "@betterdo/shared/constants";
+import { PRIORITIES, TASK_TITLE_MAX_LENGTH } from "@betterdo/shared/constants";
 import { lists } from "./list.js";
 import { user } from "./auth.js";
 
 export const tasks = pgTable("tasks", {
   id: uuid("id").primaryKey().defaultRandom(),
-  title: varchar("title", { length: 100 }).notNull(),
+  title: varchar("title", { length: TASK_TITLE_MAX_LENGTH }).notNull(),
   listId: uuid("list_id")
     .notNull()
     .references(() => lists.id, {
