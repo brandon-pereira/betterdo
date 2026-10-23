@@ -260,6 +260,8 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
                     field.handleBlur();
                     saveTask(form.state.values.listId, { notes });
                   }}
+                  // Checking or reordering checklist items persists immediately.
+                  onCommit={notes => saveTask(form.state.values.listId, { notes })}
                 />
               )}
             </form.Field>

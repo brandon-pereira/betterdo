@@ -12,6 +12,7 @@
     "@linaria/react": "^6",
     "@tanstack/react-form": "^1.33.5",
     "@tiptap/extension-list": "^3.14.0",
+    "@tiptap/extensions": "^3.19.0",
     "@tiptap/pm": "^3.14.0",
     "@tiptap/react": "^3.14.0",
     "@tiptap/starter-kit": "^3.15.3",

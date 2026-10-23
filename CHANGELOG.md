@@ -10,6 +10,7 @@
 - Improved automatic color a11y, including safari changes
 - Add current list color accent to edit task modal
 - Better and consistent max length of task validation
+- Improved checklists in notes: one-click start from an empty note, strike through checked items, drag to reorder, and undo/redo support
 
 ## v8.1.0 (2026-10-01)
 

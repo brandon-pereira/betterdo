@@ -5,7 +5,10 @@ import { Paragraph } from "@tiptap/extension-paragraph";
 import { ListKit } from "@tiptap/extension-list";
 import { Text } from "@tiptap/extension-text";
 import { Bold } from "@tiptap/extension-bold";
+import { UndoRedo } from "@tiptap/extensions";
 import Link from "./TipTap/Link";
+import ChecklistItem, { CHECKLIST_COMMIT } from "./TipTap/ChecklistItem";
+import ChecklistHint from "./TipTap/ChecklistHint";
 
 import { styled } from "@linaria/react";
 
@@ -68,6 +71,58 @@ const ToolbarButton = styled.button`
 `;
 
 const Editor = styled(EditorContent)`
+  /* Positioning context for the hover checklist hint. */
+  position: relative;
+
+  --checkbox-size: 20px;
+  --editor-padding-x: 1rem;
+
+  /* Placeholder for an empty notes box (see TipTap/ChecklistHint.ts): a grayed-out checkbox,
+     sitting exactly where a checklist item's checkbox will be, plus hint text. Only the
+     checkbox is clickable; clicks on the text reach the editor underneath. */
+  .checklist-hint {
+    position: absolute;
+    display: none;
+    align-items: center;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+
+    &[data-visible="true"] {
+      display: flex;
+    }
+
+    button {
+      display: flex;
+      margin: 0 0.5rem 0 0; /* matches a checklist item's checkbox spacing */
+      padding: 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+      pointer-events: auto;
+      opacity: 0.35;
+      transition: opacity 0.15s ease;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    input {
+      width: var(--checkbox-size);
+      height: var(--checkbox-size);
+      margin: 0;
+      pointer-events: none;
+    }
+
+    span {
+      color: ${theme.effects.subtleText};
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
   .tiptap {
     border: 2px solid ${theme.colors.forms.input.borderColor};
     color: ${theme.colors.forms.input.color};
@@ -77,7 +132,7 @@ const Editor = styled(EditorContent)`
     resize: none;
     width: 100%;
     box-sizing: border-box;
-    padding: 0.8rem 1rem;
+    padding: 0.8rem var(--editor-padding-x);
     border-radius: 0 0 3px 3px;
     outline: none;
     min-height: 200px;
@@ -136,29 +191,110 @@ const Editor = styled(EditorContent)`
       padding: 0;
       margin: 0.5rem 0;
 
-      li {
+      /* More specific than the editor's first/last-child resets, so repeat them here. */
+      &:first-child {
+        margin-top: 0;
+      }
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      > li {
+        position: relative;
         display: flex;
         align-items: flex-start;
-        margin: 0.25rem 0;
+        /* Space between items only, so the first item sits on the same line as the
+           empty-notes placeholder checkbox (no jump when starting a checklist). */
+        & + li {
+          margin-top: 0.25rem;
+        }
+
+        > label,
+        > .checklist-handle {
+          display: flex;
+          align-items: center;
+          height: 1.6em; /* one line, so controls center on the first line */
+          user-select: none;
+          -webkit-user-select: none;
+        }
 
         > label {
           flex: 0 0 auto;
           margin-right: 0.5rem;
-          user-select: none;
         }
 
         > div {
           flex: 1 1 auto;
-          p {
-            margin: 0;
-          }
+        }
+
+        /* Sits in the editor's side padding so it doesn't indent the text. */
+        > .checklist-handle {
+          position: absolute;
+          top: 0;
+          left: calc(-1 * var(--editor-padding-x));
+          width: var(--editor-padding-x);
+          justify-content: center;
+          color: ${theme.colors.forms.input.color};
+          opacity: 0;
+          cursor: grab;
+          touch-action: none; /* let pointer events drive the drag instead of scrolling */
+          -webkit-touch-callout: none;
+          transition: opacity 0.15s ease;
+        }
+
+        &:hover > .checklist-handle {
+          opacity: 0.4;
+        }
+
+        > .checklist-handle:hover {
+          opacity: 0.8;
+        }
+
+        > div p {
+          margin: 0;
+        }
+
+        &[data-checked="true"] > div {
+          text-decoration: line-through;
         }
 
         input[type="checkbox"] {
-          width: 20px;
-          height: 20px;
+          width: var(--checkbox-size);
+          height: var(--checkbox-size);
+          margin: 0;
           cursor: pointer;
           accent-color: var(--accent-color, ${theme.colors.general.blue});
+        }
+
+        &[data-sorting="true"] {
+          transition: transform 0.15s ease;
+        }
+
+        &[data-dragging="true"] {
+          z-index: 1;
+          transition: none;
+
+          /* Lifted card that also covers the drag handle. */
+          &::before {
+            content: "";
+            position: absolute;
+            inset: 0 -0.25rem 0 calc(-1 * var(--editor-padding-x));
+            z-index: -1;
+            background: ${theme.colors.forms.input.background};
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border-radius: 3px;
+          }
+
+          > .checklist-handle {
+            opacity: 0.8;
+            cursor: grabbing;
+          }
+        }
+
+        @media (hover: none) {
+          > .checklist-handle {
+            opacity: 0.4;
+          }
         }
       }
     }
@@ -174,6 +310,8 @@ interface RichTextEditorProps {
   content?: string;
   onChange?: (content: string) => void;
   onBlur?: (content: string) => void;
+  /** Discrete checklist edits (checking or reordering items) that should persist immediately. */
+  onCommit?: (content: string) => void;
   placeholder?: string;
   invalid?: boolean;
 }
@@ -182,13 +320,15 @@ export default function RichTextEditor({
   content = "",
   onChange,
   onBlur,
-  placeholder = "Start typing..."
+  onCommit,
+  placeholder = "Add notes, or check the box to start a checklist"
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       Document,
       Paragraph,
       Text,
+      UndoRedo,
       Link.configure({
         autolink: true,
         linkOnPaste: true,
@@ -203,18 +343,24 @@ export default function RichTextEditor({
       Heading.configure({
         levels: [1, 2, 3]
       }),
-      ListKit
+      ListKit.configure({ taskItem: false }),
+      ChecklistItem,
+      ChecklistHint.configure({ placeholder })
     ],
     content,
-    onUpdate: ({ editor }) => {
-      onChange?.(editor.getHTML());
+    onUpdate: ({ editor, transaction }) => {
+      const html = editor.getHTML();
+      onChange?.(html);
+      if (transaction.getMeta(CHECKLIST_COMMIT)) {
+        onCommit?.(html);
+      }
     },
     onBlur: ({ editor }) => {
       onBlur?.(editor.getHTML());
     },
     editorProps: {
       attributes: {
-        placeholder
+        "aria-placeholder": placeholder
       }
     }
   });
@@ -247,7 +393,7 @@ export default function RichTextEditor({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleTaskList().run()}
           data-active={editor.isActive("taskList") ? "true" : "false"}
-          title="Subtasks (Cmd+Shift+9)"
+          title="Checklist (Cmd+Shift+9)"
           type="button"
         >
           ☑
