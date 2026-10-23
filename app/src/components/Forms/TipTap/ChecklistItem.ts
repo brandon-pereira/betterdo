@@ -8,7 +8,7 @@ import { vibrate } from "@utilities/haptics";
 
 /**
  * Transaction meta flag for discrete checklist edits (checking an item, reordering).
- * Like the old subtasks, these should persist immediately instead of waiting for blur.
+ * These persist immediately instead of waiting for blur.
  */
 export const CHECKLIST_COMMIT = "checklistCommit";
 
@@ -48,7 +48,7 @@ function moveItem(editor: Editor, itemPos: number, toIndex: number): boolean {
 
 /**
  * Pointer-driven sorting of the `<li>` siblings of `item`, modeled after the dnd-kit
- * vertical list used by subtasks: the dragged item follows the pointer (clamped to the
+ * vertical lists used elsewhere in the app: the dragged item follows the pointer (clamped to the
  * list) and its siblings slide out of the way. Calls `onDrop` with the new index.
  */
 function startDrag(event: PointerEvent, item: HTMLElement, handle: HTMLElement, onDrop: (toIndex: number) => void) {

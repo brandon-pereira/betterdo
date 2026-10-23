@@ -14,7 +14,6 @@ import Selector from "@components/Selector";
 import { Form, Field, Label, Input, Error } from "@components/Forms";
 import Button from "@components/Button";
 import DueDate from "@components/DueDate/DueDate";
-import Subtasks from "@components/Subtasks";
 import useCurrentTaskId from "@hooks/useCurrentTaskId";
 import useTaskDetails from "@hooks/useTaskDetails";
 import useModifyTask from "@hooks/useModifyTask";
@@ -38,8 +37,7 @@ const toFormValues = (task?: Task): EditTaskValues => ({
   listId: task?.listId ?? "",
   // Normalize nullable server values so form fields get consistent types.
   dueDate: task?.dueDate ?? undefined,
-  notes: task?.notes ?? "",
-  subtasks: task?.subtasks ?? []
+  notes: task?.notes ?? ""
 });
 
 function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
@@ -106,7 +104,6 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
         priority: value.priority,
         dueDate: value.dueDate,
         notes: value.notes,
-        subtasks: value.subtasks,
         // Only send `listId` when it changed, or else modifyTask redirects,
         // which isn't ideal from custom lists.
         ...(value.listId !== task.listId ? { listId: value.listId } : {})
@@ -226,21 +223,6 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
                     field.handleChange(priority);
                   }}
                   value={field.state.value}
-                />
-              )}
-            </form.Field>
-          </Field>
-          <Field>
-            <Label>Subtasks</Label>
-            <form.Field name="subtasks">
-              {field => (
-                <Subtasks
-                  subtasks={field.state.value}
-                  onChange={subtasks => {
-                    field.handleChange(subtasks);
-                    // Subtasks persist immediately.
-                    saveTask(form.state.values.listId, { subtasks });
-                  }}
                 />
               )}
             </form.Field>

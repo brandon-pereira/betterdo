@@ -50,7 +50,6 @@ interface CustomListTask {
   dueDate: Date | null;
   creationDate: Date | null;
   notes: string | null;
-  subtasks: unknown;
   createdBy: MemberProfile;
 }
 
@@ -194,7 +193,6 @@ async function fetchTasksByPredicate(whereClause: SQL<unknown>, router: RouterOp
       dueDate: tasks.dueDate,
       creationDate: tasks.createdAt,
       notes: tasks.notes,
-      subtasks: tasks.subtasks,
       createdById: tasks.createdById,
       createdByName: userTable.name,
       createdByEmail: userTable.email,
@@ -217,7 +215,6 @@ async function fetchTasksByPredicate(whereClause: SQL<unknown>, router: RouterOp
       dueDate: row.dueDate ?? null,
       creationDate: row.creationDate ?? null,
       notes: row.notes ?? null,
-      subtasks: row.subtasks ?? [],
       createdBy: {
         id: row.createdById,
         email: row.createdByEmail ?? undefined,

@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, boolean, jsonb, timestamp, text, integer } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, boolean, timestamp, text, integer } from "drizzle-orm/pg-core";
 import { PRIORITIES, TASK_TITLE_MAX_LENGTH } from "@betterdo/shared/constants";
 import { lists } from "./list.js";
 import { user } from "./auth.js";
@@ -18,7 +18,6 @@ export const tasks = pgTable("tasks", {
   completedAt: timestamp("completed_at"),
   dueDate: timestamp("due_date", { withTimezone: true }),
   notes: text("notes"),
-  subtasks: jsonb("subtasks"),
   priority: text("priority", {
     enum: PRIORITIES
   }).default("normal"),

@@ -11,14 +11,7 @@ export const editTaskSchema = z.object({
   // DueDate emits `undefined` when cleared. The API returns `null` for empty
   // nullable columns; those are normalized when seeding the form, not here.
   dueDate: z.string().optional(),
-  notes: z.string().optional(),
-  subtasks: z.array(
-    z.object({
-      id: z.string().optional(),
-      title: z.string(),
-      isComplete: z.boolean()
-    })
-  )
+  notes: z.string().optional()
 });
 
 export type EditTaskValues = z.input<typeof editTaskSchema>;

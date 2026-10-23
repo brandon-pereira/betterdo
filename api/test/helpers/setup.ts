@@ -124,7 +124,6 @@ beforeAll(async () => {
       "completed_at" TIMESTAMP,
       "due_date" TIMESTAMP WITH TIME ZONE,
       "notes" TEXT,
-      "subtasks" JSONB,
       "priority" TEXT DEFAULT 'normal',
       "position" INTEGER NOT NULL DEFAULT 0,
       "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),

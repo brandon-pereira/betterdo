@@ -17,16 +17,5 @@ export const updateTaskSchema = z.object({
   priority: prioritySchema.optional().nullable(),
   dueDate: dueDateSchema,
   listId: z.uuid("List ID").optional(),
-  notes: z.string().optional().nullable(),
-  subtasks: z
-    .array(
-      z.object({
-        // Random ID by default
-        id: z.string().default(() => Math.random().toString(36).substring(2, 15)),
-        title: z.string().min(1, "Subtask title is required"),
-        isComplete: z.boolean().default(false)
-      })
-    )
-    .optional()
-    .nullable()
+  notes: z.string().optional().nullable()
 });
