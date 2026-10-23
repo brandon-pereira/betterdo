@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useState, useRef, useId } from "react";
 import type { CSSProperties } from "react";
+import { useForm, useSelector } from "@tanstack/react-form";
 
 import { Container, Content, ButtonContainer, HeaderBar, HeaderTitle } from "./EditTask.styles";
 import CreatorBlock from "./CreatorBlock";
@@ -7,9 +8,8 @@ import ListsDropdown from "./ListsDropdown";
 import Loader from "./Loader";
 
 import { PRIORITY_OPTIONS } from "@betterdo/shared/constants";
-import { taskTitleSchema } from "@betterdo/shared/validation";
 
-import Task from "@customTypes/task";
+import type Task from "@customTypes/task";
 import Selector from "@components/Selector";
 import { Form, Field, Label, Input, Error } from "@components/Forms";
 import Button from "@components/Button";
@@ -22,6 +22,9 @@ import useDeleteTask from "@hooks/useDeleteTask";
 import useLists from "@hooks/useLists";
 import useAccentPalette from "@hooks/useAccentPalette";
 import { ServerError } from "@utilities/server";
+import { fieldError } from "@utilities/forms";
+import { editTaskSchema } from "@utilities/validation/task";
+import type { EditTaskValues } from "@utilities/validation/task";
 import RichTextEditor from "@components/Forms/RichText";
 
 interface Props {
@@ -29,28 +32,24 @@ interface Props {
   registerFlush?: (flush: (() => Promise<void>) | null) => void;
 }
 
+const toFormValues = (task?: Task): EditTaskValues => ({
+  title: task?.title ?? "",
+  priority: task?.priority ?? "normal",
+  listId: task?.listId ?? "",
+  // Normalize nullable server values so form fields get consistent types.
+  dueDate: task?.dueDate ?? undefined,
+  notes: task?.notes ?? "",
+  subtasks: task?.subtasks ?? []
+});
+
 function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
   const taskId = useCurrentTaskId() || "";
   const { task, loading, error } = useTaskDetails(taskId);
   const modifyTask = useModifyTask();
   const deleteTask = useDeleteTask();
-  const [state, _setState] = useState<Partial<Task>>({ ...(task || {}), priority: task?.priority ?? "normal" });
   const [_error, setError] = useState<string | undefined>();
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
-
-  // Accent the modal with the color of the list the task belongs to. Reading
-  // `state.listId` (not `task.listId`) previews the new list's color as soon as
-  // a different list is picked in the dropdown. The palette is contrast-checked
-  // for the active theme, so any user-picked color stays WCAG compliant.
-  const { lists } = useLists();
-  const listColor = lists.find(list => list.id === state.listId)?.color;
-  const { accent, accentText, onAccent } = useAccentPalette(listColor);
-  const accentStyle = {
-    "--accent-color": accent,
-    "--accent-text-color": accentText,
-    "--on-accent-color": onAccent
-  } as CSSProperties;
 
   const idPrefix = useId();
   const ids = {
@@ -62,23 +61,10 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
     dueDateCustom: `${idPrefix}-due-date-custom`
   };
 
+  // Tracks edits that haven't been fully persisted yet. Kept separately from the
+  // form's own `isDirty` (which never resets on save) so the container can
+  // decide whether closing needs to flush/confirm.
   const isDirty = useRef(false);
-
-  const titleResult = taskTitleSchema.safeParse(state.title ?? "");
-  const titleError = titleResult.success ? undefined : titleResult.error.issues[0]?.message;
-
-  useEffect(() => {
-    // Only sync local state from the server when there are no unsaved changes.
-    if (isDirty.current) {
-      return;
-    }
-    _setState({ ...(task || {}), priority: task?.priority ?? "normal" });
-  }, [task]);
-
-  // Mirror the latest state + dirty flag in refs so `flush` (called from the
-  // container on close) can read current values without stale closures.
-  const stateRef = useRef(state);
-  stateRef.current = state;
   const markDirty = useCallback(
     (dirty: boolean) => {
       isDirty.current = dirty;
@@ -87,136 +73,109 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
     [setUnsavedChanges]
   );
 
-  const onSaveTask = useCallback(
-    async (updatedProps: Partial<Task>) => {
-      if (!stateRef.current.listId) {
-        return;
+  const saveTask = useCallback(
+    async (listId: string, updatedProps: Partial<Task>) => {
+      if (!listId) {
+        return false;
       }
       setSaving(true);
       try {
-        await modifyTask(taskId, stateRef.current.listId, updatedProps);
-        markDirty(false);
+        await modifyTask(taskId, listId, updatedProps);
+        return true;
       } catch (err) {
         console.error(err);
         setError(err instanceof ServerError ? err.formattedMessage : ServerError.defaultError);
+        return false;
       } finally {
         setSaving(false);
       }
     },
-    [modifyTask, markDirty, taskId]
+    [modifyTask, taskId]
   );
 
+  const form = useForm({
+    defaultValues: toFormValues(task),
+    validators: { onChange: editTaskSchema },
+    onSubmit: async ({ value }) => {
+      if (!task) {
+        return;
+      }
+      setError(undefined);
+      const saved = await saveTask(value.listId, {
+        title: value.title,
+        priority: value.priority,
+        dueDate: value.dueDate,
+        notes: value.notes,
+        subtasks: value.subtasks,
+        // Only send `listId` when it changed, or else modifyTask redirects,
+        // which isn't ideal from custom lists.
+        ...(value.listId !== task.listId ? { listId: value.listId } : {})
+      });
+      if (saved) {
+        markDirty(false);
+      }
+    }
+  });
+
+  // Accent the modal with the color of the list the task belongs to. Reading the
+  // form's `listId` (not `task.listId`) previews the new list's color as soon as
+  // a different list is picked in the dropdown. The palette is contrast-checked
+  // for the active theme, so any user-picked color stays WCAG compliant.
+  const { lists } = useLists();
+  const selectedListId = useSelector(form.store, state => state.values.listId);
+  const listColor = lists.find(list => list.id === selectedListId)?.color;
+  const { accent, accentText, onAccent } = useAccentPalette(listColor);
+  const accentStyle = {
+    "--accent-color": accent,
+    "--accent-text-color": accentText,
+    "--on-accent-color": onAccent
+  } as CSSProperties;
+
+  // Re-seed the form from the server, but only when there are no unsaved changes.
+  useEffect(() => {
+    if (isDirty.current) {
+      return;
+    }
+    form.reset(toFormValues(task));
+  }, [task, form]);
+
   // Persist any unsaved edits on close (notes save on blur, but closing via the
-  // X/overlay can race that blur). Saves all editable fields when dirty.
+  // X/overlay can race that blur). Submits the whole form when dirty; if it's
+  // invalid nothing is saved, it stays dirty, and the container asks to discard.
   useEffect(() => {
     if (!registerFlush) {
       return;
     }
     registerFlush(async () => {
-      if (!isDirty.current) {
-        return;
+      if (isDirty.current) {
+        await form.handleSubmit();
       }
-      const s = stateRef.current;
-      // Save everything else even if the title is invalid, rather than losing all edits.
-      const isTitleValid = taskTitleSchema.safeParse(s.title).success;
-      await onSaveTask({
-        ...(isTitleValid ? { title: s.title } : {}),
-        priority: s.priority,
-        dueDate: s.dueDate,
-        notes: s.notes,
-        subtasks: s.subtasks,
-        ...(task && s.listId !== task.listId ? { listId: s.listId } : {})
-      });
     });
     return () => registerFlush(null);
-  }, [registerFlush, onSaveTask, task]);
-
-  const onSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      if (titleError) {
-        return;
-      }
-      if (task) {
-        onSaveTask({
-          title: state.title,
-          priority: state.priority,
-          dueDate: state.dueDate,
-          notes: state.notes,
-          subtasks: state.subtasks,
-          // we only mutate list if changed, or else we automatically
-          // redirect which isn't ideal (custom lists)
-          ...(state.listId !== task.listId ? { listId: state.listId } : {})
-        });
-      }
-    },
-    [state, task, onSaveTask, titleError]
-  );
+  }, [registerFlush, form]);
 
   const onDeleteTask = useCallback(async () => {
-    const result = confirm(`Are you sure you want to delete the task "${state.title}"? This can't be undone.`);
+    const result = confirm(
+      `Are you sure you want to delete the task "${form.state.values.title}"? This can't be undone.`
+    );
     if (result) {
       setDeleting(true);
       try {
         await deleteTask(taskId);
       } catch (err) {
         console.error(err);
-        if (err instanceof ServerError) {
-          setError(err.formattedMessage);
-        } else {
-          setError(ServerError.defaultError);
-        }
-        setSaving(false);
+        setError(err instanceof ServerError ? err.formattedMessage : ServerError.defaultError);
       }
       setDeleting(false);
     }
-  }, [taskId, deleteTask, state.title]);
-
-  const _setValues = (updatedProps: Partial<Task>) => {
-    _setState(state => ({
-      ...state,
-      ...updatedProps
-    }));
-  };
-
-  const onInputChange = (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Mark content as dirty
-    markDirty(true);
-    // Set state for re-render
-    _setValues({ [id]: e.target.value });
-  };
-
-  const onValueChange = useCallback(
-    (updatedProps: Partial<Task>) => {
-      markDirty(true);
-      _setValues(updatedProps);
-    },
-    [markDirty]
-  );
-
-  // Notes update local state live (marking the form dirty) and persist when the
-  // editor loses focus. Saving on blur keeps the save logic simple (no debounce
-  // timers or flush bookkeeping) while still autosaving without a button press.
-  const onNotesChange = useCallback(
-    (notes: string) => {
-      onValueChange({ notes });
-    },
-    [onValueChange]
-  );
-
-  const onNotesBlur = useCallback(
-    (notes: string) => {
-      onSaveTask({ notes });
-    },
-    [onSaveTask]
-  );
-
-  if (loading || !state.id) {
-    return <Loader />;
-  }
+  }, [taskId, deleteTask, form]);
 
   if (error) {
     return <Error>Unexpected Error</Error>;
+  }
+
+  if (loading || !task) {
+    return <Loader />;
   }
 
   return (
@@ -225,57 +184,121 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
         <HeaderBar>
           <HeaderTitle>Edit Task</HeaderTitle>
         </HeaderBar>
-        <Form id={ids.form} onSubmit={onSubmit} errorMessage={_error}>
+        <Form
+          id={ids.form}
+          errorMessage={_error}
+          onSubmit={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
           <Field>
             <Label htmlFor={ids.title}>Title</Label>
-            <Input
-              id={ids.title}
-              value={state.title}
-              onChange={onInputChange("title")}
-              invalid={!!titleError}
-              errorMessage={titleError}
-            />
+            <form.Field name="title">
+              {field => {
+                const errorMessage = fieldError(field.state.meta);
+                return (
+                  <Input
+                    id={ids.title}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={evt => {
+                      markDirty(true);
+                      field.handleChange(evt.target.value);
+                    }}
+                    invalid={!!errorMessage}
+                    errorMessage={errorMessage}
+                  />
+                );
+              }}
+            </form.Field>
           </Field>
           <Field>
             <Label id={ids.priority}>Priority</Label>
-            <Selector
-              aria-labelledby={ids.priority}
-              values={PRIORITY_OPTIONS}
-              onSelect={(priority: Task["priority"]) => onValueChange({ priority })}
-              value={state.priority}
-            />
+            <form.Field name="priority">
+              {field => (
+                <Selector
+                  aria-labelledby={ids.priority}
+                  values={PRIORITY_OPTIONS}
+                  onSelect={(priority: Task["priority"]) => {
+                    markDirty(true);
+                    field.handleChange(priority);
+                  }}
+                  value={field.state.value}
+                />
+              )}
+            </form.Field>
           </Field>
           <Field>
             <Label>Subtasks</Label>
-            <Subtasks
-              subtasks={state.subtasks || []}
-              onChange={subtasks => {
-                onValueChange({ subtasks });
-                onSaveTask({ subtasks });
-              }}
-            />
+            <form.Field name="subtasks">
+              {field => (
+                <Subtasks
+                  subtasks={field.state.value}
+                  onChange={subtasks => {
+                    field.handleChange(subtasks);
+                    // Subtasks persist immediately.
+                    saveTask(form.state.values.listId, { subtasks });
+                  }}
+                />
+              )}
+            </form.Field>
           </Field>
           <Field>
             <Label>Notes</Label>
-            <RichTextEditor content={state.notes} onChange={onNotesChange} onBlur={onNotesBlur} />
+            <form.Field name="notes">
+              {field => (
+                <RichTextEditor
+                  content={field.state.value}
+                  onChange={notes => {
+                    markDirty(true);
+                    field.handleChange(notes);
+                  }}
+                  // Notes autosave when the editor loses focus.
+                  onBlur={notes => {
+                    field.handleBlur();
+                    saveTask(form.state.values.listId, { notes });
+                  }}
+                />
+              )}
+            </form.Field>
           </Field>
           <Field>
             <Label htmlFor={ids.list}>List</Label>
-            <ListsDropdown id={ids.list} onSelect={listId => onValueChange({ listId })} currentListId={state.listId} />
+            <form.Field name="listId">
+              {field => (
+                <ListsDropdown
+                  id={ids.list}
+                  onSelect={listId => {
+                    markDirty(true);
+                    field.handleChange(listId);
+                  }}
+                  currentListId={field.state.value}
+                />
+              )}
+            </form.Field>
           </Field>
           <Field>
             {/* Clicking the label activates the Custom button, opening the date picker. */}
             <Label id={ids.dueDate} htmlFor={ids.dueDateCustom}>
               Due By
             </Label>
-            <DueDate
-              htmlFor={ids.dueDateCustom}
-              aria-labelledby={ids.dueDate}
-              value={state.dueDate}
-              onChange={dueDate => onValueChange({ dueDate })}
-            />
+            <form.Field name="dueDate">
+              {field => (
+                <DueDate
+                  htmlFor={ids.dueDateCustom}
+                  aria-labelledby={ids.dueDate}
+                  value={field.state.value}
+                  onChange={dueDate => {
+                    markDirty(true);
+                    field.handleChange(dueDate);
+                  }}
+                />
+              )}
+            </form.Field>
           </Field>
-          {task && <CreatorBlock createdBy={task.createdBy} creationDate={task.creationDate} />}
+          <CreatorBlock createdBy={task.createdBy} creationDate={task.creationDate} />
         </Form>
       </Content>
       <ButtonContainer>
