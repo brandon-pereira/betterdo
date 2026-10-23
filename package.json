@@ -27,5 +27,6 @@
   "devDependencies": {
     "concurrently": "^10.0.5",
     "knip": "^6.39.0"
-  }
+  },
+  "packageManager": "yarn@4.18.1"
 }

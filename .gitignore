@@ -21,3 +21,5 @@ yarn-error.log*
 
 # Astro Temp Files
 .astro
+
+.yarn/install-state.gz
