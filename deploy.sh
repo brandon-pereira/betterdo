@@ -17,7 +17,7 @@ git checkout .
 git pull origin main
 
 # Install dependencies
-yarn install --frozen-lockfile
+yarn install --immutable
 
 # Detect global changes that require full rebuild
 GLOBAL_FILES=$(echo "$CHANGED" | grep -E '^(CHANGELOG\.md|package\.json|yarn\.lock|shared/)' || true)
