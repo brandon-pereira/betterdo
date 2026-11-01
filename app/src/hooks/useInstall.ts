@@ -5,7 +5,7 @@ function useInstall() {
   const [isInstallAvailable, setAvailable] = useState(false);
 
   useEffect(() => {
-    window.addEventListener("beforeinstallprompt", (e: Event) => {
+    const onBeforeInstallPrompt = (e: Event) => {
       // Prevent automatically showing the prompt
       e.preventDefault();
       // Store event for later use
@@ -14,15 +14,23 @@ function useInstall() {
       if (!localStorage.getItem("banners.a2hDisabled")) {
         setAvailable(true);
       }
-    });
-
-    window.addEventListener("appinstalled", () => {
+    };
+    const onAppInstalled = () => {
       // User installed the app, hide the notification
       setAvailable(false);
-    });
-  });
+    };
+
+    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    window.addEventListener("appinstalled", onAppInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", onAppInstalled);
+    };
+  }, []);
 
   const onRequestInstall = useCallback(async () => {
+    // The prompt event can only be used once, so hide the banner either way.
+    setAvailable(false);
     // No event stored, short circuit
     if (!installPrompt.current) {
       return;

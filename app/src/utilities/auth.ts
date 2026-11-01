@@ -14,6 +14,15 @@ export const authClient = createAuthClient({
 
 export const { signIn, signUp, signOut, useSession } = authClient;
 
+// Re-fetch the session into the shared `useSession` store so every consumer
+// re-renders with fresh user data. `authClient.getSession()` does NOT do this:
+// it's a plain GET whose result is discarded. Better Auth only auto-refreshes
+// the store for built-in paths (/update-user, /sign-in/email, ...), so custom
+// endpoints called via $fetch (e.g. /update-profile) must refresh explicitly.
+export async function refreshSession() {
+  await authClient.$store.atoms.session.get().refetch();
+}
+
 // Payload accepted by the custom POST /api/auth/update-profile endpoint.
 // The type is inferred from the backend Zod schema (see
 // api/src/plugins/profileUpdate.ts) so the two can't drift. Unlike

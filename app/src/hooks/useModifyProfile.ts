@@ -4,7 +4,7 @@ import { mutate } from "swr";
 import { getListsUrl } from "./internal/urls";
 
 import { _UpdateUserPayload, UpdateUserObject } from "@customTypes/user";
-import { authClient, updateProfile, UpdateProfilePayload } from "@utilities/auth";
+import { refreshSession, updateProfile, UpdateProfilePayload } from "@utilities/auth";
 
 function useModifyProfile() {
   return useCallback(async (updatedProps: UpdateUserObject) => {
@@ -14,8 +14,8 @@ function useModifyProfile() {
       formattedProps.lists = updatedProps.lists.filter(t => t.type === "default").map(t => t.id);
     }
     await updateProfile(getProfilePropsFromUpdatePayload(formattedProps));
-    // Refresh the session so consumers re-render with the persisted values.
-    await authClient.getSession();
+    // Refresh the shared session store so consumers re-render with the persisted values.
+    await refreshSession();
     if (updatedProps.lists || updatedProps?.customLists) {
       await mutate(getListsUrl());
     }
