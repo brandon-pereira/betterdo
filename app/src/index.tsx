@@ -13,10 +13,9 @@ import ErrorBoundary from "@components/ErrorBoundary";
 
 import "./utilities/ServiceWorkerRegister";
 
+// The static loader from index.html stays up until FullScreenLoader unmounts
+// (see FullScreenLoader.tsx), so we intentionally don't hide it here.
 const root = ReactDOM.createRoot(document.querySelector(".main-container")!);
-
-document.body.classList.add("loaded");
-document.querySelector("#critical-css")?.remove();
 
 root.render(
   <HelmetProvider>

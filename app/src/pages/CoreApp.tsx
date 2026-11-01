@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
@@ -17,11 +16,6 @@ import Helmet from "@components/Helmet";
 import SharedProviders from "@hooks/internal/SharedProviders";
 
 const CoreApp = () => {
-  useEffect(() => {
-    document.body.classList.add("loaded");
-    document.querySelector("#critical-css")?.remove();
-  }, []);
-
   return (
     <SharedProviders>
       <Routes>
