@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useLists from "@hooks/useLists";
 import FullScreenLoader from "@components/FullScreenLoader";
-import GlobalError from "@components/ErrorBoundary/GlobalError";
 import { getListSlug } from "@utilities/customLists";
 
 function InitialListRedirect() {
@@ -44,9 +43,15 @@ function InitialListRedirect() {
     }
   }, [currentListId, navigate, lists, loading]);
 
-  if (error) {
-    return <GlobalError errorMessage={error} />;
-  }
+  // If lists failed to load (e.g. offline or API unreachable), still enter the
+  // app shell rather than a full-page error. The list page surfaces connection
+  // problems via its own error banner and recovers when SWR revalidates.
+  useEffect(() => {
+    if (error) {
+      navigate(`/${localStorage.getItem("lastViewedList") || "inbox"}`, { replace: true });
+    }
+  }, [error, navigate]);
+
   return <FullScreenLoader />;
 }
 

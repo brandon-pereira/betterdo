@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createAuthClient } from "better-auth/react";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { passkeyClient } from "@better-auth/passkey/client";
@@ -12,7 +13,78 @@ export const authClient = createAuthClient({
   plugins: [passkeyClient(), inferAdditionalFields<typeof auth>()]
 });
 
-export const { signIn, signUp, signOut, useSession } = authClient;
+export const { signIn, signUp } = authClient;
+
+type SessionData = NonNullable<ReturnType<typeof authClient.useSession>["data"]>;
+
+// Last known good session, so a signed-in user who opens the app offline lands
+// in the app (with its connection error UI) instead of the login screen. On a
+// cold start offline, Better Auth's get-session fetch fails with a network error
+// and `data` is null, which is indistinguishable from "logged out" otherwise.
+// The session token is stripped: auth relies on the HTTP-only cookie, not this.
+const SESSION_CACHE_KEY = "cachedSession";
+const DATE_KEYS = new Set(["createdAt", "updatedAt", "expiresAt"]);
+
+function readCachedSession(): SessionData | null {
+  try {
+    const raw = localStorage.getItem(SESSION_CACHE_KEY);
+    if (!raw) {
+      return null;
+    }
+    return JSON.parse(raw, (key, value) =>
+      DATE_KEYS.has(key) && typeof value === "string" ? new Date(value) : value
+    ) as SessionData;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedSession(data: SessionData) {
+  try {
+    localStorage.setItem(SESSION_CACHE_KEY, JSON.stringify({ ...data, session: { ...data.session, token: "" } }));
+  } catch {
+    // Storage full or unavailable; offline fallback just won't be available.
+  }
+}
+
+function clearCachedSession() {
+  localStorage.removeItem(SESSION_CACHE_KEY);
+}
+
+export function useSession() {
+  const result = authClient.useSession();
+  const { data, error, isPending } = result;
+  // A non-401 error (network failure, server down) means we couldn't verify the
+  // session, not that there isn't one. A 401 or a successful null response means
+  // the user is genuinely signed out.
+  const isUnverified = Boolean(error) && error?.status !== 401;
+
+  useEffect(() => {
+    if (isPending) {
+      return;
+    }
+    if (data) {
+      writeCachedSession(data);
+    } else if (!isUnverified) {
+      clearCachedSession();
+    }
+  }, [data, isPending, isUnverified]);
+
+  if (!data && isUnverified) {
+    const cached = readCachedSession();
+    if (cached) {
+      return { ...result, data: cached };
+    }
+  }
+  return result;
+}
+
+export async function signOut(...args: Parameters<typeof authClient.signOut>) {
+  // Clear eagerly: callers typically hard-reload right after signing out, before
+  // the session store update would clear it via useSession.
+  clearCachedSession();
+  return authClient.signOut(...args);
+}
 
 // Re-fetch the session into the shared `useSession` store so every consumer
 // re-renders with fresh user data. `authClient.getSession()` does NOT do this:
