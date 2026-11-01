@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { Document } from "@tiptap/extension-document";
 import { Heading } from "@tiptap/extension-heading";
@@ -364,6 +365,20 @@ export default function RichTextEditor({
       }
     }
   });
+
+  // `useEditor` only reads `content` when the editor is created, so later prop
+  // changes (e.g. the form seeding notes after the task loads) would otherwise be
+  // ignored, leaving the editor empty and letting a blur/checklist commit save
+  // that empty doc over the real notes. Our own edits round-trip through
+  // `onChange` and match `getHTML()`, so this only fires for external changes.
+  // Don't emit an update (it's not a user edit) or record it in undo history
+  // (Cmd+Z shouldn't revert to the pre-load empty doc).
+  useEffect(() => {
+    if (!editor || editor.isDestroyed || content === editor.getHTML() || (!content && editor.isEmpty)) {
+      return;
+    }
+    editor.chain().setMeta("addToHistory", false).setContent(content, { emitUpdate: false }).run();
+  }, [editor, content]);
 
   if (!editor) {
     return null;
