@@ -18,6 +18,7 @@ export const Button = styled(_Button)`
   margin: 0.5rem auto 1rem;
   text-transform: uppercase;
   user-select: none;
+  border-radius: 50px;
   align-self: start;
   background: rgba(0, 0, 0, 0.1) !important;
   border: 1px solid ${theme.colors.body.completedTasksButton.borderColor};

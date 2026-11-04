@@ -181,7 +181,7 @@ export const DARK_VARS: Record<string, string> = {
   "colors-body-banner-color": "#9e9e9e",
   "colors-body-banner-icon-background": "#191919",
   "colors-body-banner-icon-stroke": "#282828",
-  "colors-body-completed-tasks-button-border-color": "#313131",
+  "colors-body-completed-tasks-button-border-color": "#212121",
   "colors-body-completed-tasks-button-color": "#616161",
   "colors-body-completed-tasks-button-text-shadow": "none",
   "colors-task-background": "linear-gradient(#252525, #1e1e1e)",
