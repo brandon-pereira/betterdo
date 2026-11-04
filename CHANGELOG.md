@@ -1,5 +1,9 @@
 # Changelog
 
+## v8.3.0 (2026-11-03)
+
+- Redesigned nav styles
+
 ## v8.2.0 (2026-10-03)
 
 - Migrated styling from styled-components to Linaria (zero-runtime, build-time extracted CSS)

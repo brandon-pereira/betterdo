@@ -1,6 +1,6 @@
 {
   "name": "betterdo",
-  "version": "8.2.0-beta.9",
+  "version": "8.3.0",
   "type": "module",
   "private": true,
   "workspaces": [
@@ -14,6 +14,7 @@
     "start:website": "yarn workspace website start",
     "lint": "yarn workspaces foreach --all --exclude betterdo run lint && yarn knip",
     "knip": "knip",
+    "generate": "yarn workspace api generate",
     "migrate": "yarn workspace api push",
     "test": "yarn workspace api test",
     "build:website": "yarn workspace website build",
