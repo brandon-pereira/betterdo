@@ -17,7 +17,7 @@ export const Container = styled.nav`
   background: ${theme.colors.navigation.background};
   flex-direction: column;
   box-shadow:
-    1px 1px ${theme.colors.navigation.border},
+    1px 0 ${theme.colors.navigation.border},
     0 1px 5px rgba(0, 0, 0, 0.9);
   position: relative;
   z-index: var(--z-navigation);

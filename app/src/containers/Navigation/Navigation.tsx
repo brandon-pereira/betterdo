@@ -4,6 +4,7 @@ import { Container, ListScroller, NavigationModalOverlay, ListsContainer } from 
 import useLists from "@hooks/useLists";
 import useModifyProfile from "@hooks/useModifyProfile";
 import useHamburgerNav from "@hooks/useHamburgerNav";
+import useNavHover from "@hooks/useNavHover";
 import { NewListItem } from "@components/ListItem";
 import Loader from "@components/Loader";
 
@@ -11,6 +12,7 @@ const SortableList = lazy(() => import("./SortableList"));
 
 function Navigation() {
   const [isMobileNavVisible, setMobileNavVisibility] = useHamburgerNav();
+  const [, setHoveredId] = useNavHover();
   const modifyProfile = useModifyProfile();
   const { lists } = useLists();
 
@@ -34,7 +36,7 @@ function Navigation() {
   return (
     <Container data-mobile-nav={isMobileNavVisible ? "true" : "false"}>
       <ListScroller>
-        <ListsContainer>
+        <ListsContainer onPointerLeave={() => setHoveredId(null)}>
           <Suspense fallback={<Loader />}>
             <SortableList lists={lists} onSortEnd={onSortEnd} />
           </Suspense>

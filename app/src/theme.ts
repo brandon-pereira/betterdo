@@ -22,7 +22,9 @@ export const theme = {
   colors: {
     navigation: {
       background: v("colors-navigation-background"),
-      border: v("colors-navigation-border")
+      border: v("colors-navigation-border"),
+      hover: v("colors-navigation-hover"),
+      divider: v("colors-navigation-divider")
     },
     modals: {
       overlayBackground: v("colors-modals-overlay-background"),
@@ -109,6 +111,8 @@ export const theme = {
 export const LIGHT_VARS: Record<string, string> = {
   "colors-navigation-background": "#202020",
   "colors-navigation-border": "#171717",
+  "colors-navigation-hover": "rgba(255, 255, 255, 0.08)",
+  "colors-navigation-divider": "rgba(255, 255, 255, 0.08)",
   "colors-modals-overlay-background": "rgba(0,0,0,.5)",
   "colors-modals-content-background": "#fff",
   "colors-modals-list-view-alternate-background": "#EEE",
@@ -159,6 +163,8 @@ export const LIGHT_VARS: Record<string, string> = {
 export const DARK_VARS: Record<string, string> = {
   "colors-navigation-background": "#080808",
   "colors-navigation-border": "#171717",
+  "colors-navigation-hover": "rgba(255, 255, 255, 0.07)",
+  "colors-navigation-divider": "rgba(255, 255, 255, 0.07)",
   "colors-modals-overlay-background": "rgba(0,0,0,.7)",
   "colors-modals-content-background": "#171717",
   "colors-modals-list-view-alternate-background": "#212121",
