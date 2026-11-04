@@ -9,7 +9,6 @@ import _Hamburger from "@components/Hamburger";
 export const Container = styled.div`
   background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
   background-color: var(--current-list-color, ${DEFAULT_LIST_COLOR});
-  overflow: hidden;
   position: relative;
   grid-row: 1;
   grid-column: 1;
@@ -51,6 +50,9 @@ export const Content = styled.div`
   }
   ${theme.queries.medium} {
     border-radius: 0 30px 0 0;
+    box-shadow:
+      1px 0 ${theme.colors.navigation.border},
+      0 1px 5px rgba(0, 0, 0, 0.9);
     transform: none;
     padding: 0 0.5rem;
     h1 {

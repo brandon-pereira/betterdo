@@ -21,7 +21,8 @@ export const theme = {
   queries: QUERIES,
   colors: {
     navigation: {
-      background: v("colors-navigation-background")
+      background: v("colors-navigation-background"),
+      border: v("colors-navigation-border")
     },
     modals: {
       overlayBackground: v("colors-modals-overlay-background"),
@@ -107,6 +108,7 @@ export const theme = {
 /** Concrete custom-property values for light mode. */
 export const LIGHT_VARS: Record<string, string> = {
   "colors-navigation-background": "#202020",
+  "colors-navigation-border": "#171717",
   "colors-modals-overlay-background": "rgba(0,0,0,.5)",
   "colors-modals-content-background": "#fff",
   "colors-modals-list-view-alternate-background": "#EEE",
@@ -156,6 +158,7 @@ export const LIGHT_VARS: Record<string, string> = {
 /** Concrete custom-property values for dark mode. */
 export const DARK_VARS: Record<string, string> = {
   "colors-navigation-background": "#080808",
+  "colors-navigation-border": "#171717",
   "colors-modals-overlay-background": "rgba(0,0,0,.7)",
   "colors-modals-content-background": "#171717",
   "colors-modals-list-view-alternate-background": "#212121",

@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { styled } from "@linaria/react";
 
 import { DEFAULT_LIST_COLOR } from "../../constants";
-import { theme } from "../../theme";
 
 export const Container = styled.button`
   border: none;
@@ -18,8 +17,8 @@ export const Container = styled.button`
   color: #fff;
   display: flex;
   align-items: center;
-  background: ${theme.colors.navigation.background};
-  box-shadow: inset 0 -1px rgba(255, 255, 255, 0.15);
+  background: transparent;
+  box-shadow: inset 0 -1px rgba(255, 255, 255, 0.06);
   &[data-selected="true"] {
     z-index: 6;
   }
