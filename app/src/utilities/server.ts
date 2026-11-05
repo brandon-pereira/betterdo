@@ -32,6 +32,10 @@ export const deleteList = (listId: string): Promise<void> => {
   return _delete(`lists/${listId}`);
 };
 
+export const disconnectApp = (clientId: string): Promise<void> => {
+  return _delete(`mcp-sessions/${encodeURIComponent(clientId)}`);
+};
+
 export const getUserByEmail = (email: string): Promise<User> => {
   return _get<User>(`users/${email}`);
 };

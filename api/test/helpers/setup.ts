@@ -159,6 +159,105 @@ beforeAll(async () => {
     )
   `);
 
+  // OAuth provider tables (see schema/auth.ts), used by the MCP connected-apps service.
+  await testDb.execute(sql`
+    CREATE TABLE IF NOT EXISTS "oauth_client" (
+      "id" TEXT PRIMARY KEY,
+      "client_id" TEXT NOT NULL UNIQUE,
+      "client_secret" TEXT,
+      "client_discovery_id" TEXT,
+      "disabled" BOOLEAN DEFAULT false,
+      "skip_consent" BOOLEAN,
+      "enable_end_session" BOOLEAN,
+      "subject_type" TEXT,
+      "scopes" TEXT[],
+      "client_credentials_scopes" TEXT[] DEFAULT '{}',
+      "user_id" TEXT REFERENCES "user"("id") ON DELETE CASCADE,
+      "created_at" TIMESTAMP,
+      "updated_at" TIMESTAMP,
+      "name" TEXT,
+      "uri" TEXT,
+      "icon" TEXT,
+      "contacts" TEXT[],
+      "tos" TEXT,
+      "policy" TEXT,
+      "software_id" TEXT,
+      "software_version" TEXT,
+      "software_statement" TEXT,
+      "redirect_uris" TEXT[] NOT NULL,
+      "post_logout_redirect_uris" TEXT[],
+      "backchannel_logout_uri" TEXT,
+      "backchannel_logout_session_required" BOOLEAN,
+      "token_endpoint_auth_method" TEXT,
+      "application_type" TEXT,
+      "jwks" TEXT,
+      "jwks_uri" TEXT,
+      "grant_types" TEXT[],
+      "response_types" TEXT[],
+      "require_pkce" BOOLEAN,
+      "dpop_bound_access_tokens" BOOLEAN DEFAULT false,
+      "reference_id" TEXT,
+      "metadata" JSONB
+    )
+  `);
+
+  await testDb.execute(sql`
+    CREATE TABLE IF NOT EXISTS "oauth_consent" (
+      "id" TEXT PRIMARY KEY,
+      "client_id" TEXT NOT NULL REFERENCES "oauth_client"("client_id") ON DELETE CASCADE,
+      "user_id" TEXT REFERENCES "user"("id") ON DELETE CASCADE,
+      "reference_id" TEXT,
+      "resources" TEXT[],
+      "requested_user_info_claims" TEXT[],
+      "scopes" TEXT[] NOT NULL,
+      "created_at" TIMESTAMP,
+      "updated_at" TIMESTAMP
+    )
+  `);
+
+  await testDb.execute(sql`
+    CREATE TABLE IF NOT EXISTS "oauth_refresh_token" (
+      "id" TEXT PRIMARY KEY,
+      "token" TEXT NOT NULL UNIQUE,
+      "client_id" TEXT NOT NULL REFERENCES "oauth_client"("client_id") ON DELETE CASCADE,
+      "session_id" TEXT REFERENCES "session"("id") ON DELETE SET NULL,
+      "user_id" TEXT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+      "reference_id" TEXT,
+      "authorization_code_id" TEXT,
+      "resources" TEXT[],
+      "requested_user_info_claims" TEXT[],
+      "expires_at" TIMESTAMP,
+      "created_at" TIMESTAMP,
+      "revoked" TIMESTAMP,
+      "rotated_at" TIMESTAMP,
+      "rotation_replay_response" TEXT,
+      "rotation_replay_expires_at" TIMESTAMP,
+      "auth_time" TIMESTAMP,
+      "confirmation" JSONB,
+      "scopes" TEXT[] NOT NULL
+    )
+  `);
+
+  await testDb.execute(sql`
+    CREATE TABLE IF NOT EXISTS "oauth_access_token" (
+      "id" TEXT PRIMARY KEY,
+      "token" TEXT UNIQUE,
+      "client_id" TEXT NOT NULL REFERENCES "oauth_client"("client_id") ON DELETE CASCADE,
+      "session_id" TEXT REFERENCES "session"("id") ON DELETE SET NULL,
+      "user_id" TEXT REFERENCES "user"("id") ON DELETE CASCADE,
+      "reference_id" TEXT,
+      "authorization_code_id" TEXT,
+      "resources" TEXT[],
+      "requested_user_info_claims" TEXT[],
+      "refresh_id" TEXT REFERENCES "oauth_refresh_token"("id") ON DELETE CASCADE,
+      "expires_at" TIMESTAMP,
+      "created_at" TIMESTAMP,
+      "revoked" TIMESTAMP,
+      "confirmation" JSONB,
+      "scopes" TEXT[] NOT NULL
+    )
+  `);
+
   // Add foreign key for tasks -> list after list table exists
   await testDb.execute(sql`
     ALTER TABLE "tasks" ADD CONSTRAINT "tasks_list_id_list_id_fk"

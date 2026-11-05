@@ -9,3 +9,5 @@ export const getListDetailUrl = (listId: string, includeCompleted?: boolean) =>
 export const getTaskDetailUrl = (taskId: string) => `${SERVER_URL}/api/tasks/${taskId}`;
 
 export const getConfigUrl = () => `${SERVER_URL}/api/config`;
+
+export const getConnectedAppsUrl = () => `${SERVER_URL}/api/mcp-sessions`;

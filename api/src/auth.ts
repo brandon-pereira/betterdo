@@ -2,6 +2,10 @@ import { betterAuth } from "better-auth";
 import { createAuthMiddleware, APIError } from "better-auth/api";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { passkey } from "@better-auth/passkey";
+import { jwt } from "better-auth/plugins";
+import { mcp } from "@better-auth/mcp";
+import { cimd } from "@better-auth/cimd";
+import { fetchClientMetadataResource } from "@better-auth/cimd/node";
 import { db } from "./db.js";
 import config from "./config.js";
 import * as authSchema from "./schema/auth.js";
@@ -18,6 +22,11 @@ import { getGravatarUrl } from "./utils/gravatar.js";
 import { profileUpdatePlugin } from "./plugins/profileUpdate.js";
 
 const forgotPasswordUrl = new URL("/auth/forgot-password", config.APP_URL).toString();
+
+/** OAuth protected resource identifier for the MCP endpoint (access token `aud`). */
+export const MCP_RESOURCE = new URL("/api/mcp", config.SERVER_URL).toString();
+/** The single OAuth scope granting MCP clients access to the user's lists and tasks. */
+export const MCP_SCOPE = "tasks";
 const accountUrl = config.APP_URL;
 
 /**
@@ -132,7 +141,31 @@ export const auth = betterAuth({
   hooks: {
     after: securityEventEmails
   },
-  plugins: [passkey(), profileUpdatePlugin()],
+  // The jwt plugin's session-token endpoint isn't needed (OAuth access tokens are
+  // minted by /oauth2/token) and would hand out tokens signed by the same keys.
+  disabledPaths: ["/token"],
+  plugins: [
+    passkey(),
+    profileUpdatePlugin(),
+    // Signing keys + /jwks for OAuth access tokens.
+    jwt({ disableSettingJwtHeader: true }),
+    // OAuth 2.1 authorization server for MCP clients (MCP 2026-07-28 profile).
+    mcp({
+      resource: MCP_RESOURCE,
+      scopes: [MCP_SCOPE, "offline_access"],
+      // The login and consent screens live in the SPA, which may be on another
+      // origin, so these must be absolute URLs.
+      loginPage: new URL("/", config.APP_URL).toString(),
+      consentPage: new URL("/auth/consent", config.APP_URL).toString(),
+      // CIMD is the 2026-07-28 way for clients to identify themselves. Dynamic
+      // Client Registration is kept as a fallback for clients that predate it
+      // (e.g. Cursor); "infer" accepts their native/loopback redirect URIs.
+      allowDynamicClientRegistration: true,
+      allowUnauthenticatedClientRegistration: true,
+      clientRegistrationDefaultApplicationType: "infer"
+    }),
+    cimd({ fetchClientMetadataResource, metadataProfile: "mcp-2026-07-28" })
+  ],
   user: {
     additionalFields: {
       timeZone: {

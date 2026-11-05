@@ -6,17 +6,15 @@ import {
   getListMembers,
   getUserInbox,
   getUserLists,
+  updateListDetails,
   updateListMembers
 } from "../services/lists.js";
 import { reorderTasks } from "../services/tasks.js";
 import { getAccountsCustomLists, getCustomListById, isCustomList } from "../services/customLists.js";
-import { lists } from "../schema/list.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { zValidator } from "@hono/zod-validator";
-import { db } from "../db.js";
 import { createListSchema, updateListSchema } from "../validators/lists.js";
 import { validationErrorHook } from "../utils/validationErrorHook.js";
-import { eq } from "drizzle-orm";
 
 const listsApi = new Hono();
 
@@ -108,7 +106,7 @@ listsApi.post("/:id", authMiddleware, zValidator("json", updateListSchema, valid
 
   // Update list properties (title, color, etc.) if any were provided
   if (Object.keys(listProps).length > 0) {
-    await db.update(lists).set(listProps).where(eq(lists.id, listId));
+    await updateListDetails(listId, listProps);
   }
 
   // Reorder tasks if provided

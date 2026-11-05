@@ -31,6 +31,15 @@ export async function getUserByEmail(email: string): Promise<SanitizedUser | nul
   };
 }
 
+export async function getUserById(id: string) {
+  const result = await db.query.user.findFirst({
+    where: { id },
+    columns: { id: true, name: true, email: true, image: true, timeZone: true, customLists: true }
+  });
+  if (!result) return null;
+  return { ...result, customLists: result.customLists as Record<string, unknown> | null };
+}
+
 interface UpdateUserProps {
   isPushEnabled?: boolean;
   isBeta?: boolean;

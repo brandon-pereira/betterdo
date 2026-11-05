@@ -239,3 +239,14 @@ export const VisuallyHidden = styled.div`
   white-space: nowrap;
   border: 0;
 `;
+
+export const ScopeList = styled.ul`
+  margin: 0;
+  padding: 0.75rem 0.75rem 0.75rem 2rem;
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  border-radius: 0.75rem;
+  border: 1px solid ${theme.colors.forms.input.borderColor};
+  background: ${theme.colors.forms.input.background};
+`;

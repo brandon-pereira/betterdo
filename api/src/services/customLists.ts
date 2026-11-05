@@ -8,8 +8,8 @@ import { timezone } from "../utils/timezone.js";
 import { CustomListConfig } from "../validators/lists.js";
 import type { Priority } from "@betterdo/shared/types";
 
-const CUSTOM_LISTS = ["highPriority", "today", "tomorrow", "overdue", "week"] as const;
-type CustomListId = (typeof CUSTOM_LISTS)[number];
+export const CUSTOM_LISTS = ["highPriority", "today", "tomorrow", "overdue", "week"] as const;
+export type CustomListId = (typeof CUSTOM_LISTS)[number];
 
 const DEFAULT_CUSTOM_LIST_CONFIG: Required<CustomListConfig> = {
   highPriority: true,

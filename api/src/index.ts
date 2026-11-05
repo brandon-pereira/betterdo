@@ -7,6 +7,8 @@ import listsApi from "./routes/lists.js";
 import tasksApi from "./routes/tasks.js";
 import usersApi from "./routes/users.js";
 import configApi from "./routes/config.js";
+import mcpApi from "./routes/mcp.js";
+import mcpSessionsApi from "./routes/mcpSessions.js";
 import { getNotifier } from "./notifier.js";
 
 // Last-resort guard: transient DB failures (e.g. Postgres not up yet when pm2
@@ -42,11 +44,17 @@ app.onError((err, c) => {
 });
 
 app.on(["POST", "GET"], "/api/auth/**", c => auth.handler(c.req.raw));
+// OAuth discovery for MCP clients lives at the server root (RFC 8414 / RFC 9728):
+// /.well-known/oauth-authorization-server/api/auth and
+// /.well-known/oauth-protected-resource[/api/mcp]. Better Auth serves them.
+app.get("/.well-known/*", c => auth.handler(c.req.raw));
 
 app.route("/api/lists", listsApi);
 app.route("/api/tasks", tasksApi);
 app.route("/api/users", usersApi);
 app.route("/api/config", configApi);
+app.route("/api/mcp", mcpApi);
+app.route("/api/mcp-sessions", mcpSessionsApi);
 
 serve({
   port: config.PORT,

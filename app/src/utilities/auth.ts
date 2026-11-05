@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { createAuthClient } from "better-auth/react";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { passkeyClient } from "@better-auth/passkey/client";
+import { oauthProviderClient } from "@better-auth/oauth-provider/client";
 import { SERVER_URL } from "@utilities/env";
 import type { auth } from "../../../api/src/auth";
 import type { UpdateProfilePayload } from "../../../api/src/plugins/profileUpdate";
@@ -10,8 +11,21 @@ export type { UpdateProfilePayload };
 
 export const authClient = createAuthClient({
   baseURL: SERVER_URL,
-  plugins: [passkeyClient(), inferAdditionalFields<typeof auth>()]
+  // oauthProviderClient attaches the signed OAuth query (present in the URL while
+  // an MCP client is authorizing) to sign-in/consent requests, so the server can
+  // resume the authorization flow and respond with a redirect.
+  plugins: [passkeyClient(), oauthProviderClient(), inferAdditionalFields<typeof auth>()]
 });
+
+/** True when the URL carries a signed OAuth query, i.e. this page was reached during an OAuth authorization. */
+export const hasOAuthQuery = (params = new URLSearchParams(window.location.search)) => params.has("sig");
+
+/**
+ * True while this page is part of a live OAuth authorization. The server rejects
+ * a signed query once its `exp` (seconds) passes, so an expired one can't resume anything.
+ */
+export const isOAuthAuthorizationRequest = (params = new URLSearchParams(window.location.search)) =>
+  hasOAuthQuery(params) && Number(params.get("exp")) * 1000 >= Date.now();
 
 export const { signIn, signUp } = authClient;
 

@@ -21,6 +21,7 @@ import {
   SmallButton,
   TinyButton
 } from "./AuthSettings.styles";
+import ConnectedApps from "./ConnectedApps";
 
 import { Input, Label } from "@components/Forms";
 import { authClient, useSession } from "@utilities/auth";
@@ -275,6 +276,8 @@ function AuthSettings() {
           )}
         </PasskeyList>
       </Section>
+
+      <ConnectedApps />
 
       {hasPassword === undefined ? (
         <Section>

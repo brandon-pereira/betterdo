@@ -107,7 +107,8 @@ export async function getListById({
         title: true,
         isCompleted: true,
         priority: true,
-        completedAt: true
+        completedAt: true,
+        dueDate: true
       }
     }),
     db.query.listMembers.findMany({
@@ -170,6 +171,14 @@ export async function createList(payload: typeof lists.$inferInsert & { createdB
   return newList[0];
 }
 
+export async function updateListDetails(
+  listId: string,
+  details: Pick<Partial<typeof lists.$inferInsert>, "title" | "color">
+) {
+  const [updated] = await db.update(lists).set(details).where(eq(lists.id, listId)).returning();
+  return updated;
+}
+
 export async function isUserAuthorizedToAccessList({ userId, listId }: { userId: string; listId: string }) {
   const result = await db.query.listMembers.findFirst({
     where: { userId, listId }
@@ -190,6 +199,13 @@ export async function getUserInbox(userId: string) {
   // lazily on first access instead of leaving the user in a broken state.
   const inbox = await createList({ createdById: userId, title: "Inbox", type: "inbox" });
   return { id: inbox.id };
+}
+
+// Resolves the "inbox" alias to the user's real inbox UUID; other IDs pass through.
+export async function resolveListId(userId: string, listId: string) {
+  if (listId !== "inbox") return listId;
+  const inbox = await getUserInbox(userId);
+  return inbox.id;
 }
 
 export async function createInboxForUser(userId: string) {
