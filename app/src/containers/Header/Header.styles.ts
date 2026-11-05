@@ -24,12 +24,16 @@ export const Container = styled.header`
   grid-column: 1;
   background-color: var(--current-list-color, ${DEFAULT_LIST_COLOR});
   background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
-  box-shadow: inset 0 -1px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    inset 0 -1px rgba(0, 0, 0, 0.3),
+    0 2px 3px rgba(0, 0, 0, 0.3);
   color: #1f1f1f;
   display: flex;
   align-items: center;
   padding: 0 0.8rem 0 0;
   overflow: hidden;
+  z-index: var(--z-header);
+
   transform: translateY(0%);
   transition: background 0.6s;
   &[data-dark-color="true"] {
