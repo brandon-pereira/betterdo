@@ -3,6 +3,7 @@
 ## v8.3.0 (2026-11-03)
 
 - Redesigned nav styles
+- Add experimental mcp server support
 
 ## v8.2.0 (2026-10-03)
 
