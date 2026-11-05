@@ -19,9 +19,10 @@ import {
   passkeyRemovedTemplate
 } from "./emails/index.js";
 import { getGravatarUrl } from "./utils/gravatar.js";
+import { appUrl } from "./utils/appUrl.js";
 import { profileUpdatePlugin } from "./plugins/profileUpdate.js";
 
-const forgotPasswordUrl = new URL("/auth/forgot-password", config.APP_URL).toString();
+const forgotPasswordUrl = appUrl("/auth/forgot-password");
 
 /** OAuth protected resource identifier for the MCP endpoint (access token `aud`). */
 export const MCP_RESOURCE = new URL("/api/mcp", config.SERVER_URL).toString();
@@ -79,7 +80,7 @@ export const auth = betterAuth({
   }),
   emailVerification: {
     sendVerificationEmail: async ({ user, token }) => {
-      const verifyUrl = new URL("/auth/verify-email", config.APP_URL);
+      const verifyUrl = new URL(appUrl("/auth/verify-email"));
       verifyUrl.searchParams.set("token", token);
       await sendEmail({
         to: user.email,
@@ -155,8 +156,8 @@ export const auth = betterAuth({
       scopes: [MCP_SCOPE, "offline_access"],
       // The login and consent screens live in the SPA, which may be on another
       // origin, so these must be absolute URLs.
-      loginPage: new URL("/", config.APP_URL).toString(),
-      consentPage: new URL("/auth/consent", config.APP_URL).toString(),
+      loginPage: appUrl("/"),
+      consentPage: appUrl("/auth/consent"),
       // CIMD is the 2026-07-28 way for clients to identify themselves. Dynamic
       // Client Registration is kept as a fallback for clients that predate it
       // (e.g. Cursor); "infer" accepts their native/loopback redirect URIs.
