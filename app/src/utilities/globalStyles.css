@@ -5,6 +5,9 @@
   --z-navigation: 10;
   --z-logo: 40;
   --z-header: 30;
+  /* Mobile nav sits above the header so its overlay covers it, but below
+     the logo so the hamburger stays clickable. */
+  --z-navigation-mobile: 35;
   --z-modal-overlay: 100;
 }
 

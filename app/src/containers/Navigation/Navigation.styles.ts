@@ -20,7 +20,7 @@ export const Container = styled.nav`
     1px 0 ${theme.colors.navigation.border},
     0 1px 5px rgba(0, 0, 0, 0.9);
   position: relative;
-  z-index: var(--z-navigation);
+  z-index: var(--z-navigation-mobile);
   grid-column: 1;
   grid-row: 2;
   max-height: 100%;
@@ -34,6 +34,7 @@ export const Container = styled.nav`
   ${theme.queries.medium} {
     display: flex;
     position: static;
+    z-index: var(--z-navigation);
     opacity: 1;
     grid-row: 2;
     grid-column: 1;
