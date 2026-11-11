@@ -30,7 +30,7 @@ function Logo() {
           <ProfilePicture
             onClick={e => {
               e.stopPropagation();
-              navigate(generateUrl("/profile-settings/general"));
+              navigate(generateUrl("/profile-settings/account"));
             }}
             user={profile}
           />

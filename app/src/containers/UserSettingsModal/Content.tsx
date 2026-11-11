@@ -3,22 +3,29 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { theme } from "../../theme";
 
-import ProfileSettings from "./ProfileSettings";
-import AuthSettings from "./AuthSettings";
-import CustomLists from "./CustomLists";
-import General from "./General";
+import Account from "./Account";
+import Preferences from "./Preferences";
+import Agents from "./Agents";
 import About from "./About";
 
 import Tabs, { Tab } from "@components/Tabs";
 import { Header } from "@components/Copy";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
 
-const tabs = ["general", "profile", "auth", "custom-lists", "about"];
+const tabs = ["account", "preferences", "agents", "about"];
+
+// Sections from before tabs were consolidated, so old links still land somewhere sensible.
+const legacySections: Record<string, string> = {
+  general: "preferences",
+  "custom-lists": "preferences",
+  profile: "account",
+  auth: "account"
+};
 
 function UserSettingsModalContent() {
-  const { section } = useParams();
+  const { section = "" } = useParams();
   const [selectedIndex, setSelectedIndex] = useState(() => {
-    const tab = tabs.findIndex(tab => tab === section);
+    const tab = tabs.indexOf(legacySections[section] ?? section);
     return tab !== -1 ? tab : 0;
   });
   const generateUrl = useGeneratedUrl();
@@ -34,19 +41,16 @@ function UserSettingsModalContent() {
         }}
         selectedIndex={selectedIndex}
         color={theme.colors.general.blue}
-        titles={["General", "Profile", "Auth", "Custom Lists", "About"]}
+        titles={["Account", "Preferences", "Agents", "About"]}
       >
         <Tab>
-          <General />
+          <Account />
         </Tab>
         <Tab>
-          <ProfileSettings />
+          <Preferences />
         </Tab>
         <Tab>
-          <AuthSettings />
-        </Tab>
-        <Tab>
-          <CustomLists />
+          <Agents />
         </Tab>
         <Tab>
           <About />

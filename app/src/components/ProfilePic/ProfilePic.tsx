@@ -64,7 +64,7 @@ const ProfilePicture = ({ user, onClick, className, size }: Props) => {
   );
 };
 
-export const FormatProfilePictureUrl = (url?: string | null, sizeInPx?: number) => {
+const FormatProfilePictureUrl = (url?: string | null, sizeInPx?: number) => {
   if (url && typeof url === "string") {
     return url.replace("sz=50", sizeInPx ? `sz=${sizeInPx}` : "");
   }
