@@ -4,6 +4,7 @@
 
 - Redesigned nav styles
 - Add experimental mcp server support
+- Redesigned Settings screen
 
 ## v8.2.0 (2026-10-03)
 
