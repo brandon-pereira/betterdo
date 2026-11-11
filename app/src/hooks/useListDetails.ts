@@ -29,11 +29,15 @@ function useListDetails(listId: string) {
   }, [data, error]);
 
   useEffect(() => {
-    if (error && error.message === "Invalid List ID") {
+    if (error && error.message === "Invalid List ID" && listId !== "inbox") {
       console.warn("Invalid list detected, redirecting to inbox.");
-      navigate("/");
+      // Clear the stale list so InitialListRedirect doesn't send the user back to it
+      if (localStorage.getItem("lastViewedList") === listId) {
+        localStorage.removeItem("lastViewedList");
+      }
+      navigate("/inbox", { replace: true });
     }
-  }, [error, navigate]);
+  }, [error, listId, navigate]);
 
   return {
     error,

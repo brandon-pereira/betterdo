@@ -5,6 +5,7 @@
 - Redesigned nav styles
 - Add experimental mcp server support
 - Redesigned Settings screen
+- Fix issue when localStorage caches deleted lists
 
 ## v8.2.0 (2026-10-03)
 

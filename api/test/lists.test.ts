@@ -10,6 +10,12 @@ import { createListSchema, updateListSchema } from "../src/validators/lists.js";
 
 describe("Lists", () => {
   describe("Lists API", () => {
+    test("Returns null for a malformed list ID", async () => {
+      const router = await createRouter();
+      const result = await getListById({ userId: router.user.id, listId: "not-a-real-list" });
+      expect(result).toBeNull();
+    });
+
     test("Can be created with valid data", async () => {
       const router = await createRouter();
       const list = await createList({ title: "Test", createdById: router.user.id });

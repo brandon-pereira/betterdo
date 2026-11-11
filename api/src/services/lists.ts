@@ -1,4 +1,5 @@
 import { and, asc, count, eq, inArray } from "drizzle-orm";
+import z from "zod";
 import { db } from "../db.js";
 import { listMembers, lists } from "../schema/list.js";
 import { tasks } from "../schema/task.js";
@@ -79,6 +80,11 @@ export async function getListById({
   listId: string;
   includeCompleted?: boolean;
 }) {
+  // Malformed IDs would otherwise make Postgres throw on the uuid column
+  if (!z.uuid().safeParse(listId).success) {
+    return null;
+  }
+
   const [result] = await db
     .select({
       id: lists.id,
