@@ -6,6 +6,7 @@
 - Add experimental mcp server support
 - Redesigned Settings screen
 - Fix issue when localStorage caches deleted lists
+- Notes handles pasting markdown correctly
 
 ## v8.2.0 (2026-10-03)
 

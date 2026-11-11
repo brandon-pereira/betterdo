@@ -10,6 +10,8 @@ import { UndoRedo } from "@tiptap/extensions";
 import Link from "./TipTap/Link";
 import ChecklistItem, { CHECKLIST_COMMIT } from "./TipTap/ChecklistItem";
 import ChecklistHint from "./TipTap/ChecklistHint";
+import MarkdownPaste from "./TipTap/MarkdownPaste";
+import Checklist from "@components/Icon/svgs/checklist.svg";
 
 import { styled } from "@linaria/react";
 
@@ -64,10 +66,10 @@ const ToolbarButton = styled.button`
     transform: scale(0.95);
   }
 
-  /* Icon styling for checkboxes */
   svg {
-    width: 18px;
-    height: 18px;
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
   }
 `;
 
@@ -348,6 +350,7 @@ export default function RichTextEditor({
       }),
       ListKit.configure({ taskItem: false }),
       ChecklistItem,
+      MarkdownPaste,
       ChecklistHint.configure({ placeholder })
     ],
     content,
@@ -413,7 +416,7 @@ export default function RichTextEditor({
           title="Checklist (Cmd+Shift+9)"
           type="button"
         >
-          ☑
+          <Checklist aria-hidden="true" focusable="false" />
         </ToolbarButton>
       </Toolbar>
 
