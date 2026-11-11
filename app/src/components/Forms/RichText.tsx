@@ -125,6 +125,8 @@ const Editor = styled(EditorContent)`
   }
 
   .tiptap {
+    max-height: 5rem;
+    overflow-y: auto;
     border: 2px solid ${theme.colors.forms.input.borderColor};
     color: ${theme.colors.forms.input.color};
     background: ${theme.colors.forms.input.background};
