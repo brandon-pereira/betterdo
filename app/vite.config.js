@@ -1,6 +1,8 @@
 /*  global __dirname, process */
+import fs from "fs/promises";
 import path from "path";
 
+import { transform } from "esbuild";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
@@ -17,12 +19,39 @@ const aliases = {
   "@customTypes": path.resolve(__dirname, "src/customTypes")
 };
 
+const criticalCssPath = path.resolve(__dirname, "src/critical.css");
+const criticalCssLink = /<link[^>]*id="critical-css"[^>]*>/;
+
+// Inlines the skeleton's critical.css into index.html so it paints from the HTML alone,
+// instead of Vite merging it into the main stylesheet that first paint would wait on.
+function inlineCriticalCss() {
+  return {
+    name: "inline-critical-css",
+    transformIndexHtml: {
+      order: "pre",
+      async handler(html) {
+        if (!criticalCssLink.test(html)) {
+          throw new Error("[app] index.html is missing the critical-css link");
+        }
+        const { code } = await transform(await fs.readFile(criticalCssPath, "utf8"), { loader: "css", minify: true });
+        return html.replace(criticalCssLink, () => `<style id="critical-css">${code.trim()}</style>`);
+      }
+    },
+    handleHotUpdate({ file, server }) {
+      if (file === criticalCssPath) {
+        server.ws.send({ type: "full-reload" });
+      }
+    }
+  };
+}
+
 export default defineConfig({
   plugins: [
     svgr({ include: "**/*.svg" }),
     react(),
     wyw(),
     markdown({ mode: [Mode.HTML] }),
+    inlineCriticalCss(),
     VitePWA({
       strategies: "injectManifest",
       srcDir: "src",
