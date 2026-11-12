@@ -1,29 +1,34 @@
-import { pgTable, uuid, varchar, boolean, timestamp, text, integer } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, boolean, timestamp, text, integer, index } from "drizzle-orm/pg-core";
 import { PRIORITIES, TASK_TITLE_MAX_LENGTH } from "@betterdo/shared/constants";
 import { lists } from "./list.js";
 import { user } from "./auth.js";
 
-export const tasks = pgTable("tasks", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  title: varchar("title", { length: TASK_TITLE_MAX_LENGTH }).notNull(),
-  listId: uuid("list_id")
-    .notNull()
-    .references(() => lists.id, {
-      onDelete: "cascade"
-    }),
-  createdById: text("created_by_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  isCompleted: boolean("is_completed").notNull().default(false),
-  completedAt: timestamp("completed_at"),
-  dueDate: timestamp("due_date", { withTimezone: true }),
-  notes: text("notes"),
-  priority: text("priority", {
-    enum: PRIORITIES
-  }).default("normal"),
-  position: integer("position").notNull().default(0),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
-    .$onUpdate(() => new Date())
-    .defaultNow()
-});
+export const tasks = pgTable(
+  "tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    title: varchar("title", { length: TASK_TITLE_MAX_LENGTH }).notNull(),
+    listId: uuid("list_id")
+      .notNull()
+      .references(() => lists.id, {
+        onDelete: "cascade"
+      }),
+    createdById: text("created_by_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    isCompleted: boolean("is_completed").notNull().default(false),
+    completedAt: timestamp("completed_at"),
+    dueDate: timestamp("due_date", { withTimezone: true }),
+    notes: text("notes"),
+    priority: text("priority", {
+      enum: PRIORITIES
+    }).default("normal"),
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
+      .$onUpdate(() => new Date())
+      .defaultNow()
+  },
+  // Tasks are almost always read per list, split by completion, in position order.
+  t => [index("tasks_list_id_is_completed_position_idx").on(t.listId, t.isCompleted, t.position)]
+);

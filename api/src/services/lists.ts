@@ -104,19 +104,37 @@ export async function getListById({
     return null;
   }
 
-  const [_tasks, members] = await Promise.all([
+  const taskColumns = {
+    id: true,
+    title: true,
+    isCompleted: true,
+    priority: true,
+    completedAt: true,
+    dueDate: true
+  } as const;
+
+  // Completed tasks pile up over time, so unless they're requested they're
+  // only counted rather than loaded.
+  const [activeTasks, completedTasks, completedCount, members] = await Promise.all([
     db.query.tasks.findMany({
-      where: { listId: result.id },
+      where: { listId: result.id, isCompleted: false },
       orderBy: { position: "asc" },
-      columns: {
-        id: true,
-        title: true,
-        isCompleted: true,
-        priority: true,
-        completedAt: true,
-        dueDate: true
-      }
+      columns: taskColumns
     }),
+    includeCompleted
+      ? db.query.tasks.findMany({
+          where: { listId: result.id, isCompleted: true },
+          orderBy: { position: "asc" },
+          columns: taskColumns
+        })
+      : [],
+    includeCompleted
+      ? 0
+      : db
+          .select({ value: count() })
+          .from(tasks)
+          .where(and(eq(tasks.listId, result.id), eq(tasks.isCompleted, true)))
+          .then(([row]) => row.value),
     db.query.listMembers.findMany({
       where: { listId: result.id },
       columns: {},
@@ -133,21 +151,15 @@ export async function getListById({
     })
   ]);
 
-  // Split completed tasks out of the main `tasks` array (matches v1 behavior)
-  const activeTasks = _tasks.filter(task => !task.isCompleted);
   // Completed tasks are shown most-recently-completed first
-  const completedTasks = _tasks
-    .filter(task => task.isCompleted)
-    .sort((a, b) => (b.completedAt?.getTime() ?? 0) - (a.completedAt?.getTime() ?? 0));
+  completedTasks.sort((a, b) => (b.completedAt?.getTime() ?? 0) - (a.completedAt?.getTime() ?? 0));
 
   return {
     ...result,
     owner: result.createdById,
     tasks: activeTasks,
-    // Completed tasks are only hydrated when explicitly requested; otherwise
-    // the count is surfaced via `additionalTasks`.
-    completedTasks: includeCompleted ? completedTasks : [],
-    additionalTasks: includeCompleted ? 0 : completedTasks.length,
+    completedTasks,
+    additionalTasks: completedCount,
     members: members.map(member => {
       return {
         id: member.user.id,
