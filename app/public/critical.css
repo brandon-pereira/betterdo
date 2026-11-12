@@ -58,6 +58,14 @@ html[data-theme="dark"] .app-skeleton {
   grid-row: 1;
   grid-column: 1;
   overflow: hidden;
+  background-color: var(--current-list-color, #666666);
+  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
+  position: relative;
+  z-index: 2;
+}
+.app-skeleton .skeleton-logo-content {
+  height: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   padding: 0 0.5rem;
@@ -67,8 +75,6 @@ html[data-theme="dark"] .app-skeleton {
   box-shadow:
     1px 0 #171717,
     0 1px 5px rgba(0, 0, 0, 0.9);
-  position: relative;
-  z-index: 2;
 }
 .app-skeleton .skeleton-logo h1 {
   margin: 0;
@@ -206,9 +212,6 @@ html[data-theme="dark"] .app-skeleton {
 @media (min-width: 1024px) {
   .app-skeleton {
     grid-template-columns: 14rem 1fr;
-  }
-  .app-skeleton .skeleton-logo {
-    padding: 0 1rem;
   }
   .app-skeleton .skeleton-logo h1 {
     font-size: 1.8rem;

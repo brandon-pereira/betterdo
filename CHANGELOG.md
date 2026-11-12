@@ -7,6 +7,7 @@
 - Redesigned Settings screen
 - Fix issue when localStorage caches deleted lists
 - Notes handles pasting markdown correctly
+- Add app skelton when starting up
 
 ## v8.2.0 (2026-10-03)
 

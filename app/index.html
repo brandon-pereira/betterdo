@@ -14,6 +14,8 @@
         }
       } catch (e) {}
     </script>
+    <!-- Tints the Android status bar to match the skeleton header; FullScreenLoader removes it once the app renders. -->
+    <meta name="theme-color" content="#666666" id="skeleton-theme-color" />
     <link rel="stylesheet" type="text/css" href="/critical.css" id="critical-css" />
     <link rel="manifest" href="https://betterdo.app/app/manifest.json" />
     <link rel="apple-touch-icon" sizes="180x180" href="https://betterdo.app/icon-apple.png" />
@@ -38,7 +40,9 @@
   <body>
     <section class="app-skeleton" aria-busy="true" aria-label="Loading BetterDo">
       <div class="skeleton-logo">
-        <h1>Better<span>Do.</span></h1>
+        <div class="skeleton-logo-content">
+          <h1>Better<span>Do.</span></h1>
+        </div>
       </div>
       <div class="skeleton-header">
         <div class="skeleton-hamburger"><i></i><i></i><i></i></div>
