@@ -53,6 +53,15 @@ function readCachedSession(): SessionData | null {
   }
 }
 
+/** Whether this browser was signed in last time, i.e. the user is probably still signed in. */
+export function hasCachedSession() {
+  try {
+    return Boolean(localStorage.getItem(SESSION_CACHE_KEY));
+  } catch {
+    return false;
+  }
+}
+
 function writeCachedSession(data: SessionData) {
   try {
     localStorage.setItem(SESSION_CACHE_KEY, JSON.stringify({ ...data, session: { ...data.session, token: "" } }));

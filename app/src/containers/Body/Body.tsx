@@ -12,14 +12,14 @@ import useCurrentListId from "@hooks/useCurrentListId";
 import useModifyList from "@hooks/useModifyList";
 import useCompletedTasks from "@hooks/useCompletedTasks";
 
-// Started eagerly (not on first render) so the chunk downloads in parallel
-// with the initial session/list fetches.
+// Started eagerly (not on first render) so these chunks download in parallel
+// with the initial session/list fetches; tasks can't render without them.
 const addTaskImport = import("@components/AddTask");
 const AddTask = lazy(() => addTaskImport);
+const sortableListImport = import("./SortableList");
+const SortableList = lazy(() => sortableListImport);
 
 const NotificationBanner = lazy(() => import("./NotificationBanner"));
-
-const SortableList = lazy(() => import("./SortableList"));
 
 const AllCaughtUpBanner = lazy(() => import("./AllCaughtUp"));
 

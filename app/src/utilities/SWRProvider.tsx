@@ -1,32 +1,9 @@
 import { SWRConfig } from "swr";
 
-function SWRProvider({ children }: { children: React.ReactChild }) {
-  return (
-    <SWRConfig
-      value={{
-        fetcher: async (url: string) => {
-          const res = await fetch(url, {
-            credentials: "include"
-          });
-          if (res.status >= 400) {
-            let error: string;
-            try {
-              const data = await res.json();
-              error = data.error;
-            } catch {
-              error = "Internal Error";
-            }
-            console.error("API Request Failed!", url, error);
-            throw new Error(error);
-          }
+import { fetcher } from "./fetcher";
 
-          return await res.json();
-        }
-      }}
-    >
-      {children}
-    </SWRConfig>
-  );
+function SWRProvider({ children }: { children: React.ReactChild }) {
+  return <SWRConfig value={{ fetcher }}>{children}</SWRConfig>;
 }
 
 export default SWRProvider;

@@ -28,6 +28,7 @@ export default defineConfig({
       srcDir: "src",
       filename: "service-worker.ts",
       registerType: "autoUpdate",
+      manifest: false,
       devOptions: {
         enabled: false,
         type: "module",

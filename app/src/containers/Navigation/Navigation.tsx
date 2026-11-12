@@ -8,7 +8,9 @@ import useNavHover from "@hooks/useNavHover";
 import { NewListItem } from "@components/ListItem";
 import Loader from "@components/Loader";
 
-const SortableList = lazy(() => import("./SortableList"));
+// Started eagerly so the chunk downloads in parallel with the initial fetches.
+const sortableListImport = import("./SortableList");
+const SortableList = lazy(() => sortableListImport);
 
 function Navigation() {
   const [isMobileNavVisible, setMobileNavVisibility] = useHamburgerNav();
