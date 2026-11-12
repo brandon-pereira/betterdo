@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <script>
+      // Mirrors useDarkMode so the static skeleton paints in the right theme before React mounts.
+      try {
+        if (
+          localStorage.getItem("doesBetterDoPreferDarkMode") !== "false" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+          document.documentElement.dataset.theme = "dark";
+        }
+      } catch (e) {}
+    </script>
     <link rel="stylesheet" type="text/css" href="/critical.css" id="critical-css" />
     <link rel="manifest" href="https://betterdo.app/app/manifest.json" />
     <link rel="apple-touch-icon" sizes="180x180" href="https://betterdo.app/icon-apple.png" />
@@ -25,10 +36,59 @@
     <meta name="twitter:card" content="summary" />
   </head>
   <body>
-    <section class="loader">
-      <svg id="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-        <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
-      </svg>
+    <section class="app-skeleton" aria-busy="true" aria-label="Loading BetterDo">
+      <div class="skeleton-logo">
+        <h1>Better<span>Do.</span></h1>
+      </div>
+      <div class="skeleton-header">
+        <div class="skeleton-hamburger"><i></i><i></i><i></i></div>
+        <div class="skeleton-bar skeleton-title"></div>
+      </div>
+      <div class="skeleton-nav">
+        <div class="skeleton-nav-item">
+          <i></i>
+          <div class="skeleton-bar" style="width: 55%"></div>
+        </div>
+        <div class="skeleton-nav-item">
+          <i></i>
+          <div class="skeleton-bar" style="width: 40%"></div>
+        </div>
+        <div class="skeleton-nav-item">
+          <i></i>
+          <div class="skeleton-bar" style="width: 65%"></div>
+        </div>
+        <div class="skeleton-nav-item">
+          <i></i>
+          <div class="skeleton-bar" style="width: 45%"></div>
+        </div>
+        <div class="skeleton-nav-item">
+          <i></i>
+          <div class="skeleton-bar" style="width: 60%"></div>
+        </div>
+      </div>
+      <div class="skeleton-body">
+        <div class="skeleton-input"></div>
+        <div class="skeleton-task">
+          <i></i>
+          <div class="skeleton-bar" style="width: 45%"></div>
+        </div>
+        <div class="skeleton-task">
+          <i></i>
+          <div class="skeleton-bar" style="width: 60%"></div>
+        </div>
+        <div class="skeleton-task">
+          <i></i>
+          <div class="skeleton-bar" style="width: 35%"></div>
+        </div>
+        <div class="skeleton-task">
+          <i></i>
+          <div class="skeleton-bar" style="width: 55%"></div>
+        </div>
+        <div class="skeleton-task">
+          <i></i>
+          <div class="skeleton-bar" style="width: 40%"></div>
+        </div>
+      </div>
     </section>
     <section class="main-container"></section>
   </body>

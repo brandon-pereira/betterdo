@@ -1,46 +1,234 @@
-.loader {
-  background: #4285f4;
+/* Static app skeleton shown before React mounts and while FullScreenLoader is
+   rendered. Mirrors the layout of containers/Container (grid), Logo, Header,
+   Navigation and Body. Colors mirror LIGHT_VARS / DARK_VARS in src/theme.ts. */
+.app-skeleton {
+  --skeleton-nav-background: #202020;
+  --skeleton-body-background: #e4e4e4;
+  --skeleton-task-background: linear-gradient(#fff, #eee);
+  --skeleton-task-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2), inset 0 -1px #fff;
+  --skeleton-input-background: #fff;
+  --skeleton-input-box-shadow: inset 0 0 0 2px #ccc;
+  --skeleton-placeholder: rgba(0, 0, 0, 0.1);
+
+  font-family:
+    "Noto Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen-Sans,
+    Ubuntu,
+    Cantarell,
+    "Helvetica Neue",
+    sans-serif;
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 0;
+  grid-template-rows: 0 0 4rem 1fr;
+  background: var(--skeleton-body-background);
+}
+
+html[data-theme="dark"] .app-skeleton {
+  --skeleton-nav-background: #080808;
+  --skeleton-body-background: #101010;
+  --skeleton-task-background: linear-gradient(#252525, #1e1e1e);
+  --skeleton-task-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2), inset 0 -1px #000;
+  --skeleton-input-background: #1e1e1e;
+  --skeleton-input-box-shadow: inset 0 -1px #313131;
+  --skeleton-placeholder: rgba(255, 255, 255, 0.08);
+}
+
+.app-skeleton .skeleton-bar,
+.app-skeleton .skeleton-nav-item i,
+.app-skeleton .skeleton-task i {
+  animation: --critical-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.app-skeleton .skeleton-bar {
+  height: 0.9rem;
+  border-radius: 0.45rem;
+  background: var(--skeleton-placeholder);
+}
+
+/* Logo (only visible from the medium breakpoint up) */
+.app-skeleton .skeleton-logo {
+  grid-row: 1;
+  grid-column: 1;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  z-index: 9999;
+  padding: 0 0.5rem;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.3)), var(--skeleton-nav-background);
+  border-radius: 0 30px 0 0;
+  box-shadow:
+    1px 0 #171717,
+    0 1px 5px rgba(0, 0, 0, 0.9);
+  position: relative;
+  z-index: 2;
 }
-.loader svg {
-  animation: --critical-loader-rotate 2s linear infinite;
+.app-skeleton .skeleton-logo h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 200;
+}
+.app-skeleton .skeleton-logo span {
+  font-weight: 600;
 }
 
-.loader svg .path {
-  stroke-dasharray: 184;
-  stroke-dashoffset: 0;
-  transform-origin: center;
-  stroke: #fff;
-  animation: --critical-loader-dashoffset 2s ease-in-out infinite;
+/* Header */
+.app-skeleton .skeleton-header {
+  grid-row: 3;
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--current-list-color, #666666);
+  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
+  box-shadow:
+    inset 0 -1px rgba(0, 0, 0, 0.3),
+    0 2px 3px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+.app-skeleton .skeleton-hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 1.5rem;
+  width: 2rem;
+  padding: 0 0.5rem 0 0.8rem;
+  filter: drop-shadow(0 1px rgba(0, 0, 0, 0.5));
+}
+.app-skeleton .skeleton-hamburger i {
+  height: 4px;
+  border-radius: 3px;
+  background: #fff;
+}
+.app-skeleton .skeleton-title {
+  height: 1.4rem;
+  width: 8rem;
+  margin: 0 auto;
+  /* Offset the hamburger so the title stays centered like the real header */
+  transform: translateX(-1.65rem);
+  background: rgba(255, 255, 255, 0.35);
 }
 
-@keyframes --critical-loader-rotate {
-  0% {
-    transform: rotate(0deg);
+/* Navigation (only visible from the medium breakpoint up) */
+.app-skeleton .skeleton-nav {
+  grid-row: 2;
+  grid-column: 1;
+  overflow: hidden;
+  background: var(--skeleton-nav-background);
+  box-shadow:
+    1px 0 #171717,
+    0 1px 5px rgba(0, 0, 0, 0.9);
+  position: relative;
+  z-index: 1;
+}
+.app-skeleton .skeleton-nav-item {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding-right: 1rem;
+  box-shadow: inset 0 -1px rgba(255, 255, 255, 0.08);
+}
+.app-skeleton .skeleton-nav-item i {
+  flex-shrink: 0;
+  height: 1rem;
+  width: 1rem;
+  margin: 0 17px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+.app-skeleton .skeleton-nav-item .skeleton-bar {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Body */
+.app-skeleton .skeleton-body {
+  grid-row: 4;
+  grid-column: 1;
+  overflow: hidden;
+  padding: 1rem;
+}
+.app-skeleton .skeleton-input {
+  height: 2.5rem;
+  border-radius: 50px;
+  margin-bottom: 0.8rem;
+  background: var(--skeleton-input-background);
+  box-shadow: var(--skeleton-input-box-shadow);
+}
+.app-skeleton .skeleton-task {
+  height: 3.6rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  border-radius: 50px;
+  background: var(--skeleton-task-background);
+  box-shadow: var(--skeleton-task-box-shadow);
+}
+.app-skeleton .skeleton-task i {
+  flex-shrink: 0;
+  height: 2rem;
+  width: 2rem;
+  margin: 0 1rem 0 1.3rem;
+  border-radius: 50%;
+  background: var(--skeleton-placeholder);
+}
+
+/* Matches theme.queries.medium */
+@media (min-width: 640px) {
+  .app-skeleton {
+    grid-template-columns: 10rem 1fr;
+    grid-template-rows: 4rem 1fr;
   }
+  .app-skeleton .skeleton-header {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .app-skeleton .skeleton-hamburger {
+    display: none;
+  }
+  .app-skeleton .skeleton-title {
+    transform: none;
+  }
+  .app-skeleton .skeleton-body {
+    grid-row: 2;
+    grid-column: 2;
+  }
+}
+
+/* Matches theme.queries.large */
+@media (min-width: 1024px) {
+  .app-skeleton {
+    grid-template-columns: 14rem 1fr;
+  }
+  .app-skeleton .skeleton-logo {
+    padding: 0 1rem;
+  }
+  .app-skeleton .skeleton-logo h1 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-skeleton .skeleton-bar,
+  .app-skeleton .skeleton-nav-item i,
+  .app-skeleton .skeleton-task i {
+    animation: none;
+  }
+}
+
+@keyframes --critical-skeleton-pulse {
+  0%,
   100% {
-    transform: rotate(270deg);
-  }
-}
-
-@keyframes --critical-loader-dashoffset {
-  0% {
-    stroke-dashoffset: 184;
+    opacity: 1;
   }
   50% {
-    stroke-dashoffset: 46;
-    transform: rotate(135deg);
-  }
-  100% {
-    stroke-dashoffset: 184;
-    transform: rotate(450deg);
+    opacity: 0.45;
   }
 }

@@ -39,7 +39,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body.loaded .loader {
+body.loaded .app-skeleton {
   display: none;
 }
 

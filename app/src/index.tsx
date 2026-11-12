@@ -13,7 +13,7 @@ import ErrorBoundary from "@components/ErrorBoundary";
 
 import "./utilities/ServiceWorkerRegister";
 
-// The static loader from index.html stays up until FullScreenLoader unmounts
+// The static app skeleton from index.html stays up until FullScreenLoader unmounts
 // (see FullScreenLoader.tsx), so we intentionally don't hide it here.
 const root = ReactDOM.createRoot(document.querySelector(".main-container")!);
 
