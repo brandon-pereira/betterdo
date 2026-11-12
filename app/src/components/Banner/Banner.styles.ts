@@ -1,12 +1,12 @@
 import { styled } from "@linaria/react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 import { theme } from "../../theme";
 
 import _Icon from "@components/Icon";
 import _Button from "@components/Button";
 
-export const Container = styled(motion.div)`
+export const Container = styled(m.div)`
   display: flex;
   flex-direction: column;
   align-items: center;

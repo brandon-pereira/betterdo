@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 
 import { Button, Container } from "./CompletedTasksButton.styles";
 
@@ -42,7 +42,7 @@ function CompletedTasksButton({ onClick, isAllCaughtUp, isLoading, count, hidden
     >
       <Button hidden={hidden || count === 0} isLoading={isLoading} loaderColor="#888" onClick={onClick}>
         <AnimatePresence initial={false}>
-          <motion.span
+          <m.span
             style={{ display: "inline-block" }}
             // @ts-expect-error position is supported in browser but not types
             variants={variants}
@@ -56,7 +56,7 @@ function CompletedTasksButton({ onClick, isAllCaughtUp, isLoading, count, hidden
             }}
           >
             {formatNumber(count)}
-          </motion.span>
+          </m.span>
         </AnimatePresence>
         {" completed tasks"}
       </Button>

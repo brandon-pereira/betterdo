@@ -1,5 +1,5 @@
 import { styled } from "@linaria/react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 import { theme } from "../../theme";
 
@@ -15,7 +15,7 @@ export const TabsHeader = styled.div`
   margin-bottom: 1rem;
   overflow-x: auto;
 `;
-export const ActiveTabHeaderBackground = styled(motion.div)`
+export const ActiveTabHeaderBackground = styled(m.div)`
   position: absolute;
   z-index: -1;
   top: 0;

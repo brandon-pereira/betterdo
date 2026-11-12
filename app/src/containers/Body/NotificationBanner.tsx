@@ -4,7 +4,6 @@ import useInstall from "@hooks/useInstall";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useListDetails from "@hooks/useListDetails";
 import useDarkMode from "@hooks/useDarkMode";
-import { getTimeZone } from "@utilities/timezones";
 import useModifyProfile from "@hooks/useModifyProfile";
 import useTimezones from "@hooks/useTimezones";
 
@@ -15,7 +14,7 @@ function NotificationBanner() {
   const { list, loading, error } = useListDetails(currentListId);
   const { notificationStatus, onRequestNotificationAccess, onDeclineNotificationAccess } = usePushNotifications();
   const { onRequestInstall, onDeclineInstall, isInstallAvailable } = useInstall();
-  const { isTimezoneChanged, setDismissed } = useTimezones();
+  const { isTimezoneChanged, localTimeZone, setDismissed } = useTimezones();
 
   if (isInstallAvailable) {
     return (
@@ -63,8 +62,7 @@ function NotificationBanner() {
     );
   }
 
-  const localTimeZone = getTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone).name;
-  if (isTimezoneChanged) {
+  if (isTimezoneChanged && localTimeZone) {
     return (
       <_NotificationBanner
         title="Timezone Changed"

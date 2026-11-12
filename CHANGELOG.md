@@ -2,12 +2,15 @@
 
 ## v8.3.0 (2026-11-03)
 
-- Redesigned nav styles
 - Add experimental mcp server support
 - Redesigned Settings screen
-- Fix issue when localStorage caches deleted lists
-- Notes handles pasting markdown correctly
+- Redesigned nav styles
 - Add app skelton when starting up
+- Reduce initial bundle size by lazy loading auth pages, animations, and timezones
+- Fix lazy loaded modals erroring for users on the previous version during deploys
+- Notes handles pasting markdown correctly
+- Fix issue when localStorage caches deleted lists
+- Remove react-helmet-async in favor of a lightweight alternative
 
 ## v8.2.0 (2026-10-03)
 

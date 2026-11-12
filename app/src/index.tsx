@@ -1,6 +1,6 @@
 import * as ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
+import { LazyMotion } from "framer-motion";
 import { ResponsiveProvider } from "@hooks/useResponsive";
 
 import { ThemeProvider } from "./utilities/ThemeProvider";
@@ -17,8 +17,11 @@ import "./utilities/ServiceWorkerRegister";
 // (see FullScreenLoader.tsx), so we intentionally don't hide it here.
 const root = ReactDOM.createRoot(document.querySelector(".main-container")!);
 
+const loadMotionFeatures = () => import("./utilities/motionFeatures").then(mod => mod.default);
+
 root.render(
-  <HelmetProvider>
+  // strict: throws if a full `motion.*` component is used instead of `m.*`, which would undo the split
+  <LazyMotion features={loadMotionFeatures} strict>
     <DarkModeProvider>
       <ThemeProvider>
         <ErrorBoundary>
@@ -32,5 +35,5 @@ root.render(
         </ErrorBoundary>
       </ThemeProvider>
     </DarkModeProvider>
-  </HelmetProvider>
+  </LazyMotion>
 );

@@ -1,5 +1,5 @@
 import { styled } from "@linaria/react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 import { theme } from "../../../theme";
 
@@ -63,7 +63,7 @@ export const Prompt = styled.div`
   line-height: 1.75rem;
 `;
 
-export const PromptText = styled(motion.div)`
+export const PromptText = styled(m.div)`
   position: absolute;
   inset: 0;
   white-space: nowrap;

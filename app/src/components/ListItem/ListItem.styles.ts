@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { styled } from "@linaria/react";
 
 import { DEFAULT_LIST_COLOR } from "../../constants";
@@ -77,13 +77,13 @@ export const Container = styled.button`
   }
 `;
 
-export const HoveredItemBackground = styled(motion.div)`
+export const HoveredItemBackground = styled(m.div)`
   background: ${theme.colors.navigation.hover};
   position: absolute;
   inset: 0;
 `;
 
-export const SelectedItemBackground = styled(motion.div)`
+export const SelectedItemBackground = styled(m.div)`
   box-shadow:
     inset 0 1px rgba(255, 255, 255, 0.2),
     inset 0 -1px rgba(0, 0, 0, 0.5),

@@ -1,14 +1,17 @@
-import { useRef } from "react";
+import { lazy, Suspense, useRef } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { hasOAuthQuery, isOAuthAuthorizationRequest, useSession } from "@utilities/auth";
 import CoreApp from "./pages/CoreApp";
-import AuthPages from "./pages/Auth";
-import ResetPassword from "@components/Auth/ResetPassword";
-import VerifyEmail from "@components/Auth/VerifyEmail";
-import Consent from "@components/Auth/Consent";
-import Login from "@components/Auth/Login";
-import OAuthLinkExpired from "@components/Auth/OAuthLinkExpired";
 import FullScreenLoader from "@components/FullScreenLoader";
+
+// Auth screens are split out of the main chunk since signed-in users (the
+// common case) never render them.
+const AuthPages = lazy(() => import("./pages/Auth"));
+const ResetPassword = lazy(() => import("@components/Auth/ResetPassword"));
+const VerifyEmail = lazy(() => import("@components/Auth/VerifyEmail"));
+const Consent = lazy(() => import("@components/Auth/Consent"));
+const Login = lazy(() => import("@components/Auth/Login"));
+const OAuthLinkExpired = lazy(() => import("@components/Auth/OAuthLinkExpired"));
 
 const App = () => {
   const { isPending, data } = useSession();
@@ -36,7 +39,11 @@ const App = () => {
   // consent that carries it, and it would otherwise pin a signed-in user to Login.
   const isOAuthPage = pathname === "/" || pathname === "/auth/consent";
   if (isOAuthPage && hasOAuthQuery() && !isOAuthAuthorizationRequest()) {
-    return <OAuthLinkExpired />;
+    return (
+      <Suspense fallback={<FullScreenLoader />}>
+        <OAuthLinkExpired />
+      </Suspense>
+    );
   }
 
   // These flows are reached via email links and must work regardless of session
@@ -44,13 +51,15 @@ const App = () => {
   // signed in, so the reset screen must not be gated behind the logged-out
   // AuthPages tree (otherwise they land in CoreApp and never see it).
   return (
-    <Routes>
-      <Route path="/auth/reset-password" element={<ResetPassword />} />
-      <Route path="/auth/verify-email" element={<VerifyEmail />} />
-      {/* Rendered directly (not via AuthPages) so the signed query string survives. */}
-      <Route path="/auth/consent" element={data ? <Consent /> : <Login />} />
-      <Route path="*" element={data && !isOAuthLogin ? <CoreApp /> : <AuthPages />} />
-    </Routes>
+    <Suspense fallback={<FullScreenLoader />}>
+      <Routes>
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/verify-email" element={<VerifyEmail />} />
+        {/* Rendered directly (not via AuthPages) so the signed query string survives. */}
+        <Route path="/auth/consent" element={data ? <Consent /> : <Login />} />
+        <Route path="*" element={data && !isOAuthLogin ? <CoreApp /> : <AuthPages />} />
+      </Routes>
+    </Suspense>
   );
 };
 

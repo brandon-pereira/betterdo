@@ -1,5 +1,5 @@
 import { styled } from "@linaria/react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import _FocusLock from "react-focus-lock";
 
 import { theme } from "../../theme";
@@ -32,7 +32,7 @@ export const FocusLock = styled(_FocusLock)`
   width: 100%;
   pointer-events: none;
 `;
-export const Container = styled(motion.div)`
+export const Container = styled(m.div)`
   pointer-events: all;
   background: ${theme.colors.modals.contentBackground};
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);

@@ -1,11 +1,11 @@
 import { styled } from "@linaria/react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 import { theme } from "../../../theme";
 
 import _Button from "@components/Button";
 
-export const Container = styled(motion.div)`
+export const Container = styled(m.div)`
   &[data-all-caught-up="true"] {
     position: absolute;
     z-index: 1;

@@ -5,12 +5,17 @@ import { Container, TaskContainer, Scroller } from "./Body.styles";
 import CompletedTasksButton from "./CompletedTasksButton";
 import { ServerErrorBanner } from "./Banners";
 import customLists from "@utilities/customLists";
-import AddTask from "@components/AddTask";
+import AddTaskPlaceholder from "@components/AddTask/AddTaskPlaceholder";
 import Task from "@components/Task";
 import useListDetails from "@hooks/useListDetails";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useModifyList from "@hooks/useModifyList";
 import useCompletedTasks from "@hooks/useCompletedTasks";
+
+// Started eagerly (not on first render) so the chunk downloads in parallel
+// with the initial session/list fetches.
+const addTaskImport = import("@components/AddTask");
+const AddTask = lazy(() => addTaskImport);
 
 const NotificationBanner = lazy(() => import("./NotificationBanner"));
 
@@ -54,7 +59,9 @@ function Body() {
         <NotificationBanner />
       </Suspense>
       <Scroller>
-        <AddTask isAbsolute={isAllCaughtUp} isHidden={hideAddTaskInput} />
+        <Suspense fallback={<AddTaskPlaceholder isAbsolute={isAllCaughtUp} isHidden={!!hideAddTaskInput} />}>
+          <AddTask isAbsolute={isAllCaughtUp} isHidden={hideAddTaskInput} />
+        </Suspense>
         {!error && (
           <LayoutGroup>
             <TaskContainer>

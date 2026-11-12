@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import {
@@ -62,7 +62,7 @@ const SortableItem = function ({ id, task }: SortableItemProps) {
   );
 
   return (
-    <motion.div
+    <m.div
       // we need to tell framer to re-calculate if isTemporary changes
       key={task.id + task.isTemporaryTask}
       // Disable animations because ghost element prob did this already
@@ -73,7 +73,7 @@ const SortableItem = function ({ id, task }: SortableItemProps) {
       }}
     >
       <Task ref={setNodeRef} containerProps={containerProps} touchEvents={listeners} {...task} />
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -136,7 +136,7 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
         strategy={verticalListSortingStrategy}
       >
         <AnimatePresence mode={prevLength === 0 ? "sync" : "wait"} custom={{ newListLength: tasks.length }}>
-          <motion.div
+          <m.div
             key={listId}
             initial="beforeEnter"
             animate="visible"
@@ -153,7 +153,7 @@ function SortableList({ listId, tasks, onSortEnd }: SortableListProps) {
                 />
               ))}
             </AnimatePresence>
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </SortableContext>
     </DndContext>
