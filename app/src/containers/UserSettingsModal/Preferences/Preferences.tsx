@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Alert,
@@ -12,7 +13,8 @@ import {
   Section,
   SectionDescription,
   SectionHeader,
-  SectionTitle
+  SectionTitle,
+  TinyButton
 } from "../Settings.styles";
 import { ListIcon } from "./Preferences.styles";
 
@@ -29,6 +31,7 @@ import type { UpdateUserObject } from "@customTypes/user";
 function Preferences() {
   const { profile, loading } = useProfile();
   const modifyProfile = useModifyProfile();
+  const navigate = useNavigate();
   const [darkMode, doesPreferDarkMode] = useDarkMode();
   const [state, setState] = useState({
     isBeta: profile?.isBeta || false,
@@ -129,6 +132,20 @@ function Preferences() {
               />
             </Row>
           ))}
+        </Card>
+      </Section>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>Wrapped</SectionTitle>
+        </SectionHeader>
+        <Card>
+          <Row>
+            <RowText>
+              <RowTitle>Your recaps</RowTitle>
+              <RowDescription>Monthly, yearly and all-time summaries of what you&apos;ve gotten done.</RowDescription>
+            </RowText>
+            <TinyButton onClick={() => navigate("/wrapped")}>View</TinyButton>
+          </Row>
         </Card>
       </Section>
     </Page>

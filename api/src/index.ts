@@ -9,6 +9,7 @@ import usersApi from "./routes/users.js";
 import configApi from "./routes/config.js";
 import mcpApi from "./routes/mcp.js";
 import mcpSessionsApi from "./routes/mcpSessions.js";
+import wrappedApi from "./routes/wrapped.js";
 import { getNotifier } from "./notifier.js";
 
 // Last-resort guard: transient DB failures (e.g. Postgres not up yet when pm2
@@ -52,6 +53,7 @@ app.get("/.well-known/*", c => auth.handler(c.req.raw));
 app.route("/api/lists", listsApi);
 app.route("/api/tasks", tasksApi);
 app.route("/api/users", usersApi);
+app.route("/api/wrapped", wrappedApi);
 app.route("/api/config", configApi);
 app.route("/api/mcp", mcpApi);
 app.route("/api/mcp-sessions", mcpSessionsApi);

@@ -11,7 +11,7 @@ import { fetcher } from "@utilities/fetcher";
 // time, since the requests would only 401.
 function getInitialListId(): string | null {
   const [firstSegment] = window.location.pathname.slice(import.meta.env.BASE_URL.length).split("/");
-  if (firstSegment && firstSegment !== "auth") {
+  if (firstSegment && firstSegment !== "auth" && firstSegment !== "wrapped") {
     return firstSegment;
   }
   // Mirrors InitialListRedirect: "/" goes to the last viewed list, or the inbox

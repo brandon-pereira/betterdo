@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import _NotificationBanner from "@components/NotificationBanner";
 import usePushNotifications from "@hooks/usePushNotifications";
 import useInstall from "@hooks/useInstall";
@@ -6,6 +8,9 @@ import useListDetails from "@hooks/useListDetails";
 import useDarkMode from "@hooks/useDarkMode";
 import useModifyProfile from "@hooks/useModifyProfile";
 import useTimezones from "@hooks/useTimezones";
+import useProfile from "@hooks/useProfile";
+import useLocalStorage from "@hooks/useLocalStorage";
+import { formatPeriod, getReadyRecapKey } from "@utilities/wrappedPeriod";
 
 function NotificationBanner() {
   const modifyProfile = useModifyProfile();
@@ -15,6 +20,9 @@ function NotificationBanner() {
   const { notificationStatus, onRequestNotificationAccess, onDeclineNotificationAccess } = usePushNotifications();
   const { onRequestInstall, onDeclineInstall, isInstallAvailable } = useInstall();
   const { isTimezoneChanged, localTimeZone, setDismissed } = useTimezones();
+  const navigate = useNavigate();
+  const { profile } = useProfile();
+  const [dismissedRecapKey, setDismissedRecapKey] = useLocalStorage<string>("dismissedRecap", null);
 
   if (isInstallAvailable) {
     return (
@@ -71,6 +79,24 @@ function NotificationBanner() {
         primaryButtonAction={() => modifyProfile({ timeZone: localTimeZone })}
         secondaryButtonCopy="Dismiss"
         secondaryButtonAction={() => setDismissed(true)}
+      />
+    );
+  }
+
+  const recapKey = getReadyRecapKey(profile?.creationDate);
+  if (recapKey && recapKey !== dismissedRecapKey) {
+    const isYear = !recapKey.includes("-");
+    return (
+      <_NotificationBanner
+        title={isYear ? `Your ${recapKey} Wrapped is ready` : `Your ${formatPeriod(recapKey)} recap is ready`}
+        description={`See what you got done, your longest streak, and your busiest days in ${formatPeriod(recapKey)}.`}
+        primaryButtonCopy="View"
+        primaryButtonAction={() => {
+          setDismissedRecapKey(recapKey);
+          navigate(`/wrapped/${recapKey}`);
+        }}
+        secondaryButtonCopy="Dismiss"
+        secondaryButtonAction={() => setDismissedRecapKey(recapKey)}
       />
     );
   }

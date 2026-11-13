@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
@@ -15,12 +16,22 @@ import InitialListRedirect from "../containers/Redirects/InitialListRedirect";
 import Helmet from "@components/Helmet";
 import SharedProviders from "@hooks/internal/SharedProviders";
 
+const Wrapped = lazy(() => import("../containers/Wrapped"));
+
 const CoreApp = () => {
   return (
     <SharedProviders>
       <Routes>
         <Route path="/" element={<InitialListRedirect />} />
         <Route path="/auth/*" element={<Navigate to="/" replace />} />
+        <Route
+          path="wrapped/:period?"
+          element={
+            <Suspense>
+              <Wrapped />
+            </Suspense>
+          }
+        />
         <Route
           path=":currentListId/*"
           element={
