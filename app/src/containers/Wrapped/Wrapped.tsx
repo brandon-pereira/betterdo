@@ -39,9 +39,9 @@ import {
 import BarChart, { type BarDatum } from "./BarChart";
 import AreaChart from "./AreaChart";
 import CountUp from "./CountUp";
-import WrappedHeader from "./WrappedHeader";
 
 import Container from "../Container";
+import Header from "../Header";
 import Logo from "../Logo";
 import Navigation from "../Navigation";
 import Helmet from "@components/Helmet";
@@ -465,7 +465,7 @@ function Chrome({ children }: { children: React.ReactNode }) {
       <Container>
         <Logo />
         <Navigation />
-        <WrappedHeader />
+        <Header title="Wrapped" />
         {children}
       </Container>
     </>

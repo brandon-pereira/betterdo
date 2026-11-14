@@ -19,6 +19,18 @@ export const Loader = styled(_Loader)`
   margin-left: 0.5rem;
 `;
 
+export const Title = styled.h2`
+  flex: 1;
+  font-size: 1.8rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 4rem;
+  margin: 0;
+`;
+
 export const Container = styled.header`
   grid-row: 3;
   grid-column: 1;
@@ -38,6 +50,10 @@ export const Container = styled.header`
   transition: background 0.6s;
   &[data-dark-color="true"] {
     color: #fff;
+  }
+  /* A dark shadow smudges dark text, so lift it with a light one instead. */
+  &[data-dark-color="false"] ${Title} {
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
   }
   ${Hamburger} {
     padding: 0 0.5rem 0 0.8rem;
@@ -75,15 +91,4 @@ export const SettingsButton = styled(Button)`
     height: 1.6rem;
     width: 1.6rem;
   }
-`;
-export const Title = styled.h2`
-  flex: 1;
-  font-size: 1.8rem;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  text-align: center;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  line-height: 4rem;
-  margin: 0;
 `;

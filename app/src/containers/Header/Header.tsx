@@ -7,7 +7,13 @@ import useCurrentListId from "@hooks/useCurrentListId";
 import useHamburgerNav from "@hooks/useHamburgerNav";
 import useChromeColor from "@hooks/useChromeColor";
 
-function Header() {
+interface Props {
+  // Replaces the current list's title on pages that aren't a list (e.g. Wrapped),
+  // which also hides the list's loader and settings button.
+  title?: string;
+}
+
+function Header({ title }: Props) {
   const [isMobileNavVisible, setMobileNavVisibility] = useHamburgerNav();
   // Match the background the Header actually renders (Container writes
   // listColor to --current-list-color), so the text color stays legible.
@@ -20,12 +26,12 @@ function Header() {
   return (
     <Container data-dark-color={isDarkColor ? "true" : "false"}>
       <Hamburger open={isMobileNavVisible} hidden={isMobileNavVisible} onClick={() => setMobileNavVisibility(true)} />
-      <Loader isVisible={loading} size="2rem" />
-      <Title>{list.title}</Title>
+      <Loader isVisible={!title && loading} size="2rem" />
+      <Title>{title ?? list.title}</Title>
       <SettingsButton
         aria-label="List Settings"
         color="none"
-        hidden={list.type !== "default"}
+        hidden={Boolean(title) || list.type !== "default"}
         onClick={openEditListModal}
       >
         <Icon icon={Settings} color={"currentColor"} />
