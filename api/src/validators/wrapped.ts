@@ -1,6 +1,6 @@
 import z from "zod";
 
-// Body for POST /api/wrapped: `{ all: true }`, `{ year: 2026 }` or `{ year: 2026, month: 10 }`.
+// Body for QUERY /api/wrapped: `{ all: true }`, `{ year: 2026 }` or `{ year: 2026, month: 10 }`.
 // The year defaults to the current one.
 export const wrappedPeriodSchema = z.union([
   z.strictObject({ all: z.literal(true) }),

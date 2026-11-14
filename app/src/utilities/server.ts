@@ -39,7 +39,7 @@ export const disconnectApp = (clientId: string): Promise<void> => {
 };
 
 export const getWrapped = (period: WrappedPeriod): Promise<WrappedSummary> => {
-  return _post<WrappedSummary>(`wrapped`, period);
+  return _query<WrappedSummary>(`wrapped`, period);
 };
 
 export const getUserByEmail = (email: string): Promise<User> => {
@@ -82,6 +82,14 @@ function _delete(url: string): Promise<void> {
 function _post<response, args = object>(url: string, data: args): Promise<response> {
   return _fetch(`${baseUrl}/${url}`, {
     method: "POST",
+    body: JSON.stringify(data)
+  });
+}
+
+// HTTP QUERY (RFC 10008): a read-only request with a JSON body.
+function _query<response, args = object>(url: string, data: args): Promise<response> {
+  return _fetch(`${baseUrl}/${url}`, {
+    method: "QUERY",
     body: JSON.stringify(data)
   });
 }

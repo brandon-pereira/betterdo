@@ -7,8 +7,8 @@ import { validationErrorHook } from "../utils/validationErrorHook.js";
 
 const wrappedApi = new Hono();
 
-// A POST so the period can be sent as typed JSON; it doesn't modify anything.
-wrappedApi.post("/", authMiddleware, zValidator("json", wrappedPeriodSchema, validationErrorHook), async c => {
+// HTTP QUERY (RFC 10008): a read-only request that carries the period as a JSON body.
+wrappedApi.query("/", authMiddleware, zValidator("json", wrappedPeriodSchema, validationErrorHook), async c => {
   const user = c.get("user");
   const result = await getWrapped({
     userId: user.id,
