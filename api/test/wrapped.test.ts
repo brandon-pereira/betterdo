@@ -4,12 +4,13 @@ import { testDb } from "./helpers/setup.js";
 import createRouter, { type RouterOptions } from "./helpers/createRouter.js";
 import { createList } from "../src/services/lists.js";
 import { createTask, getTaskById, updateTaskWithNotification } from "../src/services/tasks.js";
-import { getWrapped, parseWrappedPeriod } from "../src/services/wrapped.js";
+import { getWrapped } from "../src/services/wrapped.js";
+import { wrappedPeriodSchema } from "../src/validators/wrapped.js";
 import { tasks } from "../src/schema/task.js";
 
 const TZ = "America/Edmonton";
-const YEAR_2025 = { type: "year", year: 2025 } as const;
-const ALL_TIME = { type: "all-time" } as const;
+const YEAR_2025 = { year: 2025 };
+const ALL_TIME = { all: true } as const;
 
 let router: RouterOptions;
 let listId: string;
@@ -56,7 +57,7 @@ describe("BetterDo Wrapped", () => {
   test("computes yearly totals scoped to the requested year", async () => {
     const w = await getWrapped({ userId: router.user.id, period: YEAR_2025, timeZone: TZ });
     expect(w.year).toBe(2025);
-    expect(w.period).toBe("2025");
+    expect(w.periodType).toBe("year");
     expect(w.totals.created).toBe(8); // 8 tasks created in 2025
     expect(w.totals.completed).toBe(7); // milk is incomplete
     expect(w.totals.completionRate).toBe(88); // 7 of the 8 created in 2025
@@ -113,7 +114,7 @@ describe("BetterDo Wrapped", () => {
 
   test("supports all-time: totals span every year, growth is null", async () => {
     const w = await getWrapped({ userId: router.user.id, period: ALL_TIME, timeZone: TZ });
-    expect(w.period).toBe("all-time");
+    expect(w.periodType).toBe("all-time");
     // All 9 seeded tasks (8 in 2025 + 1 in 2024).
     expect(w.totals.created).toBe(9);
     expect(w.totals.completed).toBe(8); // milk is incomplete
@@ -165,10 +166,9 @@ describe("BetterDo Wrapped", () => {
   test("monthly period buckets by day and compares with the previous month", async () => {
     const w = await getWrapped({
       userId: router.user.id,
-      period: { type: "month", year: 2025, month: 6 },
+      period: { year: 2025, month: 6 },
       timeZone: TZ
     });
-    expect(w.period).toBe("2025-06");
     expect(w.periodType).toBe("month");
     expect(w.month).toBe(6);
     expect(w.totals.created).toBe(4); // Jun 28, 29, 29, 30
@@ -195,7 +195,7 @@ describe("BetterDo Wrapped", () => {
 
     const march = await getWrapped({
       userId: solo.user.id,
-      period: { type: "month", year: 2025, month: 3 },
+      period: { year: 2025, month: 3 },
       timeZone: TZ
     });
     expect(march.totals.created).toBe(0);
@@ -206,7 +206,7 @@ describe("BetterDo Wrapped", () => {
   test("monthly growth compares across a year boundary", async () => {
     const w = await getWrapped({
       userId: router.user.id,
-      period: { type: "month", year: 2025, month: 1 },
+      period: { year: 2025, month: 1 },
       timeZone: TZ
     });
     expect(w.breakdown).toHaveLength(31);
@@ -218,7 +218,7 @@ describe("BetterDo Wrapped", () => {
     const now = new Date();
     const w = await getWrapped({
       userId: router.user.id,
-      period: { type: "month", year: now.getFullYear(), month: now.getMonth() + 1 },
+      period: { month: now.getMonth() + 1 }, // year defaults to the current one
       timeZone: TZ
     });
     expect(w.totals.daysInPeriod).toBe(now.getDate());
@@ -241,13 +241,16 @@ describe("BetterDo Wrapped", () => {
     expect(w.longestStreak.completed.length).toBe(0);
   });
 
-  test("parses period keys from the URL", () => {
-    expect(parseWrappedPeriod("2026-10")).toEqual({ type: "month", year: 2026, month: 10 });
-    expect(parseWrappedPeriod("2026")).toEqual({ type: "year", year: 2026 });
-    expect(parseWrappedPeriod("all-time")).toEqual({ type: "all-time" });
-    expect(parseWrappedPeriod("2026-13")).toBeNull();
-    expect(parseWrappedPeriod("1999")).toBeNull();
-    expect(parseWrappedPeriod("26")).toBeNull();
+  test("validates the requested period", () => {
+    expect(wrappedPeriodSchema.parse({ year: 2026, month: 10 })).toEqual({ year: 2026, month: 10 });
+    expect(wrappedPeriodSchema.parse({ year: 2026 })).toEqual({ year: 2026 });
+    expect(wrappedPeriodSchema.parse({ all: true })).toEqual({ all: true });
+    expect(wrappedPeriodSchema.parse({})).toEqual({});
+    expect(wrappedPeriodSchema.safeParse({ year: 2026, month: 13 }).success).toBe(false);
+    expect(wrappedPeriodSchema.safeParse({ year: 1999 }).success).toBe(false);
+    expect(wrappedPeriodSchema.safeParse({ year: "2026" }).success).toBe(false);
+    expect(wrappedPeriodSchema.safeParse({ all: "true" }).success).toBe(false);
+    expect(wrappedPeriodSchema.safeParse({ all: false }).success).toBe(false);
   });
 
   test("stamps completedAt when a task transitions to completed", async () => {

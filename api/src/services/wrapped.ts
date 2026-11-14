@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { db } from "../db.js";
 import { completedByUser, toLocalTime } from "./taskQueries.js";
+import type { WrappedPeriod } from "../validators/wrapped.js";
 
 /**
  * "BetterDo Wrapped" — a monthly, yearly or all-time Spotify-Wrapped-style
@@ -16,15 +17,8 @@ import { completedByUser, toLocalTime } from "./taskQueries.js";
  * (always accurate); the monthly "completed" graph uses `completed_at`.
  */
 
-export type WrappedPeriod =
-  | { type: "month"; year: number; month: number } // month is 1-12
-  | { type: "year"; year: number }
-  | { type: "all-time" };
-
 export interface WrappedSummary {
-  // URL key for the period: "2026-10", "2026" or "all-time".
-  period: string;
-  periodType: WrappedPeriod["type"];
+  periodType: "month" | "year" | "all-time";
   // The period's year, or the current year for all-time.
   year: number;
   // 1-12 for a month, null otherwise.
@@ -75,38 +69,18 @@ interface WrappedArgs {
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// Parses a URL key ("2026-10", "2026" or "all-time") into a period.
-export function parseWrappedPeriod(key: string): WrappedPeriod | null {
-  if (key === "all-time") {
-    return { type: "all-time" };
-  }
-  const match = /^(\d{4})(?:-(\d{2}))?$/.exec(key);
-  if (!match) {
-    return null;
-  }
-  const year = Number(match[1]);
-  if (year < 2000 || year > 2100) {
-    return null;
-  }
-  if (match[2] === undefined) {
-    return { type: "year", year };
-  }
-  const month = Number(match[2]);
-  return month >= 1 && month <= 12 ? { type: "month", year, month } : null;
-}
-
 const toDateString = (year: number, month: number) => `${year}-${String(month).padStart(2, "0")}-01`;
 
-// [start, end) of the period and of the one before it, as YYYY-MM-DD local dates.
-function getPeriodRange(period: Exclude<WrappedPeriod, { type: "all-time" }>) {
-  if (period.type === "year") {
+// [start, end) of a month (or the whole year when month is undefined) and of the
+// period before it, as YYYY-MM-DD local dates.
+function getPeriodRange(year: number, month?: number) {
+  if (month === undefined) {
     return {
-      start: toDateString(period.year, 1),
-      end: toDateString(period.year + 1, 1),
-      previousStart: toDateString(period.year - 1, 1)
+      start: toDateString(year, 1),
+      end: toDateString(year + 1, 1),
+      previousStart: toDateString(year - 1, 1)
     };
   }
-  const { year, month } = period;
   return {
     start: toDateString(year, month),
     end: month === 12 ? toDateString(year + 1, 1) : toDateString(year, month + 1),
@@ -114,19 +88,16 @@ function getPeriodRange(period: Exclude<WrappedPeriod, { type: "all-time" }>) {
   };
 }
 
-function getPeriodKey(period: WrappedPeriod) {
-  if (period.type === "all-time") {
-    return "all-time";
-  }
-  return period.type === "year" ? String(period.year) : toDateString(period.year, period.month).slice(0, 7);
-}
-
 export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Promise<WrappedSummary> {
-  const isAllTime = period.type === "all-time";
-  const year = isAllTime ? new Date().getFullYear() : period.year;
+  const isAllTime = "all" in period;
+  const year = (!isAllTime && period.year) || new Date().getFullYear();
+  const month = isAllTime ? undefined : period.month;
+  const periodType = isAllTime ? "all-time" : month ? "month" : "year";
 
   // All-time has no range; these are only read when !isAllTime.
-  const { start, end, previousStart } = isAllTime ? { start: "", end: "", previousStart: "" } : getPeriodRange(period);
+  const { start, end, previousStart } = isAllTime
+    ? { start: "", end: "", previousStart: "" }
+    : getPeriodRange(year, month);
 
   // Local-time conversion of a column, reused throughout.
   const local = (col: "created_at" | "completed_at") => toLocalTime(col, timeZone);
@@ -224,7 +195,7 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
         return rows.rows.map(r => ({ key: r.key, label: String(r.key), created: r.created, completed: r.completed }));
       })()
     : await (async () => {
-        const isMonth = period.type === "month";
+        const isMonth = periodType === "month";
         const unit = sql.raw(isMonth ? "DAY" : "MONTH");
         const bucketCount = isMonth ? sql`EXTRACT(DAY FROM ${end}::date - 1)::int` : sql`12`;
         const rows = await db.execute<{ key: number; created: number; completed: number }>(sql`
@@ -327,10 +298,9 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
   const prevCreated = t.prev_created ?? 0;
 
   return {
-    period: getPeriodKey(period),
-    periodType: period.type,
+    periodType,
     year,
-    month: period.type === "month" ? period.month : null,
+    month: month ?? null,
     timeZone,
     totals: {
       created,

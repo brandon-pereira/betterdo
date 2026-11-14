@@ -12,4 +12,4 @@ export const getConfigUrl = () => `${SERVER_URL}/api/config`;
 
 export const getConnectedAppsUrl = () => `${SERVER_URL}/api/mcp-sessions`;
 
-export const getWrappedUrl = (periodKey: string) => `${SERVER_URL}/api/wrapped/${periodKey}`;
+export const getWrappedUrl = () => `${SERVER_URL}/api/wrapped`;

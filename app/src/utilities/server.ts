@@ -2,6 +2,8 @@ import Task from "@customTypes/task";
 import List, { ServerList } from "@customTypes/list";
 import User from "@customTypes/user";
 import { SERVER_URL } from "@utilities/env";
+import type { WrappedPeriod } from "../../../api/src/validators/wrapped";
+import type { WrappedSummary } from "../../../api/src/services/wrapped";
 
 const baseUrl = `${SERVER_URL}/api`;
 
@@ -34,6 +36,10 @@ export const deleteList = (listId: string): Promise<void> => {
 
 export const disconnectApp = (clientId: string): Promise<void> => {
   return _delete(`mcp-sessions/${encodeURIComponent(clientId)}`);
+};
+
+export const getWrapped = (period: WrappedPeriod): Promise<WrappedSummary> => {
+  return _post<WrappedSummary>(`wrapped`, period);
 };
 
 export const getUserByEmail = (email: string): Promise<User> => {

@@ -1,23 +1,20 @@
 import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { getWrapped, parseWrappedPeriod } from "../services/wrapped.js";
+import { getWrapped } from "../services/wrapped.js";
+import { wrappedPeriodSchema } from "../validators/wrapped.js";
+import { validationErrorHook } from "../utils/validationErrorHook.js";
 
 const wrappedApi = new Hono();
 
-// `:period` is a month ("2026-10"), a calendar year ("2026") or the literal "all-time".
-wrappedApi.get("/:period", authMiddleware, async c => {
+// A POST so the period can be sent as typed JSON; it doesn't modify anything.
+wrappedApi.post("/", authMiddleware, zValidator("json", wrappedPeriodSchema, validationErrorHook), async c => {
   const user = c.get("user");
-  const period = parseWrappedPeriod(c.req.param("period"));
-  if (!period) {
-    return c.json({ error: "Invalid period" }, 400);
-  }
-
   const result = await getWrapped({
     userId: user.id,
-    period,
+    period: c.req.valid("json"),
     timeZone: user.timeZone
   });
-
   return c.json(result);
 });
 
