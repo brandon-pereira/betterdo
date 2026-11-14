@@ -40,6 +40,7 @@ function AddListModalContainer({ isOpen }: Props) {
       const mCords = $modal.getBoundingClientRect();
       const isBottom = mCords.top + mCords.height >= window.innerHeight;
       $arrow.removeAttribute("style");
+      $modal.dataset.bottom = isBottom ? "true" : "false";
       if (isBottom) {
         Object.assign($modal.style, { top: "auto", bottom: "0" });
         Object.assign($arrow.style, {
@@ -49,6 +50,7 @@ function AddListModalContainer({ isOpen }: Props) {
       }
     } else {
       $arrow.removeAttribute("style");
+      $modal.dataset.bottom = "false";
       Object.assign($modal.style, { top: "", left: "", bottom: "" });
       $newList.removeAttribute("style");
     }

@@ -34,6 +34,7 @@ export const Modal = styled(_Modal)`
       width: 1.2rem;
       border-radius: 3px 0 0 0;
       transform: rotate(45deg);
+      clip-path: polygon(-1rem -1rem, calc(100% + 1rem) -1rem, -1rem calc(100% + 1rem));
       background: ${theme.colors.modals.contentBackground};
       border-left: 1px solid ${theme.colors.modals.contentBackground};
       border-top: 1px solid ${theme.colors.modals.contentBackground};

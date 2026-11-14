@@ -19,12 +19,16 @@ export const Modal = styled(_Modal)`
   }
   ${theme.queries.medium} {
     position: absolute;
+    &[data-bottom="true"] {
+      border-bottom-left-radius: 0;
+    }
     [data-betterdo-modal-arrow] {
       display: block;
       height: 1.2rem;
       width: 1.2rem;
       left: -0.53rem;
       transform: rotate(45deg);
+      clip-path: polygon(-1rem -1rem, -1rem calc(100% + 1rem), calc(100% + 1rem) calc(100% + 1rem));
       border-radius: 0 0 0 3px;
       background: ${theme.colors.modals.contentBackground};
       border-left: 1px solid ${theme.colors.modals.contentBackground};
