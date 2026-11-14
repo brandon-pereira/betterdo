@@ -1,7 +1,5 @@
 import { sql } from "drizzle-orm";
 
-// SQL fragments for per-user stats queries (e.g. BetterDo Wrapped).
-
 // `created_at` / `completed_at` are UTC `timestamp` columns; this converts one
 // to the user's local time so it can be bucketed by local day or hour.
 export const toLocalTime = (column: "created_at" | "completed_at", timeZone: string) =>

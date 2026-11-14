@@ -3,25 +3,14 @@ import { db } from "../db.js";
 import { completedByUser, toLocalTime } from "./taskQueries.js";
 import type { WrappedPeriod } from "../validators/wrapped.js";
 
-/**
- * "BetterDo Wrapped" — a monthly, yearly or all-time Spotify-Wrapped-style
- * summary of a user's activity, computed entirely from the tasks table.
- *
- * Timezone handling: `tasks.created_at` and `tasks.completed_at` are stored as
- * UTC in `timestamp` (no tz) columns. To bucket by the user's local day / hour
- * we convert with `AT TIME ZONE 'UTC' AT TIME ZONE <userTz>`.
- *
- * Completion timing: `completed_at` was backfilled from `created_at` for
- * historical tasks and is stamped going forward on the incomplete -> complete
- * transition (see services/tasks.ts). For most stats we bucket on `created_at`
- * (always accurate); the monthly "completed" graph uses `completed_at`.
- */
+// "BetterDo Wrapped": a monthly, yearly or all-time summary of a user's activity.
+// Note `completed_at` was backfilled from `created_at` for historical tasks, so
+// older completion stats mirror creation dates.
 
 export interface WrappedSummary {
   periodType: "month" | "year" | "all-time";
   // The period's year, or the current year for all-time.
   year: number;
-  // 1-12 for a month, null otherwise.
   month: number | null;
   timeZone: string;
   totals: {
@@ -40,14 +29,10 @@ export interface WrappedSummary {
     createdPreviousPeriod: number;
     growthPct: number | null;
   };
-  // Created/completed counts bucketed by day (month), month (year) or year
-  // (all-time). `label` is for display ("1"…"31", "Jan"…"Dec", "2018"…"2026");
-  // `key` is the raw day, month or year number.
+  // Bucketed by day (month), month (year) or year (all-time). `key` is the raw
+  // day/month/year number; `label` is for display.
   breakdown: { key: number; label: string; created: number; completed: number }[];
-  // Longest run of consecutive days. `added` uses created_at (days a task was
-  // created); `completed` uses completed_at (days a task was finished). Note:
-  // completed_at was backfilled from created_at for historical tasks, so the two
-  // can be identical for older periods.
+  // Longest runs of consecutive days with a task added / completed.
   longestStreak: {
     added: { length: number; start: string | null; end: string | null };
     completed: { length: number; start: string | null; end: string | null };
@@ -57,7 +42,6 @@ export interface WrappedSummary {
   byHour: { hour: number; count: number }[];
   topTasks: { title: string; count: number }[];
   topLists: { title: string; color: string; count: number }[];
-  // First task of the period (first of the month/year, or first ever for all-time).
   firstTask: { title: string; createdAt: string } | null;
 }
 
@@ -99,18 +83,16 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
     ? { start: "", end: "", previousStart: "" }
     : getPeriodRange(year, month);
 
-  // Local-time conversion of a column, reused throughout.
   const local = (col: "created_at" | "completed_at") => toLocalTime(col, timeZone);
 
-  // Scope predicate: for a year it's user + [start, end); for all-time it's just
-  // the user (relies on the tasks_createdById_idx index for speed).
+  // Tasks the user created in the period (or ever, for all-time).
   const scope = isAllTime
     ? sql`created_by_id = ${userId}`
     : sql`created_by_id = ${userId}
         AND ${local("created_at")} >= ${start}
         AND ${local("created_at")} < ${end}`;
 
-  // Same idea but for tasks the user completed within the period.
+  // Tasks the user completed in the period.
   const completedScope = isAllTime
     ? completedByUser(userId)
     : sql`${completedByUser(userId)}
@@ -119,7 +101,6 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
 
   const today = sql`(now() AT TIME ZONE ${timeZone})::date`;
 
-  // 1. Totals (created / completed / active days) + the previous period's created count.
   const totalsRows = await db.execute<{
     created: number;
     completed: number;
@@ -157,8 +138,6 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
     days_in_period: null
   };
 
-  // Days in period: elapsed days of a month/year (all of them once it's over), or
-  // for all-time, days from the first task up to today (inclusive).
   let daysInPeriod: number;
   if (isAllTime) {
     const firstDay = t.first_day ? new Date(t.first_day) : new Date();
@@ -167,7 +146,6 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
     daysInPeriod = Math.max(1, t.days_in_period ?? 1);
   }
 
-  // 2. Breakdown — by day within a month, by month within a year, or by year for all-time.
   const breakdown = isAllTime
     ? await (async () => {
         const rows = await db.execute<{ key: number; created: number; completed: number }>(sql`
@@ -223,8 +201,7 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
         }));
       })();
 
-  // 3. Longest streaks of consecutive active days (islands-and-gaps), one for
-  // adding tasks (created_at) and one for completing them (completed_at).
+  // Islands-and-gaps: consecutive dates share the same (date - row_number).
   const streakQuery = (col: "created_at" | "completed_at", pred: ReturnType<typeof sql>) =>
     db.execute<{ streak_start: string; streak_end: string; streak_len: number }>(sql`
       WITH days AS (
@@ -243,7 +220,6 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
   const addedStreak = addedStreakRows.rows[0];
   const completedStreak = completedStreakRows.rows[0];
 
-  // 4. Busiest single day.
   const busiestRows = await db.execute<{ day: string; n: number }>(sql`
     SELECT (${local("created_at")}::date)::text AS day, COUNT(*)::int AS n
     FROM tasks WHERE ${scope}
@@ -251,7 +227,7 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
   `);
   const busiest = busiestRows.rows[0];
 
-  // 5. By weekday (0 = Sunday) and 6. by hour (0-23), local time.
+  // Weekday 0 is Sunday.
   const weekdayRows = await db.execute<{ weekday: number; count: number }>(sql`
     SELECT EXTRACT(DOW FROM ${local("created_at")})::int AS weekday, COUNT(*)::int AS count
     FROM tasks WHERE ${scope}
@@ -263,7 +239,7 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
     GROUP BY 1 ORDER BY 1
   `);
 
-  // 7. Most-created tasks by normalized title.
+  // Most-created tasks, matching titles case- and whitespace-insensitively.
   const topTaskRows = await db.execute<{ title: string; count: number }>(sql`
     SELECT lower(trim(title)) AS title, COUNT(*)::int AS count
     FROM tasks WHERE ${scope}
@@ -271,7 +247,6 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
     ORDER BY count DESC, title ASC LIMIT 10
   `);
 
-  // 8. Top lists by volume.
   const topListRows = await db.execute<{ title: string; color: string; count: number }>(sql`
     SELECT l.title, l.color, COUNT(t.id)::int AS count
     FROM tasks t JOIN list l ON l.id = t.list_id
@@ -285,7 +260,6 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
     GROUP BY l.title, l.color ORDER BY count DESC LIMIT 8
   `);
 
-  // 9. First task of the period — the first of the month/year, or the first ever for all-time.
   const firstRows = await db.execute<{ title: string; created_at: string }>(sql`
     SELECT title, (${local("created_at")})::text AS created_at
     FROM tasks WHERE ${scope}

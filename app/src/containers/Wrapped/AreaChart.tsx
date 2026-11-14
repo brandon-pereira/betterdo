@@ -37,8 +37,7 @@ function formatHour(h: number): string {
   return h < 12 ? `${h}am` : `${h - 12}pm`;
 }
 
-// A smooth area/line chart for the 24-hour activity distribution. Reads far
-// cleaner than 24 skinny bars, and highlights the peak hour.
+// Hour-of-day distribution as a smooth area chart, with the peak hour marked.
 function AreaChart({ values }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "0px 0px -10% 0px" });

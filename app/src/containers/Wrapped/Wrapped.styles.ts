@@ -44,8 +44,6 @@ export const IntroSub = styled.p`
   font-size: 1rem;
 `;
 
-// ---- Period picker (Month / Year / All time + previous/next) ----
-
 export const PeriodBar = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -115,7 +113,6 @@ export const StepButton = styled.button`
   }
 `;
 
-// Responsive masonry-ish grid. Cards can opt into spanning 2 columns.
 export const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -181,8 +178,6 @@ export const CardNote = styled.p`
   }
 `;
 
-// ---- First task ("origin story") tile ----
-
 export const FirstTask = styled.div`
   position: relative;
   display: flex;
@@ -191,7 +186,6 @@ export const FirstTask = styled.div`
   padding-top: 0.25rem;
 `;
 
-// Oversized decorative opening quote behind the title.
 export const QuoteMark = styled.span`
   position: absolute;
   top: -1.75rem;
@@ -231,13 +225,10 @@ export const FirstTaskAgo = styled.span`
   opacity: 0.7;
 `;
 
-// ---- Charts ----
-
 export const ChartWrap = styled.div`
   width: 100%;
 `;
 
-// Column count comes from --bar-count.
 export const Bars = styled.div`
   display: grid;
   grid-template-columns: repeat(var(--bar-count, 12), 1fr);
@@ -256,17 +247,14 @@ export const BarColumn = styled.div`
   min-height: 0;
 `;
 
-// The value label sits above the bar; fixed height so every column reserves the
-// same space and bar percentages compare fairly.
+// Fixed height so every column reserves the same space and bar heights compare fairly.
 export const BarValueSlot = styled.div`
   height: 0.85rem;
   display: flex;
   align-items: flex-end;
 `;
 
-// The track that the bar grows within. It flexes to fill the remaining column
-// height (after value + label), so a bar's % height is measured against a
-// consistent area for every column.
+// Fills the column height left after the value and label; bar % heights are relative to it.
 export const BarTrack = styled.div`
   flex: 1;
   min-height: 0;
@@ -295,8 +283,6 @@ export const BarValue = styled.span`
   font-weight: 700;
 `;
 
-// ---- Area chart (hour-of-day distribution) ----
-
 export const AreaChartBox = styled(m.div)`
   position: relative;
   width: 100%;
@@ -322,8 +308,6 @@ export const AreaLine = styled.path`
   vector-effect: non-scaling-stroke;
 `;
 
-// An absolutely-positioned HTML dot so it stays a perfect small circle
-// regardless of the SVG's non-uniform (stretched) scaling.
 export const AreaDot = styled.span`
   position: absolute;
   width: 0.65rem;
@@ -352,8 +336,6 @@ export const AreaPeak = styled.span`
     opacity: 1;
   }
 `;
-
-// ---- Ranked lists (top tasks / lists) ----
 
 export const RankList = styled.ol`
   list-style: none;

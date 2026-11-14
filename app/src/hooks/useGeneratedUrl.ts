@@ -7,9 +7,8 @@ function useGeneratedUrl() {
   const params = useParams();
   const generateUrl = useCallback(
     (url = "", _params?: { [key: string]: string }) => {
-      // Some pages (e.g. Wrapped) live outside the `/:currentListId/*` tree, so
-      // there's no currentListId param. Fall back to the last viewed list so
-      // links like profile-settings still resolve to a valid list-scoped route.
+      // Pages outside `/:currentListId/*` (e.g. Wrapped) fall back to the last viewed
+      // list so list-scoped links like profile-settings still resolve.
       const currentListId = params.currentListId || localStorage.getItem("lastViewedList") || "inbox";
       return generatePath(baseUrl + url, Object.assign({ currentListId }, params, _params));
     },

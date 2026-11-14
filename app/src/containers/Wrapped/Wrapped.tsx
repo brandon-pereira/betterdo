@@ -61,7 +61,6 @@ import {
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-// Accent gradients for the "hero" stat cards.
 const GRAD_BLUE = "linear-gradient(145deg, #2979ff, #6a11cb)";
 const GRAD_GREEN = "linear-gradient(145deg, #11998e, #38ef7d)";
 const GRAD_PINK = "linear-gradient(145deg, #f5576c, #f093fb)";
@@ -104,7 +103,6 @@ function formatDate(iso: string | null, contextYear?: number): string {
   });
 }
 
-// Human-friendly "N years/months/days ago" for the first-task milestone.
 function timeAgo(iso: string): string {
   const then = new Date(iso.replace(" ", "T")).getTime();
   const days = Math.floor((Date.now() - then) / 86_400_000);
@@ -179,7 +177,6 @@ function Recap({ periodKey, onSelectPeriod }: RecapProps) {
   const canGoNext = !isAllTime && Boolean(nextStart && nextStart <= new Date());
   const isCurrentPeriod = !isAllTime && !canGoNext;
 
-  // Chart of completed per bucket (days for a month, months for a year, years for all-time).
   const breakdownData: BarDatum[] = useMemo(
     () =>
       (data?.breakdown ?? []).map(b => {
@@ -280,8 +277,7 @@ function Recap({ periodKey, onSelectPeriod }: RecapProps) {
   const streak = longestStreak.completed;
   const peakWeekday = weekdayData.reduce((a, b) => (b.value > a.value ? b : a), weekdayData[0]);
 
-  // Within a month or year the year is implied, so dates in it can omit it.
-  // In all-time view (contextYear undefined) every date shows its year.
+  // Within a month or year, dates in that year can omit it.
   const contextYear = isAllTime ? undefined : data.year;
   const periodName = isAllTime ? "all-time" : formatPeriod(periodKey);
   const monthName = isMonth
@@ -295,7 +291,7 @@ function Recap({ periodKey, onSelectPeriod }: RecapProps) {
       : `Everything you got done this ${periodNoun}, at a glance.`;
   }
 
-  // Simple incrementing index so cards fade in with a slight stagger.
+  // Staggers the cards' fade-in.
   let i = 0;
   const anim = () => ({
     custom: i++,

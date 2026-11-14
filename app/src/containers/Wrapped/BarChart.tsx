@@ -18,8 +18,7 @@ type Props = {
   showValues?: boolean;
 };
 
-// A dependency-free SVG-less bar chart. Bars grow from 0 -> their height when
-// the chart scrolls into view, staggered left-to-right via framer-motion.
+// Bars grow in left to right once the chart scrolls into view.
 function BarChart({ data, accent, highlightAccent, showValues }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "0px 0px -10% 0px" });

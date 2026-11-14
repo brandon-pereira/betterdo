@@ -35,9 +35,8 @@ export const tasks = pgTable(
   t => [
     // Tasks are almost always read per list, split by completion, in position order.
     index("tasks_list_id_is_completed_position_idx").on(t.listId, t.isCompleted, t.position),
-    // Speeds up per-user aggregations (e.g. BetterDo Wrapped) that scope tasks by their creator.
+    // Per-user stats (BetterDo Wrapped) filter by creator and by completer.
     index("tasks_createdById_idx").on(t.createdById),
-    // Speeds up per-user completion stats (e.g. BetterDo Wrapped).
     index("tasks_completed_by_id_idx").on(t.completedById)
   ]
 );

@@ -11,7 +11,6 @@ type Props = {
   prefix?: string;
 };
 
-// Animated number that counts up from 0 when scrolled into view.
 function CountUp({ value, duration = 1.5, decimals = 0, suffix = "", prefix = "" }: Props) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "0px 0px -10% 0px" });
