@@ -22,10 +22,13 @@ function smoothPath(points: [number, number][]): string {
     const p1 = points[i];
     const p2 = points[i + 1];
     const p3 = points[i + 2] ?? p2;
+    // Keeping control points within the segment's own y-range keeps the curve
+    // there too, so it never overshoots below zero or above the peak.
+    const clampY = (y: number) => Math.min(Math.max(y, Math.min(p1[1], p2[1])), Math.max(p1[1], p2[1]));
     const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
-    const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const cp1y = clampY(p1[1] + (p2[1] - p0[1]) / 6);
     const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
-    const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+    const cp2y = clampY(p2[1] - (p3[1] - p1[1]) / 6);
     d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`;
   }
   return d;
