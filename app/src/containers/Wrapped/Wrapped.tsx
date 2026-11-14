@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { CSSProperties } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { formatDistanceToNowStrict } from "date-fns";
 
 import {
   Page,
@@ -101,21 +102,6 @@ function formatDate(iso: string | null, contextYear?: number): string {
     day: "numeric",
     ...(showYear ? { year: "numeric" } : {})
   });
-}
-
-function timeAgo(iso: string): string {
-  const then = new Date(iso.replace(" ", "T")).getTime();
-  const days = Math.floor((Date.now() - then) / 86_400_000);
-  if (days >= 365) {
-    const years = Math.floor(days / 365);
-    return `${years} year${years === 1 ? "" : "s"} ago`;
-  }
-  if (days >= 30) {
-    const months = Math.floor(days / 30);
-    return `${months} month${months === 1 ? "" : "s"} ago`;
-  }
-  if (days >= 1) return `${days} day${days === 1 ? "" : "s"} ago`;
-  return "today";
 }
 
 // Switching tabs keeps you near the period you were looking at.
@@ -280,6 +266,12 @@ function Recap({ periodKey, onSelectPeriod }: RecapProps) {
   // Within a month or year, dates in that year can omit it.
   const contextYear = isAllTime ? undefined : data.year;
   const periodName = isAllTime ? "all-time" : formatPeriod(periodKey);
+  const firstTaskAge =
+    firstTask &&
+    formatDistanceToNowStrict(new Date(firstTask.createdAt.replace(" ", "T")), {
+      addSuffix: true,
+      roundingMethod: "floor"
+    });
   const monthName = isMonth
     ? new Date(period.year, period.month - 1, 1).toLocaleDateString(undefined, { month: "long" })
     : "";
@@ -421,7 +413,7 @@ function Recap({ periodKey, onSelectPeriod }: RecapProps) {
                   <FirstTaskDate>{formatDate(firstTask.createdAt, contextYear)}</FirstTaskDate>
                   <FirstTaskAgo>
                     · {isAllTime ? "your very first task" : `your first task of the ${periodNoun}`}
-                    {isAllTime ? `, ${timeAgo(firstTask.createdAt)}` : ""}
+                    {isAllTime ? `, ${firstTaskAge}` : ""}
                   </FirstTaskAgo>
                 </FirstTaskMeta>
               </FirstTask>

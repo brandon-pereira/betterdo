@@ -224,23 +224,6 @@ describe("BetterDo Wrapped", () => {
     expect(w.totals.daysInPeriod).toBe(now.getDate());
   });
 
-  test("completed stats only count tasks the user completed themselves", async () => {
-    const owner = await createRouter();
-    const partner = await createRouter();
-    const list = await createList({ title: "Shared", createdById: owner.user.id });
-    const [task] = await createTask({ listId: list.id, title: "x", createdById: owner.user.id });
-    const completedAt = new Date("2025-04-02T18:00:00Z");
-    await testDb
-      .update(tasks)
-      .set({ createdAt: completedAt, isCompleted: true, completedAt, completedById: partner.user.id })
-      .where(eq(tasks.id, task.id));
-
-    const w = await getWrapped({ userId: owner.user.id, period: YEAR_2025, timeZone: TZ });
-    expect(w.totals.completed).toBe(0);
-    expect(w.breakdown.find(m => m.key === 4)?.completed).toBe(0);
-    expect(w.longestStreak.completed.length).toBe(0);
-  });
-
   test("validates the requested period", () => {
     expect(wrappedPeriodSchema.parse({ year: 2026, month: 10 })).toEqual({ year: 2026, month: 10 });
     expect(wrappedPeriodSchema.parse({ year: 2026 })).toEqual({ year: 2026 });
@@ -261,7 +244,6 @@ describe("BetterDo Wrapped", () => {
     const completed = await getTaskById(task.id);
     expect(completed?.isCompleted).toBe(true);
     expect(completed?.completedAt).toBeInstanceOf(Date);
-    expect(completed?.completedById).toBe(router.user.id);
   });
 
   test("clears completedAt when a task is re-opened", async () => {
@@ -270,8 +252,6 @@ describe("BetterDo Wrapped", () => {
     expect((await getTaskById(task.id))?.completedAt).toBeInstanceOf(Date);
 
     await updateTaskWithNotification(task.id, { isCompleted: false }, router);
-    const reopened = await getTaskById(task.id);
-    expect(reopened?.completedAt).toBeNull();
-    expect(reopened?.completedById).toBeNull();
+    expect((await getTaskById(task.id))?.completedAt).toBeNull();
   });
 });

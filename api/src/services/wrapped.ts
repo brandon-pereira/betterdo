@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import { db } from "../db.js";
-import { completedByUser, toLocalTime } from "./taskQueries.js";
 import type { WrappedPeriod } from "../validators/wrapped.js";
 
 // "BetterDo Wrapped": a monthly, yearly or all-time summary of a user's activity.
@@ -15,7 +14,7 @@ export interface WrappedSummary {
   timeZone: string;
   totals: {
     created: number;
-    // Tasks the user completed during the period, whenever they were created.
+    // The user's tasks completed during the period, whenever they were created.
     completed: number;
     // Share (0-100) of the tasks created in the period that are now done.
     completionRate: number;
@@ -83,7 +82,10 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
     ? { start: "", end: "", previousStart: "" }
     : getPeriodRange(year, month);
 
-  const local = (col: "created_at" | "completed_at") => toLocalTime(col, timeZone);
+  // created_at / completed_at are UTC `timestamp` columns; convert to the user's
+  // local time to bucket by local day or hour.
+  const local = (col: "created_at" | "completed_at") =>
+    sql`(${sql.raw(col)} AT TIME ZONE 'UTC' AT TIME ZONE ${timeZone})`;
 
   // Tasks the user created in the period (or ever, for all-time).
   const scope = isAllTime
@@ -92,10 +94,11 @@ export async function getWrapped({ userId, period, timeZone }: WrappedArgs): Pro
         AND ${local("created_at")} >= ${start}
         AND ${local("created_at")} < ${end}`;
 
-  // Tasks the user completed in the period.
+  // Tasks the user created that were completed in the period.
   const completedScope = isAllTime
-    ? completedByUser(userId)
-    : sql`${completedByUser(userId)}
+    ? sql`created_by_id = ${userId} AND completed_at IS NOT NULL`
+    : sql`created_by_id = ${userId}
+        AND completed_at IS NOT NULL
         AND ${local("completed_at")} >= ${start}
         AND ${local("completed_at")} < ${end}`;
 

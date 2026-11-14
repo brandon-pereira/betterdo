@@ -18,9 +18,6 @@ export const tasks = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     isCompleted: boolean("is_completed").notNull().default(false),
     completedAt: timestamp("completed_at"),
-    // Who checked the task off; on shared lists this can differ from the creator.
-    // Null for tasks completed before this was tracked.
-    completedById: text("completed_by_id").references(() => user.id, { onDelete: "set null" }),
     dueDate: timestamp("due_date", { withTimezone: true }),
     notes: text("notes"),
     priority: text("priority", {
@@ -35,8 +32,7 @@ export const tasks = pgTable(
   t => [
     // Tasks are almost always read per list, split by completion, in position order.
     index("tasks_list_id_is_completed_position_idx").on(t.listId, t.isCompleted, t.position),
-    // Per-user stats (BetterDo Wrapped) filter by creator and by completer.
-    index("tasks_createdById_idx").on(t.createdById),
-    index("tasks_completed_by_id_idx").on(t.completedById)
+    // Per-user stats (BetterDo Wrapped) filter by creator.
+    index("tasks_createdById_idx").on(t.createdById)
   ]
 );
