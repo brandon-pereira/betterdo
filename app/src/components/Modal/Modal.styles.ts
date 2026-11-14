@@ -6,7 +6,7 @@ import { theme } from "../../theme";
 
 import Icon from "@components/Icon";
 
-export const Overlay = styled.div`
+export const Overlay = styled(m.div)`
   position: fixed;
   top: 0;
   left: 0;
@@ -21,6 +21,11 @@ export const Overlay = styled.div`
   backdrop-filter: blur(3px);
   &[data-visible="false"] {
     visibility: hidden;
+    pointer-events: none;
+  }
+  /* Let clicks through while the exit animation finishes. */
+  &[data-exiting="true"],
+  &[data-exiting="true"] * {
     pointer-events: none;
   }
 `;

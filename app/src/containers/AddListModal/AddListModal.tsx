@@ -32,39 +32,24 @@ function AddListModalContainer({ isOpen }: Props) {
     if (!$modal || !$newList || !$arrow) {
       return;
     }
+    // Only position properties are set, so framer-motion's inline transform and
+    // opacity (the enter/exit animation) are left alone.
     if (window.innerWidth >= MEDIUM) {
       const nlCords = $newList.getBoundingClientRect();
-      $modal.setAttribute(
-        "style",
-        toStyleString({
-          top: nlCords.top + "px",
-          left: nlCords.width + 10 + "px",
-          bottom: "auto"
-        })
-      );
+      Object.assign($modal.style, { top: nlCords.top + "px", left: nlCords.width + 10 + "px", bottom: "auto" });
       const mCords = $modal.getBoundingClientRect();
       const isBottom = mCords.top + mCords.height >= window.innerHeight;
       $arrow.removeAttribute("style");
       if (isBottom) {
-        $modal.setAttribute(
-          "style",
-          toStyleString({
-            top: "auto",
-            left: nlCords.width + 10 + "px",
-            bottom: 0
-          })
-        );
-        $arrow.setAttribute(
-          "style",
-          toStyleString({
-            top: "auto",
-            bottom: window.innerHeight - (nlCords.height + nlCords.top) + 10 + "px"
-          })
-        );
+        Object.assign($modal.style, { top: "auto", bottom: "0" });
+        Object.assign($arrow.style, {
+          top: "auto",
+          bottom: window.innerHeight - (nlCords.height + nlCords.top) + 10 + "px"
+        });
       }
     } else {
       $arrow.removeAttribute("style");
-      $modal.removeAttribute("style");
+      Object.assign($modal.style, { top: "", left: "", bottom: "" });
       $newList.removeAttribute("style");
     }
   }, []);
@@ -99,10 +84,5 @@ function AddListModalContainer({ isOpen }: Props) {
     </Modal>
   );
 }
-
-const toStyleString = (styles: Record<string, string | number>) =>
-  Object.entries(styles)
-    .map(([k, v]) => `${k}:${v}`)
-    .join(";");
 
 export default AddListModalContainer;

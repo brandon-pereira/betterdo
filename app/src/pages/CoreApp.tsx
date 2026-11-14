@@ -1,5 +1,5 @@
-import { lazy, Suspense } from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Fragment, lazy, Suspense } from "react";
+import { Routes, Route, Navigate, Outlet, useLocation, useRoutes } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
 import Container from "../containers/Container";
@@ -12,6 +12,8 @@ import EditListModal from "../containers/EditListModal";
 import EditTaskModal from "../containers/EditTaskModal";
 import UserSettingsModal from "../containers/UserSettingsModal";
 import InitialListRedirect from "../containers/Redirects/InitialListRedirect";
+
+import { MODAL_ROUTES } from "../constants";
 
 import Helmet from "@components/Helmet";
 import SharedProviders from "@hooks/internal/SharedProviders";
@@ -30,6 +32,31 @@ function AppLayout() {
   );
 }
 
+const modalRoutes = [
+  { path: "create-list", element: <AddListModal isOpen={true} /> },
+  { path: "edit-list/:section", element: <EditListModal isOpen={true} /> },
+  { path: "edit-task/:currentTaskId", element: <EditTaskModal isOpen={true} /> },
+  { path: "profile-settings/:section", element: <UserSettingsModal isOpen={true} /> }
+];
+
+function ModalRoutes() {
+  const element = useRoutes(modalRoutes);
+  const { pathname } = useLocation();
+  const modalKey = pathname.split("/").find(segment => MODAL_ROUTES.has(segment));
+  return <AnimatePresence>{element && <Fragment key={modalKey}>{element}</Fragment>}</AnimatePresence>;
+}
+
+const wrappedPage = (
+  <>
+    <Helmet title="Wrapped" />
+    <Header title="Wrapped" />
+    <Suspense>
+      <Wrapped />
+    </Suspense>
+    <ModalRoutes />
+  </>
+);
+
 const CoreApp = () => {
   return (
     <SharedProviders>
@@ -37,18 +64,9 @@ const CoreApp = () => {
         <Route path="/" element={<InitialListRedirect />} />
         <Route path="/auth/*" element={<Navigate to="/" replace />} />
         <Route element={<AppLayout />}>
-          <Route
-            path="wrapped/:period?"
-            element={
-              <>
-                <Helmet title="Wrapped" />
-                <Header title="Wrapped" />
-                <Suspense>
-                  <Wrapped />
-                </Suspense>
-              </>
-            }
-          />
+          {/* Wrapped redirects a bare /wrapped to the current month. */}
+          <Route path="wrapped" element={wrappedPage} />
+          <Route path="wrapped/:period/*" element={wrappedPage} />
           <Route
             path=":currentListId/*"
             element={
@@ -56,20 +74,7 @@ const CoreApp = () => {
                 <Helmet />
                 <Header />
                 <Body />
-                <AnimatePresence>
-                  {/* 
-                      We can get unmount animations once this open issue is resolved:
-                      I've previously added   <Routes location={location} key={location.pathname}>
-                      which works but causes app to error when you change lists. No good.
-                      https://github.com/remix-run/react-router/issues/7117 
-                  */}
-                  <Routes>
-                    <Route element={<AddListModal isOpen={true} />} path="create-list" key="create-list" />
-                    <Route element={<EditListModal isOpen={true} />} path="edit-list/:section" />
-                    <Route element={<EditTaskModal isOpen={true} />} path="edit-task/:currentTaskId" />
-                    <Route element={<UserSettingsModal isOpen={true} />} path="profile-settings/:section" />
-                  </Routes>
-                </AnimatePresence>
+                <ModalRoutes />
               </>
             }
           />

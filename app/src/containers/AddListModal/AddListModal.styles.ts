@@ -19,13 +19,6 @@ export const Modal = styled(_Modal)`
   }
   ${theme.queries.medium} {
     position: absolute;
-    transform: translateX(-50px);
-    opacity: 0;
-    transition: transform 0.2s;
-    &.visible {
-      transform: translateX(0%);
-      opacity: 1;
-    }
     [data-betterdo-modal-arrow] {
       display: block;
       height: 1.2rem;

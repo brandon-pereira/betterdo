@@ -1,18 +1,27 @@
 import { useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { generatePath } from "react-router";
 
+import { MODAL_ROUTES } from "../constants";
+
+// The current page's path without any open modal, e.g. "/wrapped/2026-10".
+function getPagePath(pathname: string) {
+  const segments = pathname.split("/");
+  const modalIndex = segments.findIndex(segment => MODAL_ROUTES.has(segment));
+  return (modalIndex === -1 ? segments : segments.slice(0, modalIndex)).join("/");
+}
+
 function useGeneratedUrl() {
-  const baseUrl = "/:currentListId";
   const params = useParams();
+  const { pathname } = useLocation();
   const generateUrl = useCallback(
     (url = "", _params?: { [key: string]: string }) => {
-      // Pages outside `/:currentListId/*` (e.g. Wrapped) fall back to the last viewed
-      // list so list-scoped links like profile-settings still resolve.
-      const currentListId = params.currentListId || localStorage.getItem("lastViewedList") || "inbox";
-      return generatePath(baseUrl + url, Object.assign({ currentListId }, params, _params));
+      // List pages build on the list; other pages (e.g. Wrapped) on their own path,
+      // so modals open on top of them.
+      const baseUrl = params.currentListId ? "/:currentListId" : getPagePath(pathname);
+      return generatePath(baseUrl + url, Object.assign({}, params, _params));
     },
-    [params]
+    [params, pathname]
   );
   return generateUrl;
 }

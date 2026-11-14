@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
 
-// Modals are route-driven (see the nested <Routes> in pages/CoreApp.tsx), so
-// whether one is open is derived from the first segment under the list route.
-const MODAL_ROUTES = new Set(["create-list", "edit-list", "edit-task", "profile-settings"]);
+import { MODAL_ROUTES } from "../constants";
+
+// Modals are route-driven, so whether one is open is derived from the first
+// segment under the page's route.
 
 /** Returns true while a modal route is active. */
 function useIsModalOpen() {

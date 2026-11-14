@@ -3,6 +3,7 @@
 ## v8.3.0 (2026-11-03)
 
 - Add experimental mcp server support
+- Added BetterDo Wrapped (Monthly, Yearly, All Time)
 - Redesigned Settings screen
 - Redesigned nav styles
 - Add app skelton when starting up
@@ -10,6 +11,7 @@
 - Fix lazy loaded modals erroring for users on the previous version during deploys
 - Notes handles pasting markdown correctly
 - Fix issue when localStorage caches deleted lists
+- Improve exit modal animations
 - Remove react-helmet-async in favor of a lightweight alternative
 
 ## v8.2.0 (2026-10-03)

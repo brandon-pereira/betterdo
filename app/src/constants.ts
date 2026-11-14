@@ -9,3 +9,6 @@ export const QUERIES = {
 } as const;
 
 export const DEFAULT_LIST_COLOR = "#666666";
+
+// First path segment of each route-driven modal (see modalRoutes in pages/CoreApp.tsx).
+export const MODAL_ROUTES = new Set(["create-list", "edit-list", "edit-task", "profile-settings"]);

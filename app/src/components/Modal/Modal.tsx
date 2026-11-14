@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { Transition, Variant } from "framer-motion";
+import { PresenceContext, Transition, Variant, useIsPresent } from "framer-motion";
 
 import useEscapeKey from "./useEscapeKey";
 import useSaveShortcut from "./useSaveShortcut";
@@ -49,20 +49,24 @@ const Modal = forwardRef<HTMLDivElement, Props>(
   ) => {
     const contentRef = useRef<HTMLDivElement>(null);
     const [height, setHeight] = useState<number | "auto">("auto");
+    // False while an enclosing AnimatePresence plays the exit animation; the
+    // modal stays on screen but should no longer respond to input.
+    const isPresent = useIsPresent();
+    const isActive = visible && isPresent;
     const closeModal = useCallback(
       async (e?: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const isBackgroundClick = !e || e.currentTarget === e.target;
-        if (isBackgroundClick) {
+        if (isPresent && isBackgroundClick) {
           const _canCloseModal = typeof canCloseModal === "function" ? await canCloseModal() : true;
           if (_canCloseModal) {
             onRequestClose();
           }
         }
       },
-      [canCloseModal, onRequestClose]
+      [canCloseModal, onRequestClose, isPresent]
     );
 
-    useEscapeKey(visible ? closeModal : undefined);
+    useEscapeKey(isActive ? closeModal : undefined);
 
     // Cmd/Ctrl+S submits the modal's form, mirroring what the Save/submit
     // button does. Modals that render a <form> get this behavior for free.
@@ -79,7 +83,7 @@ const Modal = forwardRef<HTMLDivElement, Props>(
       form?.requestSubmit();
     }, []);
 
-    useSaveShortcut(visible ? onSaveShortcut : undefined);
+    useSaveShortcut(isActive ? onSaveShortcut : undefined);
 
     const onContainerResize = useCallback(() => {
       if (!disableHeightAnimation && contentRef.current) {
@@ -99,8 +103,16 @@ const Modal = forwardRef<HTMLDivElement, Props>(
     }, [onContainerResize, disableHeightAnimation, visible]);
 
     return (
-      <Overlay data-visible={visible ? "true" : "false"} onMouseDown={e => closeModal(e)}>
-        <FocusLock disabled={Boolean(!visible)}>
+      <Overlay
+        data-visible={visible ? "true" : "false"}
+        data-exiting={isPresent ? "false" : "true"}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
+        onMouseDown={e => closeModal(e)}
+      >
+        <FocusLock disabled={!isActive}>
           <Container
             initial="hidden"
             animate="visible"
@@ -122,7 +134,7 @@ const Modal = forwardRef<HTMLDivElement, Props>(
                 data-full-height={disableHeightAnimation ? "true" : "false"}
                 ref={contentRef}
               >
-                {children}
+                <PresenceContext.Provider value={null}>{children}</PresenceContext.Provider>
               </Content>
             </ContentContainer>
             <ModalClose icon={x} color="#a9a9a9" size="1rem" onClick={() => closeModal()}>
