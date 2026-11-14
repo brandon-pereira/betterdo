@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
 import Container from "../containers/Container";
@@ -18,48 +18,62 @@ import SharedProviders from "@hooks/internal/SharedProviders";
 
 const Wrapped = lazy(() => import("../containers/Wrapped"));
 
+// The sidebar stays mounted while switching between pages; each page renders
+// its own Helmet, Header and main content into the grid.
+function AppLayout() {
+  return (
+    <Container>
+      <Logo />
+      <Navigation />
+      <Outlet />
+    </Container>
+  );
+}
+
 const CoreApp = () => {
   return (
     <SharedProviders>
       <Routes>
         <Route path="/" element={<InitialListRedirect />} />
         <Route path="/auth/*" element={<Navigate to="/" replace />} />
-        <Route
-          path="wrapped/:period?"
-          element={
-            <Suspense>
-              <Wrapped />
-            </Suspense>
-          }
-        />
-        <Route
-          path=":currentListId/*"
-          element={
-            <>
-              <Helmet />
-              <Container>
-                <Logo />
-                <Navigation />
+        <Route element={<AppLayout />}>
+          <Route
+            path="wrapped/:period?"
+            element={
+              <>
+                <Helmet title="Wrapped" />
+                <Header title="Wrapped" />
+                <Suspense>
+                  <Wrapped />
+                </Suspense>
+              </>
+            }
+          />
+          <Route
+            path=":currentListId/*"
+            element={
+              <>
+                <Helmet />
                 <Header />
                 <Body />
-              </Container>
-              <AnimatePresence>
-                {/* 
-                    We can get unmount animations once this open issue is resolved:
-                    I've previously added   <Routes location={location} key={location.pathname}>
-                    which works but causes app to error when you change lists. No good.
-                    https://github.com/remix-run/react-router/issues/7117 
-                */}
-                <Routes>
-                  <Route element={<AddListModal isOpen={true} />} path="create-list" key="create-list" />
-                  <Route element={<EditListModal isOpen={true} />} path="edit-list/:section" />
-                  <Route element={<EditTaskModal isOpen={true} />} path="edit-task/:currentTaskId" />
-                  <Route element={<UserSettingsModal isOpen={true} />} path="profile-settings/:section" />
-                </Routes>
-              </AnimatePresence>
-            </>
-          }
-        />
+                <AnimatePresence>
+                  {/* 
+                      We can get unmount animations once this open issue is resolved:
+                      I've previously added   <Routes location={location} key={location.pathname}>
+                      which works but causes app to error when you change lists. No good.
+                      https://github.com/remix-run/react-router/issues/7117 
+                  */}
+                  <Routes>
+                    <Route element={<AddListModal isOpen={true} />} path="create-list" key="create-list" />
+                    <Route element={<EditListModal isOpen={true} />} path="edit-list/:section" />
+                    <Route element={<EditTaskModal isOpen={true} />} path="edit-task/:currentTaskId" />
+                    <Route element={<UserSettingsModal isOpen={true} />} path="profile-settings/:section" />
+                  </Routes>
+                </AnimatePresence>
+              </>
+            }
+          />
+        </Route>
       </Routes>
     </SharedProviders>
   );

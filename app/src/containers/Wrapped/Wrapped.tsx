@@ -40,11 +40,6 @@ import BarChart, { type BarDatum } from "./BarChart";
 import AreaChart from "./AreaChart";
 import CountUp from "./CountUp";
 
-import Container from "../Container";
-import Header from "../Header";
-import Logo from "../Logo";
-import Navigation from "../Navigation";
-import Helmet from "@components/Helmet";
 import useWrapped from "@hooks/useWrapped";
 import useProfile from "@hooks/useProfile";
 import Loader from "@components/Loader";
@@ -127,11 +122,7 @@ function Wrapped() {
     return <Navigate to={`/wrapped/${getCurrentPeriodKey()}`} replace />;
   }
 
-  return (
-    <Chrome>
-      <Recap periodKey={toPeriodKey(parsedPeriod)} onSelectPeriod={key => navigate(`/wrapped/${key}`)} />
-    </Chrome>
-  );
+  return <Recap periodKey={toPeriodKey(parsedPeriod)} onSelectPeriod={key => navigate(`/wrapped/${key}`)} />;
 }
 
 interface RecapProps {
@@ -453,22 +444,6 @@ function Recap({ periodKey, onSelectPeriod }: RecapProps) {
         </Grid>
       </Dashboard>
     </Page>
-  );
-}
-
-// Shared app chrome (sidebar, logo, header) so Wrapped feels in-app. Kept outside
-// Recap so the sidebar doesn't remount while paging between periods.
-function Chrome({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <Helmet />
-      <Container>
-        <Logo />
-        <Navigation />
-        <Header title="Wrapped" />
-        {children}
-      </Container>
-    </>
   );
 }
 

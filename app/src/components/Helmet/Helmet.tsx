@@ -8,16 +8,22 @@ import useChromeColor from "@hooks/useChromeColor";
 
 const BASE_TITLE = "BetterDo.";
 
+interface Props {
+  // Replaces the current list's title on pages that aren't a list (e.g. Wrapped).
+  title?: string;
+}
+
 // Sets the document title and theme-color for the current list. Written
 // directly to the DOM rather than via react-helmet-async to keep it out of the
 // main chunk.
-function Helmet() {
+function Helmet({ title: pageTitle }: Props) {
   const { chromeColor } = useChromeColor();
   const currentListId = useCurrentListId();
   const { list, error } = useListDetails(currentListId);
 
   const hasList = !error && Boolean(list);
-  const title = hasList && list.title ? `${BASE_TITLE} - ${list.title}` : BASE_TITLE;
+  const titleSuffix = pageTitle ?? (hasList ? list.title : undefined);
+  const title = titleSuffix ? `${BASE_TITLE} - ${titleSuffix}` : BASE_TITLE;
   const themeColor = hasList ? chromeColor : DEFAULT_LIST_COLOR;
 
   useLayoutEffect(() => {
