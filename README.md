@@ -50,3 +50,13 @@ If everything was successful, you should be able to access the application at th
 - [http://localhost:4000/](http://localhost:4000/) is the API server
 - [http://localhost:4001/](http://localhost:4001/) is the Web App server
 - [http://localhost:4002/](http://localhost:4002/) is the public website (we recommend starting here)
+
+## Testing Local First Offline Support
+
+To test the local first offline support, follow these steps:
+
+1. Run the app using `yarn preview` instead of `yarn start`. This will start the app in a way that simulates the production environment more closely, including the service worker for offline support.
+2. In your DevTools, go to the "Application" tab and select "Service Workers" from the sidebar. Ensure that the service worker is active and controlling the page.
+3. Simulate offline mode by checking the "Offline" box in the "Network" tab of your DevTools.
+4. Interact with the app while offline to verify that it continues to function correctly, leveraging the cached data provided by the service worker.
+5. Once you go back online, data should be synced and pulled from the server.

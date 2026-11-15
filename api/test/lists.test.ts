@@ -26,6 +26,25 @@ describe("Lists", () => {
       expect(members[0].userId).toBe(router.user.id);
     });
 
+    test("Replaying a create with the same ID returns the original list", async () => {
+      const router = await createRouter();
+      const id = crypto.randomUUID();
+      const first = await createList({ id, title: "Offline", createdById: router.user.id });
+      const second = await createList({ id, title: "Offline", createdById: router.user.id });
+      expect(second.id).toBe(first.id);
+      const members = await testDb.query.listMembers.findMany({ where: { listId: id } });
+      expect(members).toHaveLength(1);
+    });
+
+    test("Rejects a create that reuses another user's list ID", async () => {
+      const router = await createRouter();
+      const other = await createRouter();
+      const list = await createList({ title: "Theirs", createdById: other.user.id });
+      await expect(createList({ id: list.id, title: "Mine", createdById: router.user.id })).rejects.toThrow(
+        "List ID is already in use"
+      );
+    });
+
     test("Can fetch single list", async () => {
       const router = await createRouter();
       const list = await createList({ title: "Test", createdById: router.user.id });

@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeAll } from "vitest";
 import createRouter, { type RouterOptions } from "./helpers/createRouter.js";
 import { createList, getListById, isUserAuthorizedToAccessList } from "../src/services/lists.js";
-import { createTask, updateTask, getTaskById, getTasks } from "../src/services/tasks.js";
+import { createTask, createTaskWithNotification, updateTask, getTaskById, getTasks } from "../src/services/tasks.js";
 import { testDb } from "./helpers/setup.js";
 import { tasks } from "../src/schema/task.js";
 import { eq } from "drizzle-orm";
@@ -155,5 +155,41 @@ describe("Tasks Validation", () => {
     const title = "a".repeat(TASK_TITLE_MAX_LENGTH);
     const [task] = await createTask({ listId: validListId, title, createdById: router.user.id });
     expect(task.title).toBe(title);
+  });
+});
+
+describe("Offline task replay", () => {
+  test("Replaying a create with the same ID returns the original task", async () => {
+    const list = await createList({ title: "Replay List", createdById: router.user.id });
+    const id = crypto.randomUUID();
+    const context = { notifier: router.notifier, user: { id: router.user.id, name: router.user.name } };
+    const first = await createTaskWithNotification(
+      { id, listId: list.id, title: "Once", createdById: router.user.id },
+      context
+    );
+    const second = await createTaskWithNotification(
+      { id, listId: list.id, title: "Once", createdById: router.user.id },
+      context
+    );
+    expect(second.id).toBe(first.id);
+    expect(await getTasks({ listId: list.id })).toHaveLength(1);
+  });
+
+  test("Rejects a create that reuses another user's task ID", async () => {
+    const otherRouter = await createRouter();
+    const otherList = await createList({ title: "Other", createdById: otherRouter.user.id });
+    const [task] = await createTask({ listId: otherList.id, title: "Theirs", createdById: otherRouter.user.id });
+    const context = { notifier: router.notifier, user: { id: router.user.id, name: router.user.name } };
+    await expect(
+      createTaskWithNotification(
+        { id: task.id, listId: validListId, title: "Mine", createdById: router.user.id },
+        context
+      )
+    ).rejects.toThrow("Task ID is already in use");
+  });
+
+  test("Accepts a client-generated ID", () => {
+    expect(createTaskSchema.safeParse({ id: crypto.randomUUID(), listId: "inbox", title: "Test" }).success).toBe(true);
+    expect(createTaskSchema.safeParse({ id: "not-a-uuid", listId: "inbox", title: "Test" }).success).toBe(false);
   });
 });

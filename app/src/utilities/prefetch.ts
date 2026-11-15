@@ -1,12 +1,11 @@
-import { preload } from "swr";
+import { queryClient } from "./queryClient";
 
 import { getListDetailUrl, getListsUrl } from "@hooks/internal/urls";
 import { hasCachedSession } from "@utilities/auth";
-import { fetcher } from "@utilities/fetcher";
 
 // Starts the first screen's data requests as soon as the app boots, in parallel
 // with the session check, instead of waiting for the session to resolve and the
-// app to render. The hooks pick up these in-flight requests via SWR's preload
+// app to render. The hooks pick up these in-flight requests from the query
 // cache, so nothing is fetched twice. Skipped when the user was signed out last
 // time, since the requests would only 401.
 function getInitialListId(): string | null {
@@ -21,11 +20,10 @@ function getInitialListId(): string | null {
 }
 
 if (hasCachedSession()) {
-  // Errors surface when a hook consumes the request; catch here so an unused
-  // preload (e.g. the session turned out to be expired) isn't an unhandled rejection.
-  preload(getListsUrl(), fetcher).catch(() => {});
+  // prefetchQuery never rejects; errors surface when a hook reads the query.
+  queryClient.prefetchQuery({ queryKey: [getListsUrl()] });
   const listId = getInitialListId();
   if (listId) {
-    preload(getListDetailUrl(listId), fetcher).catch(() => {});
+    queryClient.prefetchQuery({ queryKey: [getListDetailUrl(listId)] });
   }
 }

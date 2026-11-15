@@ -1,37 +1,32 @@
 import { useCallback } from "react";
-import { useSWRConfig } from "swr";
 import { useNavigate } from "react-router-dom";
 
-import { getListsUrl } from "./internal/urls";
-
-import List from "@customTypes/list";
-import { createList } from "@utilities/server";
+import useProfile from "@hooks/useProfile";
+import { addList } from "@utilities/listCache";
+import { queueChange } from "@utilities/offlineQueue";
 
 function useCreateList() {
-  const { mutate } = useSWRConfig();
-
   const navigate = useNavigate();
+  const { profile } = useProfile();
   return useCallback(
     async (title: string, color: string) => {
-      await mutate(
-        getListsUrl(),
-        async (lists?: List[]) => {
-          return [
-            ...(lists || []),
-            {
-              id: Math.random(), // temp id
-              title,
-              color
-            }
-          ] as List[];
-        },
-        false
-      );
-      const list = await createList({ title, color });
-      navigate(`/${list.id}`);
-      await mutate(getListsUrl());
+      // Generated here so the list can be opened and filled before the server
+      // has seen it, e.g. while offline.
+      const id = crypto.randomUUID();
+      addList({
+        id,
+        title,
+        color,
+        type: "default",
+        tasks: [],
+        members: profile ? [profile] : [],
+        owner: profile?.id ?? ""
+      });
+      const created = queueChange("createList", { id, title, color });
+      navigate(`/${id}`);
+      await created;
     },
-    [navigate, mutate]
+    [navigate, profile]
   );
 }
 

@@ -51,7 +51,7 @@ function Body() {
   );
 
   const customListConfig = customLists.find(cl => list.id === cl.id);
-  const hideAddTaskInput = error || (customListConfig && customListConfig.disableTaskCreation);
+  const hideAddTaskInput = Boolean(error || customListConfig?.disableTaskCreation);
 
   return (
     <Container>

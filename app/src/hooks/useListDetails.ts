@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import { DEFAULT_LIST_COLOR } from "../constants";
@@ -8,6 +8,7 @@ import { getListDetailUrl } from "./internal/urls";
 
 import List from "@customTypes/list";
 import useCompletedTasks from "@hooks/useCompletedTasks";
+import { isQueueIdle } from "@utilities/queryClient";
 
 function useListDetails(listId: string) {
   const previousList = useRef<Partial<List>>({
@@ -17,9 +18,11 @@ function useListDetails(listId: string) {
   });
   const [isCompletedTasksIncluded] = useCompletedTasks();
   const navigate = useNavigate();
-  const { data, error } = useSWR<List>(getListDetailUrl(listId, isCompletedTasksIncluded), {
-    dedupingInterval: 5000,
-    refreshInterval: 30000
+  const { data, error } = useQuery<List>({
+    queryKey: [getListDetailUrl(listId, isCompletedTasksIncluded)],
+    staleTime: 5000,
+    // Picks up changes from other devices and shared list members.
+    refetchInterval: () => (isQueueIdle() ? 30000 : false)
   });
 
   useEffect(() => {

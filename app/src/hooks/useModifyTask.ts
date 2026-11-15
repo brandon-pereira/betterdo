@@ -1,24 +1,18 @@
 import { useCallback } from "react";
-import { useSWRConfig } from "swr";
 import { useNavigate } from "react-router-dom";
 
-import { getListDetailUrl, getTaskDetailUrl } from "./internal/urls";
-
 import Task from "@customTypes/task";
-import List from "@customTypes/list";
-import useCompletedTasks from "@hooks/useCompletedTasks";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
 import useCurrentListId from "@hooks/useCurrentListId";
-import { updateTask } from "@utilities/server";
+import { moveTaskToList, moveTaskToSection, patchTask } from "@utilities/listCache";
+import { queueChange } from "@utilities/offlineQueue";
 
 function useModifyTask() {
-  const { mutate } = useSWRConfig();
   const navigate = useNavigate();
-  const [isCompletedTasksIncluded] = useCompletedTasks();
   const currentListId = useCurrentListId();
   const generateUrl = useGeneratedUrl();
   return useCallback(
-    async (taskId: string, listId: string, updatedProps: Partial<Task>) => {
+    async (taskId: string, _listId: string, updatedProps: Partial<Task>) => {
       if (
         // If dueDate is passed in and format is 'YYYY-MM-DD' then
         // we need to create a date obj using CURRENT timezone
@@ -32,47 +26,31 @@ function useModifyTask() {
         const [year, month, day] = updatedProps.dueDate.split("-");
         updatedProps.dueDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).toUTCString();
       }
-      await mutate(getListDetailUrl(listId, isCompletedTasksIncluded), updateTaskInList(taskId, updatedProps), false);
-      await mutate(
-        getListDetailUrl(currentListId, isCompletedTasksIncluded),
-        updateTaskInList(taskId, updatedProps),
-        false
-      );
-      const updater = updateTask(taskId, updatedProps);
-      // if we update to completed, add a delay to show UI animation
-      if (updatedProps.isCompleted) {
-        const sleep = new Promise(resolve => setTimeout(resolve, 300));
-        await Promise.all([updater, sleep]);
-      } else {
-        await updater;
+      patchTask(taskId, updatedProps);
+      const isMovingList = Boolean(updatedProps.listId && updatedProps.listId !== currentListId);
+      if (isMovingList) {
+        moveTaskToList(taskId, updatedProps.listId!);
       }
-      mutate(getListDetailUrl(currentListId, isCompletedTasksIncluded));
-      mutate(getTaskDetailUrl(taskId));
-      if (updatedProps.listId && updatedProps.listId !== currentListId) {
+      const saved = queueChange("updateTask", { taskId, updates: updatedProps });
+      if (updatedProps.isCompleted !== undefined) {
+        // Let the checkbox animation play before the task moves sections.
+        const sleep = new Promise(resolve => setTimeout(resolve, 300));
+        await Promise.all([saved, sleep]);
+        moveTaskToSection(taskId, updatedProps.isCompleted);
+      } else {
+        await saved;
+      }
+      if (isMovingList) {
         navigate(
           generateUrl(`/edit-task/:taskId`, {
-            currentListId: updatedProps.listId,
+            currentListId: updatedProps.listId!,
             taskId: taskId
           })
         );
-        mutate(getListDetailUrl(updatedProps.listId));
       }
     },
-    [currentListId, mutate, isCompletedTasksIncluded, navigate, generateUrl]
+    [currentListId, navigate, generateUrl]
   );
 }
-
-const updateTaskInList = (taskId: string, updatedProps: Partial<Task>) => (list?: List) =>
-  ({
-    ...list,
-    tasks: list
-      ? list.tasks.map(task => {
-          if (task.id === taskId) {
-            return { ...task, ...updatedProps };
-          }
-          return task;
-        })
-      : []
-  }) as List;
 
 export default useModifyTask;

@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 
 import { getWrappedUrl } from "./internal/urls";
 
@@ -16,10 +16,12 @@ function toWrappedPeriod(periodKey: string) {
 
 function useWrapped(periodKey: string) {
   // The period is part of the key so each one is cached separately.
-  const { data, error } = useSWR([getWrappedUrl(), periodKey], () => getWrapped(toWrappedPeriod(periodKey)), {
+  const { data, error } = useQuery({
+    queryKey: [getWrappedUrl(), periodKey],
+    queryFn: () => getWrapped(toWrappedPeriod(periodKey)),
     // Past periods are effectively static; avoid refetching while browsing.
-    dedupingInterval: 600000, // 10min
-    revalidateOnFocus: false
+    staleTime: 600000, // 10min
+    refetchOnWindowFocus: false
   });
 
   if (error) {

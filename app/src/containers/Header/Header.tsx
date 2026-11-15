@@ -1,6 +1,7 @@
 import { Container, Hamburger, Loader, Title, SettingsButton, Icon } from "./Header.styles";
 
 import Settings from "@components/Icon/svgs/settings.svg";
+import SyncStatus from "@components/SyncStatus";
 import useEditListModal from "@hooks/useEditListModal";
 import useListDetails from "@hooks/useListDetails";
 import useCurrentListId from "@hooks/useCurrentListId";
@@ -28,6 +29,7 @@ function Header({ title }: Props) {
       <Hamburger open={isMobileNavVisible} hidden={isMobileNavVisible} onClick={() => setMobileNavVisibility(true)} />
       <Loader isVisible={!title && loading} size="2rem" />
       <Title>{title ?? list.title}</Title>
+      <SyncStatus />
       <SettingsButton
         aria-label="List Settings"
         color="none"

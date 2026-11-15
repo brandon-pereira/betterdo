@@ -106,6 +106,17 @@ interface NotifyContext {
 }
 
 export async function createTaskWithNotification(payload: typeof tasks.$inferInsert, context: NotifyContext) {
+  // Offline clients choose the task id and may replay a create that already
+  // went through, so hand back the original rather than inserting (and notifying) twice.
+  if (payload.id) {
+    const existing = await getTaskById(payload.id);
+    if (existing) {
+      if (existing.createdById !== payload.createdById) {
+        throw new Error("Task ID is already in use");
+      }
+      return existing;
+    }
+  }
   const [task] = await createTask(payload);
   const list = await getListById({ userId: context.user.id, listId: payload.listId });
   if (list) {

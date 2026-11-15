@@ -45,7 +45,7 @@ function InitialListRedirect() {
 
   // If lists failed to load (e.g. offline or API unreachable), still enter the
   // app shell rather than a full-page error. The list page surfaces connection
-  // problems via its own error banner and recovers when SWR revalidates.
+  // problems via its own error banner and recovers once the lists load.
   useEffect(() => {
     if (error) {
       navigate(`/${localStorage.getItem("lastViewedList") || "inbox"}`, { replace: true });

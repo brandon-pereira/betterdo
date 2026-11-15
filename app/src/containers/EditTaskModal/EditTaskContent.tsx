@@ -42,7 +42,7 @@ const toFormValues = (task?: Task): EditTaskValues => ({
 
 function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
   const taskId = useCurrentTaskId() || "";
-  const { task, loading, error } = useTaskDetails(taskId);
+  const { task, loading, error, unavailableOffline } = useTaskDetails(taskId);
   const modifyTask = useModifyTask();
   const deleteTask = useDeleteTask();
   const [_error, setError] = useState<string | undefined>();
@@ -169,6 +169,10 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
 
   if (error) {
     return <Error>Unexpected Error</Error>;
+  }
+
+  if (unavailableOffline) {
+    return <Error>This task hasn't been opened on this device yet, so it can't be edited offline.</Error>;
   }
 
   if (loading || !task) {

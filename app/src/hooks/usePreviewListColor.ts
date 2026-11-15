@@ -1,45 +1,39 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useSWRConfig } from "swr";
 
-import { getListDetailUrl } from "./internal/urls";
-
-import List from "@customTypes/list";
-import useCompletedTasks from "@hooks/useCompletedTasks";
+import { patchList } from "@utilities/listCache";
 
 /**
  * Lets the Edit List modal preview a list color across the app (header, chrome,
- * etc.) before it's saved. Optimistically patches the SWR list cache without
- * revalidating so every consumer of `useListDetails` reflects the picked color
- * immediately. On unmount any un-saved preview is rolled back by revalidating.
+ * etc.) before it's saved, by patching the cached list so every consumer of
+ * `useListDetails` reflects the picked color immediately. On unmount any
+ * un-saved preview is rolled back to the original color.
  */
-function usePreviewListColor(listId: string) {
-  const { mutate } = useSWRConfig();
-  const [isCompletedTasksIncluded] = useCompletedTasks();
-  const key = getListDetailUrl(listId, isCompletedTasksIncluded);
-  const hasPreview = useRef(false);
+function usePreviewListColor(listId: string, savedColor?: string) {
+  const originalColor = useRef<string | undefined>(undefined);
 
   const preview = useCallback(
     (color: string) => {
-      hasPreview.current = true;
-      mutate(key, (current?: Partial<List>) => ({ ...current, color }) as Partial<List>, false);
+      if (originalColor.current === undefined) {
+        originalColor.current = savedColor;
+      }
+      patchList(listId, { color });
     },
-    [key, mutate]
+    [listId, savedColor]
   );
 
-  // If the modal closes with an un-saved preview still applied, revalidate to
-  // restore the persisted color. Saving triggers its own revalidation, so this
-  // only reverts discarded edits.
+  // Saving keeps the previewed color, so there's nothing to roll back.
   const commit = useCallback(() => {
-    hasPreview.current = false;
+    originalColor.current = undefined;
   }, []);
 
   useEffect(() => {
     return () => {
-      if (hasPreview.current) {
-        mutate(key);
+      if (originalColor.current !== undefined) {
+        patchList(listId, { color: originalColor.current });
+        originalColor.current = undefined;
       }
     };
-  }, [key, mutate]);
+  }, [listId]);
 
   return { preview, commit };
 }

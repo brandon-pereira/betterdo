@@ -1,25 +1,30 @@
 import { useCallback } from "react";
-import { mutate } from "swr";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { getListsUrl } from "./internal/urls";
 
+import List from "@customTypes/list";
 import { _UpdateUserPayload, UpdateUserObject } from "@customTypes/user";
 import { refreshSession, updateProfile, UpdateProfilePayload } from "@utilities/auth";
 
 function useModifyProfile() {
-  return useCallback(async (updatedProps: UpdateUserObject) => {
-    const formattedProps = { ...updatedProps } as _UpdateUserPayload;
-    if (updatedProps.lists) {
-      await mutate(getListsUrl(), async () => updatedProps.lists, false);
-      formattedProps.lists = updatedProps.lists.filter(t => t.type === "default").map(t => t.id);
-    }
-    await updateProfile(getProfilePropsFromUpdatePayload(formattedProps));
-    // Refresh the shared session store so consumers re-render with the persisted values.
-    await refreshSession();
-    if (updatedProps.lists || updatedProps?.customLists) {
-      await mutate(getListsUrl());
-    }
-  }, []);
+  const queryClient = useQueryClient();
+  return useCallback(
+    async (updatedProps: UpdateUserObject) => {
+      const formattedProps = { ...updatedProps } as _UpdateUserPayload;
+      if (updatedProps.lists) {
+        queryClient.setQueryData<List[]>([getListsUrl()], updatedProps.lists);
+        formattedProps.lists = updatedProps.lists.filter(t => t.type === "default").map(t => t.id);
+      }
+      await updateProfile(getProfilePropsFromUpdatePayload(formattedProps));
+      // Refresh the shared session store so consumers re-render with the persisted values.
+      await refreshSession();
+      if (updatedProps.lists || updatedProps?.customLists) {
+        await queryClient.invalidateQueries({ queryKey: [getListsUrl()] });
+      }
+    },
+    [queryClient]
+  );
 }
 
 // Fields forwarded to the /update-profile endpoint. Includes the relational

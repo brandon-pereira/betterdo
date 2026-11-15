@@ -4,7 +4,7 @@ import { LazyMotion } from "framer-motion";
 import { ResponsiveProvider } from "@hooks/useResponsive";
 
 import { ThemeProvider } from "./utilities/ThemeProvider";
-import SWRProvider from "./utilities/SWRProvider";
+import QueryProvider from "./utilities/QueryProvider";
 import App from "./App";
 
 import { DarkModeProvider } from "@hooks/useDarkMode";
@@ -26,13 +26,13 @@ root.render(
     <DarkModeProvider>
       <ThemeProvider>
         <ErrorBoundary>
-          <SWRProvider>
+          <QueryProvider>
             <ResponsiveProvider>
               <BrowserRouter basename={import.meta.env.BASE_URL}>
                 <App />
               </BrowserRouter>
             </ResponsiveProvider>
-          </SWRProvider>
+          </QueryProvider>
         </ErrorBoundary>
       </ThemeProvider>
     </DarkModeProvider>

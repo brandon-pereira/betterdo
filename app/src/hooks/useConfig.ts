@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 
 import { getConfigUrl } from "./internal/urls";
 
@@ -8,8 +8,9 @@ interface Config {
 }
 
 function useConfig() {
-  const { data, error } = useSWR<Config>(getConfigUrl(), {
-    dedupingInterval: 600000 // 10min
+  const { data, error } = useQuery<Config>({
+    queryKey: [getConfigUrl()],
+    staleTime: 600000 // 10min
   });
 
   if (error) {

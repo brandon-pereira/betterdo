@@ -173,6 +173,16 @@ export async function getListById({
 }
 
 export async function createList(payload: typeof lists.$inferInsert & { createdById: string }) {
+  // Offline clients choose the list id and may replay a create that already went through.
+  if (payload.id) {
+    const existing = await db.query.lists.findFirst({ where: { id: payload.id } });
+    if (existing) {
+      if (existing.createdById !== payload.createdById) {
+        throw new Error("List ID is already in use");
+      }
+      return existing;
+    }
+  }
   const newList = await db.insert(lists).values(payload).returning();
 
   // Get the current max position for this user's lists

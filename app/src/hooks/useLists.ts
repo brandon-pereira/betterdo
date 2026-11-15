@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 
 import createSharedHook from "./internal/createSharedHook";
 import { getListsUrl } from "./internal/urls";
@@ -6,8 +6,9 @@ import { getListsUrl } from "./internal/urls";
 import List from "@customTypes/list";
 
 function useListsOnce() {
-  const { data, error } = useSWR<List[]>(getListsUrl(), {
-    dedupingInterval: 600000 //10min
+  const { data, error } = useQuery<List[]>({
+    queryKey: [getListsUrl()],
+    staleTime: 600000 //10min
   });
 
   if (error) {

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import useSWR from "swr";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getConnectedAppsUrl } from "./internal/urls";
 import { disconnectApp } from "@utilities/server";
@@ -16,14 +16,17 @@ interface ConnectedApp {
 }
 
 function useConnectedApps() {
-  const { data, error, mutate } = useSWR<ConnectedApp[]>(getConnectedAppsUrl());
+  const queryClient = useQueryClient();
+  const { data, error } = useQuery<ConnectedApp[]>({ queryKey: [getConnectedAppsUrl()] });
 
   const disconnect = useCallback(
     async (clientId: string) => {
       await disconnectApp(clientId);
-      await mutate(apps => apps?.filter(app => app.clientId !== clientId), { revalidate: true });
+      const queryKey = [getConnectedAppsUrl()];
+      queryClient.setQueryData<ConnectedApp[]>(queryKey, apps => apps?.filter(app => app.clientId !== clientId));
+      await queryClient.invalidateQueries({ queryKey });
     },
-    [mutate]
+    [queryClient]
   );
 
   return {

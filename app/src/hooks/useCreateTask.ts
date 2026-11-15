@@ -1,68 +1,30 @@
 import { useCallback } from "react";
-import { useSWRConfig } from "swr";
 
-import { getListDetailUrl } from "./internal/urls";
-
-import List from "@customTypes/list";
-import useCompletedTasks from "@hooks/useCompletedTasks";
-import { createTask } from "@utilities/server";
+import Task from "@customTypes/task";
+import useProfile from "@hooks/useProfile";
+import { addTask } from "@utilities/listCache";
+import { queueChange } from "@utilities/offlineQueue";
 
 function useCreateTask() {
-  const { mutate } = useSWRConfig();
-  const [isCompletedTasksIncluded] = useCompletedTasks();
+  const { profile } = useProfile();
   return useCallback(
     async (listId: string, taskName: string) => {
-      // generate a tempId for now
-      const tempId = Math.floor(Math.random() * 1000);
-      // get cache url
-      const listUrl = getListDetailUrl(listId, isCompletedTasksIncluded);
-      // Update cache to add new temp task
-      await mutate(
-        listUrl,
-        async (currentList?: List) => {
-          return {
-            ...currentList,
-            tasks: [
-              {
-                id: tempId,
-                title: taskName,
-                priority: "normal",
-                isLoading: true
-              },
-              ...(currentList?.tasks || [])
-            ]
-          } as List;
-        },
-        { revalidate: false }
-      );
-      // Send request to server
-      const addedTask = await createTask(listId, taskName);
-      // Sync temp task with server response
-      const mutation = mutate(
-        listUrl,
-        async (currentList?: List) => {
-          const mutatedList = { tasks: [], ...currentList };
-          // this could be a race, but thats a big edge case, revalidation will cleanup shortly
-          mutatedList.tasks[0] = {
-            isTemporaryTask: true,
-            // existing temp task
-            ...mutatedList.tasks[0],
-            // server response to override above
-            ...addedTask,
-            // disable loading, user can technically interact before revalidation occurs
-            isLoading: false
-          };
-          mutatedList.tasks = [...mutatedList.tasks];
-          return mutatedList as List;
-        },
-        false
-      );
-      const sleep = new Promise(resolve => setTimeout(resolve, 300));
-      await Promise.all([mutation, sleep]);
-      // Update real cached data
-      await mutate(listUrl);
+      // The id is generated here so the task can be edited (or deleted) before
+      // the server has seen it, e.g. while offline.
+      const id = crypto.randomUUID();
+      addTask(listId, {
+        id,
+        title: taskName,
+        listId,
+        isCompleted: false,
+        priority: "normal",
+        notes: "",
+        createdBy: profile ?? undefined,
+        creationDate: new Date().toISOString()
+      } as Task);
+      await queueChange("createTask", { id, listId, title: taskName });
     },
-    [isCompletedTasksIncluded, mutate]
+    [profile]
   );
 }
 

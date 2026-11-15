@@ -6,6 +6,8 @@ import { dateStringSchema, prioritySchema, taskTitleSchema } from "@betterdo/sha
 const dueDateSchema = dateStringSchema.optional().nullable();
 
 export const createTaskSchema = z.object({
+  // Client-generated so offline creates can be replayed without duplicating.
+  id: z.uuid().optional(),
   listId: z.string().min(1, "List ID is required"),
   title: taskTitleSchema,
   dueDate: dueDateSchema

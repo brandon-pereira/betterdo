@@ -12,6 +12,12 @@ import wyw from "@wyw-in-js/vite";
 
 import rootPackage from "../package.json";
 
+const isProduction = process.env.NODE_ENV === "production";
+// Overridable so a production build can run against the local API (`yarn preview`).
+const SERVER_URL = process.env.SERVER_URL ?? (isProduction ? "https://betterdo.app" : "http://localhost:4000");
+const APP_URL = process.env.APP_URL ?? (isProduction ? "https://betterdo.app" : "http://localhost:4001");
+const APP_BASE = process.env.APP_BASE ?? (isProduction ? "/app/" : "/");
+
 const aliases = {
   "@components": path.resolve(__dirname, "src/components"),
   "@hooks": path.resolve(__dirname, "src/hooks"),
@@ -74,10 +80,10 @@ export default defineConfig({
   },
   define: {
     __VERSION__: `"${rootPackage.version}"`,
-    __SERVER_URL__: `"${process.env.NODE_ENV === "production" ? "https://betterdo.app" : "http://localhost:4000"}"`,
-    __APP_URL__: `"${process.env.NODE_ENV === "production" ? "https://betterdo.app" : "http://localhost:4001"}"`
+    __SERVER_URL__: `"${SERVER_URL}"`,
+    __APP_URL__: `"${APP_URL}"`
   },
-  base: process.env.NODE_ENV === "production" ? "/app/" : "/",
+  base: APP_BASE,
   server: {
     port: 4001
   }

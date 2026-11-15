@@ -29,7 +29,7 @@ function ListSettings({ setUnsavedChanges, onRequestClose }: Props) {
   const { list } = useListDetails(currentListId);
   const modifyList = useModifyList();
   const _deleteList = useDeleteList();
-  const { preview, commit } = usePreviewListColor(currentListId);
+  const { preview, commit } = usePreviewListColor(currentListId, list.color);
   const getAccessibleAccent = useAccessibleAccent();
   const [isDeleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | undefined>();

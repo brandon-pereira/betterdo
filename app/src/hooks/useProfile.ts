@@ -4,6 +4,7 @@ import createSharedHook from "./internal/createSharedHook";
 
 import User from "@customTypes/user";
 import { signOut, useSession } from "@utilities/auth";
+import { clearQueryCache } from "@utilities/queryClient";
 import { pick } from "radash";
 
 function useProfileOnce() {
@@ -11,8 +12,9 @@ function useProfileOnce() {
 
   const logout = useCallback(async () => {
     await signOut();
-    // Clear per-user state, then hard reload to wipe all in-memory state.
+    // Clear per-user state (including the offline cache), then hard reload to wipe all in-memory state.
     localStorage.removeItem("lastViewedList");
+    await clearQueryCache();
     window.location.href = "/";
   }, []);
 

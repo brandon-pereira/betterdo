@@ -2,6 +2,8 @@ import z from "zod";
 import { listTitleSchema } from "@betterdo/shared/validation";
 
 export const createListSchema = z.object({
+  // Client-generated so offline creates can be replayed without duplicating.
+  id: z.uuid().optional(),
   title: listTitleSchema,
   color: z.string().optional()
 });
