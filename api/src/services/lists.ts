@@ -198,6 +198,10 @@ export async function updateListDetails(
 }
 
 export async function isUserAuthorizedToAccessList({ userId, listId }: { userId: string; listId: string }) {
+  // Malformed IDs would otherwise make Postgres throw on the uuid column
+  if (!z.uuid().safeParse(listId).success) {
+    return false;
+  }
   const result = await db.query.listMembers.findFirst({
     where: { userId, listId }
   });
