@@ -8,9 +8,7 @@ import { ServerError } from "./server";
 
 // Long enough to survive a trip without a connection. Queued changes are
 // persisted alongside the cache, so anything older than this is dropped too.
-// Must stay under setTimeout's ~24.8 day limit, or cached data that isn't on
-// screen is garbage collected immediately.
-const MAX_CACHE_AGE = 1000 * 60 * 60 * 24 * 21;
+const MAX_CACHE_AGE = 1000 * 60 * 60 * 24 * 7; // 7 days
 // Bump only when the cached data shape changes; it discards queued changes too.
 const CACHE_VERSION = "1";
 
