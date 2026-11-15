@@ -13,7 +13,7 @@ interface Props extends TaskType {
 }
 
 const Task = forwardRef<HTMLButtonElement, Props>(
-  ({ title, id, isCompleted, listId, isLoading, priority, containerProps, touchEvents }, ref) => {
+  ({ title, id, isCompleted, isLoading, priority, containerProps, touchEvents }, ref) => {
     const { openTaskModal } = useEditTaskModal();
     const modifyTask = useModifyTask();
 
@@ -23,10 +23,10 @@ const Task = forwardRef<HTMLButtonElement, Props>(
 
     const onToggleTaskCompletion = useCallback(() => {
       vibrate(!isCompleted ? "success" : "tap");
-      modifyTask(id, listId, {
+      modifyTask(id, {
         isCompleted: !isCompleted
       });
-    }, [id, modifyTask, isCompleted, listId]);
+    }, [id, modifyTask, isCompleted]);
 
     return (
       <Container

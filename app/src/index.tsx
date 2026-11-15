@@ -11,7 +11,6 @@ import { DarkModeProvider } from "@hooks/useDarkMode";
 
 import ErrorBoundary from "@components/ErrorBoundary";
 
-import "./utilities/prefetch";
 import "./utilities/ServiceWorkerRegister";
 
 // The static app skeleton from index.html stays up until FullScreenLoader unmounts

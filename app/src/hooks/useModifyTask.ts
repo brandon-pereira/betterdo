@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Task from "@customTypes/task";
+import type Task from "@customTypes/task";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
 import useCurrentListId from "@hooks/useCurrentListId";
 import { moveTaskToList, moveTaskToSection, patchTask } from "@utilities/listCache";
@@ -12,7 +12,7 @@ function useModifyTask() {
   const currentListId = useCurrentListId();
   const generateUrl = useGeneratedUrl();
   return useCallback(
-    async (taskId: string, _listId: string, updatedProps: Partial<Task>) => {
+    async (taskId: string, updatedProps: Partial<Task>) => {
       if (
         // If dueDate is passed in and format is 'YYYY-MM-DD' then
         // we need to create a date obj using CURRENT timezone

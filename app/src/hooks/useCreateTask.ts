@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import Task from "@customTypes/task";
+import type Task from "@customTypes/task";
 import useProfile from "@hooks/useProfile";
 import { addTask } from "@utilities/listCache";
 import { queueChange } from "@utilities/offlineQueue";

@@ -3,7 +3,7 @@ import type { Mutation } from "@tanstack/react-query";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { del, get, set } from "idb-keyval";
 
-import { FetchError, fetcher } from "./fetcher";
+import { fetcher } from "./fetcher";
 import { ServerError } from "./server";
 
 // Long enough to survive a trip without a connection. Queued changes are
@@ -18,12 +18,7 @@ function isNetworkError(error: unknown) {
   return error instanceof TypeError || (error instanceof ServerError && error.originalError instanceof TypeError);
 }
 
-function getStatus(error: unknown) {
-  if (error instanceof FetchError) {
-    return error.status;
-  }
-  return error instanceof ServerError ? error.code : undefined;
-}
+const getStatus = (error: unknown) => (error instanceof ServerError ? error.code : undefined);
 
 function shouldRetry(failureCount: number, error: unknown) {
   if (isNetworkError(error)) {
@@ -77,8 +72,16 @@ export const queryClient = new QueryClient({
   })
 });
 
+// Set while signing out, so a save already under way can't write the cache back
+// after it was deleted. The reload after sign out resets it.
+let isClearing = false;
+
 const persister = createAsyncStoragePersister({
-  storage: { getItem: get, setItem: set, removeItem: del },
+  storage: {
+    getItem: get,
+    setItem: (key, value) => (isClearing ? Promise.resolve() : set(key, value)),
+    removeItem: del
+  },
   key: "betterdo-query-cache",
   // Keep this short so a change made right before closing the app is saved.
   throttleTime: 250
@@ -97,6 +100,7 @@ export const persistOptions = {
 
 /** Wipes cached data and queued changes, e.g. on sign out. */
 export async function clearQueryCache() {
+  isClearing = true;
   queryClient.clear();
   await persister.removeClient();
 }

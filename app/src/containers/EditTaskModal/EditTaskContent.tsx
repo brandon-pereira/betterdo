@@ -78,7 +78,7 @@ function EditTaskContent({ setUnsavedChanges, registerFlush }: Props) {
       }
       setSaving(true);
       try {
-        await modifyTask(taskId, listId, updatedProps);
+        await modifyTask(taskId, updatedProps);
         return true;
       } catch (err) {
         console.error(err);

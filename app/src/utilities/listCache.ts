@@ -1,8 +1,15 @@
-import type { QueryKey } from "@tanstack/react-query";
+import type { Query, QueryKey } from "@tanstack/react-query";
 
 import { queryClient } from "./queryClient";
 
-import { getListDetailUrl, getListsUrl, getTaskDetailUrl } from "@hooks/internal/urls";
+import {
+  getListDetailUrl,
+  getListDetailUrls,
+  getListsUrl,
+  getTaskDetailUrl,
+  isListDetailUrl,
+  isListDetailUrlWithCompleted
+} from "@hooks/internal/urls";
 import type List from "@customTypes/list";
 import type Task from "@customTypes/task";
 
@@ -12,19 +19,27 @@ import type Task from "@customTypes/task";
 
 type ListDetail = Partial<List>;
 
-const listDetailPrefix = getListDetailUrl("");
+const isListDetailQuery = (query: Query) => isListDetailUrl(String(query.queryKey[0]));
 
-const includesCompleted = (queryKey: QueryKey) => String(queryKey[0]).includes("includeCompleted=true");
+/**
+ * Updates a cached entry, if there is one. A fetch already in flight for it is
+ * cancelled first, or it would land afterwards and replace the change with older
+ * server data. The cancel takes effect immediately and keeps the current data.
+ */
+function updateCached<T>(queryKey: QueryKey, updater: (data: T) => T) {
+  if (queryClient.getQueryData(queryKey) === undefined) {
+    return;
+  }
+  void queryClient.cancelQueries({ queryKey, exact: true });
+  queryClient.setQueryData<T>(queryKey, data => data && updater(data));
+}
 
 // A list is cached once per "show completed tasks" setting, and smart lists
 // (Today, High Priority, ...) hold copies of tasks from other lists.
 function updateListDetails(updater: (list: ListDetail, includesCompleted: boolean, url: string) => ListDetail) {
-  const queries = queryClient
-    .getQueryCache()
-    .findAll({ predicate: query => String(query.queryKey[0]).startsWith(listDetailPrefix) });
-  for (const { queryKey } of queries) {
+  for (const { queryKey } of queryClient.getQueryCache().findAll({ predicate: isListDetailQuery })) {
     const url = String(queryKey[0]);
-    queryClient.setQueryData<ListDetail>(queryKey, list => list && updater(list, includesCompleted(queryKey), url));
+    updateCached<ListDetail>(queryKey, list => updater(list, isListDetailUrlWithCompleted(url), url));
   }
 }
 
@@ -35,9 +50,7 @@ function findTask(taskId: string): Task | undefined {
   if (cached) {
     return cached;
   }
-  for (const [, list] of queryClient.getQueriesData<ListDetail>({
-    predicate: query => String(query.queryKey[0]).startsWith(listDetailPrefix)
-  })) {
+  for (const [, list] of queryClient.getQueriesData<ListDetail>({ predicate: isListDetailQuery })) {
     const task = [...(list?.tasks ?? []), ...(list?.completedTasks ?? [])].find(t => t.id === taskId);
     if (task) {
       return task;
@@ -47,8 +60,8 @@ function findTask(taskId: string): Task | undefined {
 
 /** Adds a new task to the top of a list. The task detail is seeded too, so it can be edited offline. */
 export function addTask(listId: string, task: Task) {
-  for (const key of [getListDetailUrl(listId), getListDetailUrl(listId, true)]) {
-    queryClient.setQueryData<ListDetail>([key], list => list && { ...list, tasks: [task, ...(list.tasks ?? [])] });
+  for (const key of getListDetailUrls(listId)) {
+    updateCached<ListDetail>([key], list => ({ ...list, tasks: [task, ...(list.tasks ?? [])] }));
   }
   queryClient.setQueryData<Task>([getTaskDetailUrl(task.id)], task);
 }
@@ -56,7 +69,7 @@ export function addTask(listId: string, task: Task) {
 export function patchTask(taskId: string, updates: Partial<Task>) {
   const patch = (tasks?: Task[]) => tasks?.map(task => (task.id === taskId ? { ...task, ...updates } : task));
   updateListDetails(list => ({ ...list, tasks: patch(list.tasks), completedTasks: patch(list.completedTasks) }));
-  queryClient.setQueryData<Task>([getTaskDetailUrl(taskId)], task => task && { ...task, ...updates });
+  updateCached<Task>([getTaskDetailUrl(taskId)], task => ({ ...task, ...updates }));
 }
 
 /** Moves a task between the open and completed sections, like the server does once it saves. */
@@ -64,7 +77,8 @@ export function moveTaskToSection(taskId: string, isCompleted: boolean) {
   updateListDetails((list, hasCompleted) => {
     const from = isCompleted ? list.tasks : list.completedTasks;
     const task = from?.find(t => t.id === taskId);
-    if (!task) {
+    // Skip if the task was toggled back while this move was waiting to run.
+    if (!task || task.isCompleted !== isCompleted) {
       return list;
     }
     const remaining = from!.filter(t => t.id !== taskId);
@@ -107,7 +121,7 @@ export function removeTask(taskId: string) {
  * `listId` may also be the "inbox" slug the inbox is opened with.
  */
 export function patchList(listId: string, updates: ListDetail) {
-  const urls = [getListDetailUrl(listId), getListDetailUrl(listId, true)];
+  const urls = getListDetailUrls(listId);
   const matches = (list: ListDetail) => list.id === listId || (listId === "inbox" && list.type === "inbox");
   updateListDetails((list, _hasCompleted, url) =>
     matches(list) || urls.includes(url) ? { ...list, ...updates } : list
@@ -115,15 +129,14 @@ export function patchList(listId: string, updates: ListDetail) {
   // The sidebar holds task ids rather than tasks, so only list fields apply there.
   const sidebarUpdates = { ...updates };
   delete sidebarUpdates.tasks;
-  queryClient.setQueryData<List[]>(
-    [getListsUrl()],
-    lists => lists && lists.map(list => (matches(list) ? { ...list, ...sidebarUpdates } : list))
+  updateCached<List[]>([getListsUrl()], lists =>
+    lists.map(list => (matches(list) ? { ...list, ...sidebarUpdates } : list))
   );
 }
 
 /** Adds a new list to the sidebar and seeds its (empty) detail so it opens offline. */
 export function addList(list: List) {
-  queryClient.setQueryData<List[]>([getListsUrl()], lists => [...(lists ?? []), list]);
+  updateCached<List[]>([getListsUrl()], lists => [...lists, list]);
   queryClient.setQueryData<ListDetail>([getListDetailUrl(list.id)], {
     ...list,
     completedTasks: [],

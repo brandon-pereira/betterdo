@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { getListsUrl } from "./internal/urls";
 
-import List from "@customTypes/list";
+import type List from "@customTypes/list";
 import { _UpdateUserPayload, UpdateUserObject } from "@customTypes/user";
 import { refreshSession, updateProfile, UpdateProfilePayload } from "@utilities/auth";
 
