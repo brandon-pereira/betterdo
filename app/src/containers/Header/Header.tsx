@@ -1,7 +1,6 @@
-import { Container, Hamburger, Loader, Title, SettingsButton, Icon } from "./Header.styles";
+import { Container, Hamburger, Loader, Title, SettingsButton, Icon, SyncStatus } from "./Header.styles";
 
 import Settings from "@components/Icon/svgs/settings.svg";
-import SyncStatus from "@components/SyncStatus";
 import useEditListModal from "@hooks/useEditListModal";
 import useListDetails from "@hooks/useListDetails";
 import useCurrentListId from "@hooks/useCurrentListId";

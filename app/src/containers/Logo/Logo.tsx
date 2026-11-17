@@ -1,17 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { Container, Content, Hamburger, SyncSlot } from "./Logo.styles";
 
-import { Container, Content, Hamburger, ProfilePicture } from "./Logo.styles";
-
-import useProfile from "@hooks/useProfile";
-import useGeneratedUrl from "@hooks/useGeneratedUrl";
+import SyncStatus from "@components/SyncStatus";
 import useHamburgerNav from "@hooks/useHamburgerNav";
 
 function Logo() {
   const [isMobileNavVisible, setMobileNavVisibility] = useHamburgerNav();
-  const generateUrl = useGeneratedUrl();
-  const navigate = useNavigate();
 
-  const { profile } = useProfile();
   return (
     <Container>
       <Content>
@@ -26,15 +20,9 @@ function Logo() {
           Better
           <span>Do.</span>
         </h1>
-        {profile?.firstName && (
-          <ProfilePicture
-            onClick={e => {
-              e.stopPropagation();
-              navigate(generateUrl("/profile-settings/account"));
-            }}
-            user={profile}
-          />
-        )}
+        <SyncSlot>
+          <SyncStatus />
+        </SyncSlot>
       </Content>
     </Container>
   );

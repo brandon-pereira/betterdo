@@ -3,7 +3,6 @@ import { styled } from "@linaria/react";
 import { theme } from "../../theme";
 import { DEFAULT_LIST_COLOR } from "../../constants";
 
-import _ProfilePicture from "@components/ProfilePic";
 import _Hamburger from "@components/Hamburger";
 
 export const Container = styled.div`
@@ -22,8 +21,17 @@ export const Container = styled.div`
 `;
 
 export const Hamburger = styled(_Hamburger)``;
-export const ProfilePicture = styled(_ProfilePicture)`
+// Reserves the status icon's space so the title doesn't move when it appears.
+// On mobile the header shows the status instead (this bar is usually collapsed).
+export const SyncSlot = styled.div`
   flex-shrink: 0;
+  width: 2rem;
+  display: flex;
+  justify-content: center;
+  visibility: hidden;
+  ${theme.queries.medium} {
+    visibility: visible;
+  }
 `;
 
 export const Content = styled.div`
@@ -59,10 +67,6 @@ export const Content = styled.div`
       font-size: 1.2rem;
       margin-right: 0.2rem;
     }
-    ${ProfilePicture} {
-      height: 2rem;
-      width: 2rem;
-    }
     ${Hamburger} {
       display: none;
     }
@@ -71,10 +75,6 @@ export const Content = styled.div`
     h1 {
       font-size: 1.8rem;
       margin-right: 1rem;
-    }
-    ${ProfilePicture} {
-      height: 3rem;
-      width: 3rem;
     }
   }
 `;

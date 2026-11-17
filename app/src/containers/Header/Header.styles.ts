@@ -7,11 +7,19 @@ import Button from "@components/Button";
 import _Icon from "@components/Icon";
 import _Loader from "@components/Loader";
 import _Hamburger from "@components/Hamburger";
+import _SyncStatus from "@components/SyncStatus";
 
 export const Icon = styled(_Icon)``;
 
 export const Hamburger = styled(_Hamburger)`
   &[hidden] {
+    display: none;
+  }
+`;
+// On larger screens the sync status lives beside the logo, which is hidden on mobile.
+export const SyncStatus = styled(_SyncStatus)`
+  margin-left: 0.35rem;
+  ${theme.queries.medium} {
     display: none;
   }
 `;

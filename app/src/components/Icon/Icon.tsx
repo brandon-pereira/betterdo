@@ -9,6 +9,7 @@ interface Props {
   className?: string;
   color?: string;
   size?: string;
+  "aria-label"?: string;
 }
 
 function Icon({ children, onClick, icon, className, color, ...props }: Props) {

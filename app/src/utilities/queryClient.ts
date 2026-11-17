@@ -38,6 +38,25 @@ function shouldRetryQueued(failureCount: number, error: unknown) {
 // which never happens when the app is opened without a connection.
 onlineManager.setOnline(navigator.onLine);
 
+// Changes the server refused for good. Their local edits are undone when the
+// queue refreshes, so the count is kept until the user dismisses it.
+let failedChanges = 0;
+const failedChangesListeners = new Set<() => void>();
+
+function setFailedChanges(count: number) {
+  failedChanges = count;
+  failedChangesListeners.forEach(listener => listener());
+}
+
+export const failedChangesStore = {
+  subscribe(listener: () => void) {
+    failedChangesListeners.add(listener);
+    return () => failedChangesListeners.delete(listener);
+  },
+  get: () => failedChanges,
+  clear: () => setFailedChanges(0)
+};
+
 /** True when no local changes are waiting to reach the server. */
 export function isQueueIdle() {
   return queryClient.isMutating() === 0;
@@ -62,6 +81,7 @@ export const queryClient = new QueryClient({
   mutationCache: new MutationCache({
     onError: error => {
       console.error("[app] Failed to sync a change", error);
+      setFailedChanges(failedChanges + 1);
     },
     onSettled: () => {
       // The settling mutation still counts here, so 1 means it was the last one.

@@ -13,6 +13,7 @@ import {
 import List from "@customTypes/list";
 import customLists from "@utilities/customLists";
 import useSwitchList from "@hooks/useSwitchList";
+import useIsWrappedPage from "@hooks/useIsWrappedPage";
 import useCurrentListId from "@hooks/useCurrentListId";
 import useNavHover from "@hooks/useNavHover";
 
@@ -29,9 +30,11 @@ interface Props {
 const ListItem = forwardRef<HTMLButtonElement, Props>(({ containerProps, touchEvents, list }, ref) => {
   const switchList = useSwitchList();
   const currentListId = useCurrentListId();
+  const isWrappedPage = useIsWrappedPage();
   const [hoveredId, setHoveredId] = useNavHover();
   const { type, color, id } = list;
-  const selected = id === currentListId || (type !== "default" && type === currentListId);
+  // Wrapped has no list in the URL, so the current list falls back to the inbox; the recap button is selected instead.
+  const selected = !isWrappedPage && (id === currentListId || (type !== "default" && type === currentListId));
   const customList = getCustomList(type);
   const Icon = customList?.icon || <DotIcon style={{ "--dot-color": color } as React.CSSProperties} />;
   const title = customList?.title || list.title;
