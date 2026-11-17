@@ -19,6 +19,7 @@ import useNavHover from "@hooks/useNavHover";
 import { NewListItem, NAV_ITEM_TRANSITION, SelectedItemBackground } from "@components/ListItem";
 import useIsWrappedPage from "@hooks/useIsWrappedPage";
 import Loader from "@components/Loader";
+import Tooltip from "@components/Tooltip";
 import { ChartColumn as Recap, Settings } from "lucide-react";
 import useProfile from "@hooks/useProfile";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
@@ -64,37 +65,41 @@ function Navigation() {
           <NewListItem />
         </ListsContainer>
         <Footer>
-          <ProfilePicture
-            user={profile}
-            size="2.4rem"
-            aria-label="Account settings"
-            onClick={() => navigate(generateUrl("/profile-settings/account"))}
-          />
+          <Tooltip label="Account settings">
+            <ProfilePicture
+              user={profile}
+              size="2.4rem"
+              aria-label="Account settings"
+              onClick={() => navigate(generateUrl("/profile-settings/account"))}
+            />
+          </Tooltip>
           <FooterActions>
-            <FooterButton
-              type="button"
-              aria-label="Your recap"
-              title="Your recap"
-              data-selected={isWrappedPage ? "true" : "false"}
-              aria-current={isWrappedPage ? "page" : undefined}
-              onClick={() => {
-                setMobileNavVisibility(false);
-                navigate("/wrapped");
-              }}
-            >
-              {isWrappedPage && (
-                <SelectedItemBackground layoutId="primary-nav-selected-div" transition={NAV_ITEM_TRANSITION} />
-              )}
-              <Recap size={20} aria-hidden />
-            </FooterButton>
-            <FooterButton
-              type="button"
-              aria-label="Settings"
-              title="Settings"
-              onClick={() => navigate(generateUrl("/profile-settings/preferences"))}
-            >
-              <Settings size={20} aria-hidden />
-            </FooterButton>
+            <Tooltip label="Your recap">
+              <FooterButton
+                type="button"
+                aria-label="Your recap"
+                data-selected={isWrappedPage ? "true" : "false"}
+                aria-current={isWrappedPage ? "page" : undefined}
+                onClick={() => {
+                  setMobileNavVisibility(false);
+                  navigate("/wrapped");
+                }}
+              >
+                {isWrappedPage && (
+                  <SelectedItemBackground layoutId="primary-nav-selected-div" transition={NAV_ITEM_TRANSITION} />
+                )}
+                <Recap size={20} aria-hidden />
+              </FooterButton>
+            </Tooltip>
+            <Tooltip label="Settings">
+              <FooterButton
+                type="button"
+                aria-label="Settings"
+                onClick={() => navigate(generateUrl("/profile-settings/preferences"))}
+              >
+                <Settings size={20} aria-hidden />
+              </FooterButton>
+            </Tooltip>
           </FooterActions>
         </Footer>
       </ListScroller>
