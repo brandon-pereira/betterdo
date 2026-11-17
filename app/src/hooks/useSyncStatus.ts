@@ -38,8 +38,6 @@ function useSyncStatus() {
     state = "syncing";
   }
 
-  state = "syncing";
-
   return { state, pendingChanges, failedChanges, dismissFailedChanges: failedChangesStore.clear };
 }
 
