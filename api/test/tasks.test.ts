@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeAll } from "vitest";
+import { describe, test, expect, vi, beforeAll } from "vitest";
 import createRouter, { type RouterOptions } from "./helpers/createRouter.js";
 import { createList, getListById, isUserAuthorizedToAccessList } from "../src/services/lists.js";
 import { createTask, createTaskWithNotification, updateTask, getTaskById, getTasks } from "../src/services/tasks.js";
@@ -10,6 +10,23 @@ import { createTaskSchema, updateTaskSchema } from "../src/validators/tasks.js";
 
 let router: RouterOptions;
 let validListId: string;
+
+// Route tests sign in as the test user instead of looking up a real session.
+vi.mock("../src/middlewares/authMiddleware.js", async () => {
+  const { createMiddleware } = await import("hono/factory");
+  return {
+    authMiddleware: createMiddleware(async (c, next) => {
+      c.set("user", router.user);
+      return next();
+    })
+  };
+});
+vi.mock("../src/notifier.js", () => ({ getNotifier: () => router.notifier }));
+
+const { default: tasksApi } = await import("../src/routes/tasks.js");
+
+const sendToTasksApi = (method: string, path: string, body: unknown) =>
+  tasksApi.request(path, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 
 beforeAll(async () => {
   router = await createRouter();
@@ -191,5 +208,46 @@ describe("Offline task replay", () => {
   test("Accepts a client-generated ID", () => {
     expect(createTaskSchema.safeParse({ id: crypto.randomUUID(), listId: "inbox", title: "Test" }).success).toBe(true);
     expect(createTaskSchema.safeParse({ id: "not-a-uuid", listId: "inbox", title: "Test" }).success).toBe(false);
+  });
+});
+
+describe("Tasks route list access", () => {
+  let otherListId: string;
+
+  beforeAll(async () => {
+    const other = await createRouter();
+    otherListId = (await createList({ title: "Theirs", createdById: other.user.id })).id;
+  });
+
+  test("Can create a task in a list the user belongs to", async () => {
+    const res = await sendToTasksApi("PUT", "/", { listId: validListId, title: "Allowed" });
+    expect(res.status).toBe(200);
+    expect((await getTasks({ listId: validListId })).map(t => t.title)).toContain("Allowed");
+  });
+
+  test("Can't create a task in another user's list", async () => {
+    const res = await sendToTasksApi("PUT", "/", { listId: otherListId, title: "Intruder" });
+    expect(res.status).toBe(404);
+    expect(await getTasks({ listId: otherListId })).toHaveLength(0);
+  });
+
+  test("Rejects a malformed list ID instead of erroring", async () => {
+    const res = await sendToTasksApi("PUT", "/", { listId: "not-a-list", title: "Bad" });
+    expect(res.status).toBe(404);
+  });
+
+  test("Can't move a task into another user's list", async () => {
+    const [task] = await createTask({ listId: validListId, title: "Stay put", createdById: router.user.id });
+    const res = await sendToTasksApi("POST", `/${task.id}`, { listId: otherListId });
+    expect(res.status).toBe(404);
+    expect((await getTaskById(task.id))?.listId).toBe(validListId);
+  });
+
+  test("Can move a task between the user's own lists", async () => {
+    const secondListId = (await createList({ title: "Mine too", createdById: router.user.id })).id;
+    const [task] = await createTask({ listId: validListId, title: "Move me", createdById: router.user.id });
+    const res = await sendToTasksApi("POST", `/${task.id}`, { listId: secondListId });
+    expect(res.status).toBe(200);
+    expect((await getTaskById(task.id))?.listId).toBe(secondListId);
   });
 });

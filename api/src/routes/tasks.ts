@@ -46,8 +46,6 @@ tasksApi.put("/", authMiddleware, zValidator("json", createTaskSchema, validatio
   let extraFields: Record<string, unknown> = {};
 
   // Normalize a client-supplied dueDate to the user's timezone at start of day,
-  // matching v1 (controllers/tasks.ts:35). This is applied before the custom-list
-  // path so that a custom list's own dueDate (today/tomorrow) takes precedence.
   const normalizedFields: Record<string, unknown> = {};
   if (dueDate && typeof dueDate === "string") {
     normalizedFields.dueDate = startOfDay(timezone(new Date(dueDate), user.timeZone));
@@ -66,6 +64,11 @@ tasksApi.put("/", authMiddleware, zValidator("json", createTaskSchema, validatio
       return c.json({ error: "Inbox not found" }, 404);
     }
     resolvedListId = inbox.id;
+  }
+
+  // Ensure the user has access to the resolved list ID
+  if (!(await isUserAuthorizedToAccessList({ userId: user.id, listId: resolvedListId }))) {
+    return c.json({ error: "Invalid List ID" }, 404);
   }
 
   const newTask = await createTaskWithNotification(
@@ -94,6 +97,14 @@ tasksApi.post("/:taskId", authMiddleware, zValidator("json", updateTaskSchema, v
   });
   if (!isAuthorized) {
     return c.json({ error: "Unauthorized access to this task" }, 403);
+  }
+  // Moving a task needs access to the destination list too
+  if (
+    payload.listId &&
+    payload.listId !== task.listId &&
+    !(await isUserAuthorizedToAccessList({ userId: user.id, listId: payload.listId }))
+  ) {
+    return c.json({ error: "Invalid List ID" }, 404);
   }
 
   const { dueDate, ...rest } = payload;
