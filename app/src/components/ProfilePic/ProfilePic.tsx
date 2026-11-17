@@ -43,15 +43,22 @@ interface Props {
   size?: string;
   className?: string;
   onClick?: React.MouseEventHandler<HTMLElement>;
+  "aria-label"?: string;
 }
 
-const ProfilePicture = ({ user, onClick, className, size }: Props) => {
+const ProfilePicture = ({ user, onClick, className, size, "aria-label": ariaLabel }: Props) => {
   const [error, setError] = useState(false);
   const firstName = user?.firstName || "A";
   const lastName = user?.lastName || "A";
   const initials = firstName.charAt(0) + lastName.charAt(0);
   return (
-    <Container as={onClick ? "button" : "div"} onClick={onClick} className={className} size={size}>
+    <Container
+      as={onClick ? "button" : "div"}
+      onClick={onClick}
+      className={className}
+      size={size}
+      aria-label={ariaLabel}
+    >
       {user && user.profilePicture && !error && (
         <Img
           onError={() => setError(true)}

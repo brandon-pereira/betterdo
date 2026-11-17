@@ -3,7 +3,6 @@ import { styled } from "@linaria/react";
 import { theme } from "../../theme";
 import { DEFAULT_LIST_COLOR } from "../../constants";
 
-import _ProfilePicture from "@components/ProfilePic";
 import _Hamburger from "@components/Hamburger";
 
 export const Container = styled.div`
@@ -22,9 +21,6 @@ export const Container = styled.div`
 `;
 
 export const Hamburger = styled(_Hamburger)``;
-export const ProfilePicture = styled(_ProfilePicture)`
-  flex-shrink: 0;
-`;
 
 export const Content = styled.div`
   height: 100%;
@@ -37,7 +33,7 @@ export const Content = styled.div`
   color: #fff;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.5rem;
   position: relative;
   padding: 0 1rem;
   h1 {
@@ -59,10 +55,6 @@ export const Content = styled.div`
       font-size: 1.2rem;
       margin-right: 0.2rem;
     }
-    ${ProfilePicture} {
-      height: 2rem;
-      width: 2rem;
-    }
     ${Hamburger} {
       display: none;
     }
@@ -71,10 +63,6 @@ export const Content = styled.div`
     h1 {
       font-size: 1.8rem;
       margin-right: 1rem;
-    }
-    ${ProfilePicture} {
-      height: 3rem;
-      width: 3rem;
     }
   }
 `;
