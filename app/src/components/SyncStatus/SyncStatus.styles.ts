@@ -52,18 +52,18 @@ export const Tooltip = styled.div`
   position: fixed;
   z-index: var(--z-modal-overlay);
   box-sizing: border-box;
-  padding: 0.8rem 1rem;
-  border-radius: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 0.4rem;
   background: #111;
   color: #fff;
-  font-size: 1.3rem;
-  line-height: 1.4;
+  font-size: 0.8rem;
+  line-height: 1.35;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 `;
 
 export const DismissButton = styled.button`
   display: block;
-  margin-top: 0.6rem;
+  margin-top: 0.35rem;
   padding: 0;
   border: none;
   background: none;

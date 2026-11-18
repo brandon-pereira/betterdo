@@ -9,7 +9,7 @@ interface Props {
   className?: string;
 }
 
-const TOOLTIP_WIDTH = 240;
+const TOOLTIP_WIDTH = 220;
 const VIEWPORT_MARGIN = 8;
 
 const pluralize = (count: number) => `${count} ${count === 1 ? "change" : "changes"}`;
