@@ -6,6 +6,8 @@ import useSwipe from "@hooks/useSwipe";
 import useSwitchList from "@hooks/useSwitchList";
 import { getListSlug } from "@utilities/customLists";
 
+import { NAVIGATION_ID } from "../../constants";
+
 const Bar = styled.div`
   height: 4px;
   width: 100%;
@@ -22,12 +24,22 @@ const Bar = styled.div`
   }
 `;
 
-const ClickContainer = styled.div`
+const ClickContainer = styled.button`
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
   cursor: pointer;
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+    border-radius: 4px;
+  }
 `;
 
 const BarContainer = styled.div`
@@ -52,12 +64,13 @@ const BarContainer = styled.div`
 
 interface Props {
   className?: string;
-  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   open: boolean;
   hidden?: boolean;
+  label: string;
 }
 
-const Hamburger = ({ open, className, onClick, hidden }: Props) => {
+const Hamburger = ({ open, className, onClick, hidden, label }: Props) => {
   const { lists } = useLists();
   const currentListId = useCurrentListId();
   const switchList = useSwitchList();
@@ -70,8 +83,17 @@ const Hamburger = ({ open, className, onClick, hidden }: Props) => {
   });
 
   return (
-    <ClickContainer onClick={onClick} className={className} hidden={hidden} {...swiper}>
-      <BarContainer data-open={open ? "true" : "false"}>
+    <ClickContainer
+      type="button"
+      aria-label={label}
+      aria-expanded={open}
+      aria-controls={NAVIGATION_ID}
+      onClick={onClick}
+      className={className}
+      hidden={hidden}
+      {...swiper}
+    >
+      <BarContainer aria-hidden="true" data-open={open ? "true" : "false"}>
         <Bar />
         <Bar />
         <Bar />

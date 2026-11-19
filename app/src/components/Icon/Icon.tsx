@@ -21,10 +21,9 @@ function Icon({ children, onClick, icon, className, color, ...props }: Props) {
       onClick={onClick}
       // add type button so it doesn't default to submit
       type={onClick ? "button" : undefined}
+      aria-label={onClick ? children : undefined}
     >
-      {createElement(icon, {
-        "aria-describedby": children
-      })}
+      {createElement(icon, { "aria-hidden": true })}
     </IconContainer>
   );
 }

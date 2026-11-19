@@ -103,7 +103,9 @@ export const theme = {
     editTaskFieldBorder: v("effects-edit-task-field-border"),
     editTaskFooterBackground: v("effects-edit-task-footer-background"),
     editTaskFooterBorder: v("effects-edit-task-footer-border"),
-    settingsSectionBackground: v("effects-settings-section-background")
+    settingsSectionBackground: v("effects-settings-section-background"),
+    tooltipBackground: v("effects-tooltip-background"),
+    tooltipBorder: v("effects-tooltip-border")
   }
 } as const;
 
@@ -156,7 +158,9 @@ export const LIGHT_VARS: Record<string, string> = {
   "effects-edit-task-field-border": "rgba(0, 0, 0, 0.08)",
   "effects-edit-task-footer-background": "rgba(255, 255, 255, 0.45)",
   "effects-edit-task-footer-border": "rgba(255, 255, 255, 0.5)",
-  "effects-settings-section-background": "rgba(0, 0, 0, 0.015)"
+  "effects-settings-section-background": "rgba(0, 0, 0, 0.015)",
+  "effects-tooltip-background": "#111",
+  "effects-tooltip-border": "transparent"
 };
 
 /** Concrete custom-property values for dark mode. */
@@ -208,5 +212,7 @@ export const DARK_VARS: Record<string, string> = {
   "effects-edit-task-field-border": "rgba(255, 255, 255, 0.08)",
   "effects-edit-task-footer-background": "rgba(20, 20, 20, 0.5)",
   "effects-edit-task-footer-border": "rgba(255, 255, 255, 0.06)",
-  "effects-settings-section-background": "rgba(255, 255, 255, 0.02)"
+  "effects-settings-section-background": "rgba(255, 255, 255, 0.02)",
+  "effects-tooltip-background": "#2a2a2a",
+  "effects-tooltip-border": "rgba(255, 255, 255, 0.1)"
 };

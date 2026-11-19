@@ -10,5 +10,8 @@ export const QUERIES = {
 
 export const DEFAULT_LIST_COLOR = "#666666";
 
+// The sidebar's element id, which the hamburger buttons point at with aria-controls.
+export const NAVIGATION_ID = "navigation";
+
 // First path segment of each route-driven modal (see modalRoutes in pages/CoreApp.tsx).
 export const MODAL_ROUTES = new Set(["create-list", "edit-list", "edit-task", "profile-settings"]);

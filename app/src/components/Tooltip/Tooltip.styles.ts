@@ -1,5 +1,7 @@
 import { styled } from "@linaria/react";
 
+import { theme } from "../../theme";
+
 export const Anchor = styled.span`
   display: inline-flex;
 `;
@@ -8,11 +10,12 @@ export const Bubble = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: var(--z-modal-overlay);
+  z-index: var(--z-tooltip);
   max-width: 16rem;
   padding: 0.35rem 0.6rem;
+  border: 1px solid ${theme.effects.tooltipBorder};
   border-radius: 0.4rem;
-  background: #111;
+  background: ${theme.effects.tooltipBackground};
   color: #fff;
   font-size: 0.8rem;
   font-weight: 500;

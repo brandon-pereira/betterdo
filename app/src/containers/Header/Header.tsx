@@ -1,6 +1,7 @@
 import { Container, Hamburger, Loader, Title, SettingsButton, Icon } from "./Header.styles";
 
 import Settings from "@components/Icon/svgs/settings.svg";
+import Tooltip from "@components/Tooltip";
 import useEditListModal from "@hooks/useEditListModal";
 import useListDetails from "@hooks/useListDetails";
 import useCurrentListId from "@hooks/useCurrentListId";
@@ -25,17 +26,24 @@ function Header({ title }: Props) {
 
   return (
     <Container data-dark-color={isDarkColor ? "true" : "false"}>
-      <Hamburger open={isMobileNavVisible} hidden={isMobileNavVisible} onClick={() => setMobileNavVisibility(true)} />
+      <Hamburger
+        label="Open navigation"
+        open={isMobileNavVisible}
+        hidden={isMobileNavVisible}
+        onClick={() => setMobileNavVisibility(true)}
+      />
       <Loader isVisible={!title && loading} size="2rem" />
       <Title>{title ?? list.title}</Title>
-      <SettingsButton
-        aria-label="List Settings"
-        color="none"
-        hidden={Boolean(title) || list.type !== "default"}
-        onClick={openEditListModal}
-      >
-        <Icon icon={Settings} color={"currentColor"} />
-      </SettingsButton>
+      <Tooltip label="List settings" placement="bottom">
+        <SettingsButton
+          aria-label="List settings"
+          color="none"
+          hidden={Boolean(title) || list.type !== "default"}
+          onClick={openEditListModal}
+        >
+          <Icon icon={Settings} color={"currentColor"} />
+        </SettingsButton>
+      </Tooltip>
     </Container>
   );
 }

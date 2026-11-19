@@ -12,6 +12,7 @@ import ChecklistItem, { CHECKLIST_COMMIT } from "./TipTap/ChecklistItem";
 import ChecklistHint from "./TipTap/ChecklistHint";
 import MarkdownPaste from "./TipTap/MarkdownPaste";
 import Checklist from "@components/Icon/svgs/checklist.svg";
+import Tooltip from "@components/Tooltip";
 
 import { styled } from "@linaria/react";
 
@@ -48,7 +49,7 @@ const ToolbarButton = styled.button`
   min-height: 36px;
   justify-content: center;
 
-  &[data-active="true"] {
+  &[aria-pressed="true"] {
     background: ${theme.effects.tintActive};
     font-weight: 600;
   }
@@ -392,32 +393,38 @@ export default function RichTextEditor({
   return (
     <Container>
       <Toolbar>
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          data-active={editor.isActive("bold") ? "true" : "false"}
-          title="Bold (Cmd+B)"
-          type="button"
-        >
-          <strong>B</strong>
-        </ToolbarButton>
+        <Tooltip label="Bold (Cmd+B)">
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            aria-pressed={editor.isActive("bold")}
+            aria-label="Bold"
+            type="button"
+          >
+            <strong aria-hidden="true">B</strong>
+          </ToolbarButton>
+        </Tooltip>
 
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          data-active={editor.isActive("heading", { level: 2 }) ? "true" : "false"}
-          title="Heading (Cmd+Alt+2)"
-          type="button"
-        >
-          <strong>H</strong>
-        </ToolbarButton>
+        <Tooltip label="Heading (Cmd+Alt+2)">
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            aria-pressed={editor.isActive("heading", { level: 2 })}
+            aria-label="Heading"
+            type="button"
+          >
+            <strong aria-hidden="true">H</strong>
+          </ToolbarButton>
+        </Tooltip>
 
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleTaskList().run()}
-          data-active={editor.isActive("taskList") ? "true" : "false"}
-          title="Checklist (Cmd+Shift+9)"
-          type="button"
-        >
-          <Checklist aria-hidden="true" focusable="false" />
-        </ToolbarButton>
+        <Tooltip label="Checklist (Cmd+Shift+9)">
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleTaskList().run()}
+            aria-pressed={editor.isActive("taskList")}
+            aria-label="Checklist"
+            type="button"
+          >
+            <Checklist aria-hidden="true" focusable="false" />
+          </ToolbarButton>
+        </Tooltip>
       </Toolbar>
 
       <Editor editor={editor} />

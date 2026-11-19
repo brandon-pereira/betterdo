@@ -43,6 +43,7 @@ import CountUp from "./CountUp";
 import useWrapped from "@hooks/useWrapped";
 import useProfile from "@hooks/useProfile";
 import Loader from "@components/Loader";
+import Tooltip from "@components/Tooltip";
 import formatNumber from "@utilities/formatNumber";
 import {
   formatPeriod,
@@ -202,17 +203,21 @@ function Recap({ periodKey, onSelectPeriod }: RecapProps) {
       </PeriodTabs>
       {!isAllTime && (
         <PeriodStepper>
-          <StepButton
-            aria-label={`Previous ${periodNoun}`}
-            disabled={!canGoPrevious}
-            onClick={() => onSelectPeriod(previousKey)}
-          >
-            ‹
-          </StepButton>
+          <Tooltip label={`Previous ${periodNoun}`}>
+            <StepButton
+              aria-label={`Previous ${periodNoun}`}
+              disabled={!canGoPrevious}
+              onClick={() => onSelectPeriod(previousKey)}
+            >
+              ‹
+            </StepButton>
+          </Tooltip>
           <PeriodLabel>{formatPeriod(periodKey)}</PeriodLabel>
-          <StepButton aria-label={`Next ${periodNoun}`} disabled={!canGoNext} onClick={() => onSelectPeriod(nextKey)}>
-            ›
-          </StepButton>
+          <Tooltip label={`Next ${periodNoun}`}>
+            <StepButton aria-label={`Next ${periodNoun}`} disabled={!canGoNext} onClick={() => onSelectPeriod(nextKey)}>
+              ›
+            </StepButton>
+          </Tooltip>
         </PeriodStepper>
       )}
     </PeriodBar>
