@@ -10,6 +10,7 @@ function Logo() {
     <Container>
       <Content>
         <Hamburger
+          label="Close navigation"
           open={isMobileNavVisible}
           onClick={e => {
             setMobileNavVisibility(false);

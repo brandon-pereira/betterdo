@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback, useRef, useId } from "react";
 import randomColor from "randomcolor";
 
-import { Icon, Container, Color, LabelContainer, TooltipContainer } from "./ColorPicker.styles";
+import { Icon, Container, Color, LabelContainer, PickerContainer } from "./ColorPicker.styles";
 
 import Refresh from "@components/Icon/svgs/refresh.svg";
 import Eyedropper from "@components/Icon/svgs/eyedropper.svg";
 import { Label } from "@components/Forms";
+import Tooltip from "@components/Tooltip";
 import TouchEvents from "@utilities/touchevents";
 
 function generateRandomColor() {
@@ -83,13 +84,17 @@ function ColorPicker({ value, onChange }: Props) {
     <div>
       <LabelContainer>
         <Label htmlFor={formId}>List Colour</Label>
-        <Icon size="1rem" icon={Refresh} color="currentColor" onClick={onRefreshPalette}>
-          Refresh Palette
-        </Icon>
-        <TooltipContainer>
-          <Icon size="1rem" icon={Eyedropper} color="currentColor" onClick={onLaunchPicker}>
-            Pick a colour
+        <Tooltip label="Refresh palette">
+          <Icon size="1rem" icon={Refresh} color="currentColor" onClick={onRefreshPalette}>
+            Refresh palette
           </Icon>
+        </Tooltip>
+        <PickerContainer>
+          <Tooltip label="Pick a colour">
+            <Icon size="1rem" icon={Eyedropper} color="currentColor" onClick={onLaunchPicker}>
+              Pick a colour
+            </Icon>
+          </Tooltip>
           <input
             id={formId}
             ref={inputColorRef}
@@ -109,7 +114,7 @@ function ColorPicker({ value, onChange }: Props) {
               transform: "translateX(-50%)"
             }}
           />
-        </TooltipContainer>
+        </PickerContainer>
       </LabelContainer>
 
       <Container ref={colorPaletteRef}>

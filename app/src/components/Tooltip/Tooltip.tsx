@@ -100,7 +100,9 @@ function Tooltip({ label, placement = "top", children }: Props) {
     isOpen && isValidElement<{ "aria-label"?: string; "aria-describedby"?: string }>(children)
       ? children.props["aria-label"] === label
         ? children
-        : cloneElement(children, { "aria-describedby": id })
+        : cloneElement(children, {
+            "aria-describedby": [children.props["aria-describedby"], id].filter(Boolean).join(" ")
+          })
       : children;
 
   return (
@@ -114,7 +116,15 @@ function Tooltip({ label, placement = "top", children }: Props) {
             timer.current = setTimeout(open, HOVER_DELAY_MS);
           }
         }}
-        onPointerLeave={close}
+        onPointerLeave={() => {
+          // Keep a tooltip opened by keyboard focus until focus moves away.
+          const focused = document.activeElement;
+          if (focused && anchorRef.current?.contains(focused) && focused.matches(":focus-visible")) {
+            clearTimeout(timer.current);
+          } else {
+            close();
+          }
+        }}
         onPointerDown={close}
         onFocus={e => e.target.matches(":focus-visible") && open()}
         onBlur={close}

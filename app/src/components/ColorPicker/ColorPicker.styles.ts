@@ -41,7 +41,7 @@ export const Color = styled.button`
   }
 `;
 
-export const TooltipContainer = styled.div`
+export const PickerContainer = styled.div`
   position: relative;
   height: 1rem;
   display: flex;

@@ -24,6 +24,8 @@ import { ChartColumn as Recap, Settings } from "lucide-react";
 import useProfile from "@hooks/useProfile";
 import useGeneratedUrl from "@hooks/useGeneratedUrl";
 
+import { NAVIGATION_ID } from "../../constants";
+
 // Started eagerly so the chunk downloads in parallel with the initial fetches.
 const sortableListImport = import("./SortableList");
 const SortableList = lazy(() => sortableListImport);
@@ -56,7 +58,7 @@ function Navigation() {
   );
 
   return (
-    <Container data-mobile-nav={isMobileNavVisible ? "true" : "false"}>
+    <Container id={NAVIGATION_ID} data-mobile-nav={isMobileNavVisible ? "true" : "false"}>
       <ListScroller>
         <ListsContainer onPointerLeave={() => setHoveredId(null)}>
           <Suspense fallback={<Loader />}>

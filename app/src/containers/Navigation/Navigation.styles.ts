@@ -49,11 +49,12 @@ export const Container = styled.nav`
     }
   }
 `;
+// Grows to fill the sidebar, which keeps the footer at the bottom when there are only a few lists.
 export const ListsContainer = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
-  flex: 1;
+  flex: 1 0 auto;
 `;
 
 export const ListScroller = styled.div`
@@ -62,6 +63,8 @@ export const ListScroller = styled.div`
   width: 100%;
   height: 100%;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const Footer = styled.div`

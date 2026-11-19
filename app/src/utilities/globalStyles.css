@@ -9,6 +9,7 @@
      the logo so the hamburger stays clickable. */
   --z-navigation-mobile: 35;
   --z-modal-overlay: 100;
+  --z-tooltip: 110;
 }
 
 html {
