@@ -2,8 +2,8 @@
 
 declare let self: ServiceWorkerGlobalScope;
 
-import { cleanupOutdatedCaches, precacheAndRoute } from "workbox-precaching";
-import { registerRoute } from "workbox-routing";
+import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
+import { NavigationRoute, registerRoute } from "workbox-routing";
 import { CacheFirst } from "workbox-strategies";
 import { googleFontsCache } from "workbox-recipes";
 import { clientsClaim } from "workbox-core";
@@ -17,6 +17,15 @@ precacheAndRoute(self.__WB_MANIFEST, {
   ignoreURLParametersMatching: [/.*/]
 });
 registerRoute("/", new CacheFirst());
+
+// Client-side routes (/inbox, /<list id>/edit-task/...) aren't real files, so
+// serve the precached app shell for them. Without this, opening or reloading
+// any page other than the app root fails offline.
+registerRoute(
+  new NavigationRoute(createHandlerBoundToURL(`${import.meta.env.BASE_URL}index.html`), {
+    denylist: [/^\/api\//]
+  })
+);
 
 interface NotificationData {
   listId?: string;
