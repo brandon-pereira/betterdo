@@ -13,13 +13,15 @@ function useCreateList() {
   const navigate = useNavigate();
   return useCallback(
     async (title: string, color: string) => {
+      // The server keeps this id, so the placeholder already has the list's real id
+      const id = crypto.randomUUID();
       await mutate(
         getListsUrl(),
         async (lists?: List[]) => {
           return [
             ...(lists || []),
             {
-              id: Math.random(), // temp id
+              id,
               title,
               color
             }
@@ -27,7 +29,7 @@ function useCreateList() {
         },
         false
       );
-      const list = await createList({ title, color });
+      const list = await createList({ id, title, color });
       navigate(`/${list.id}`);
       await mutate(getListsUrl());
     },

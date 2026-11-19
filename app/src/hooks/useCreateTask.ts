@@ -12,8 +12,8 @@ function useCreateTask() {
   const [isCompletedTasksIncluded] = useCompletedTasks();
   return useCallback(
     async (listId: string, taskName: string) => {
-      // generate a tempId for now
-      const tempId = Math.floor(Math.random() * 1000);
+      // The server keeps this id, so the placeholder already has the task's real id
+      const id = crypto.randomUUID();
       // get cache url
       const listUrl = getListDetailUrl(listId, isCompletedTasksIncluded);
       // Update cache to add new temp task
@@ -24,7 +24,7 @@ function useCreateTask() {
             ...currentList,
             tasks: [
               {
-                id: tempId,
+                id,
                 title: taskName,
                 priority: "normal",
                 isLoading: true
@@ -36,7 +36,7 @@ function useCreateTask() {
         { revalidate: false }
       );
       // Send request to server
-      const addedTask = await createTask(listId, taskName);
+      const addedTask = await createTask(listId, taskName, id);
       // Sync temp task with server response
       const mutation = mutate(
         listUrl,

@@ -7,14 +7,15 @@ import type { WrappedSummary } from "../../../api/src/services/wrapped";
 
 const baseUrl = `${SERVER_URL}/api`;
 
-export const createTask = (listId: string, title: string): Promise<Task> => {
+export const createTask = (listId: string, title: string, id?: string): Promise<Task> => {
   return _put(`tasks`, {
+    id,
     title,
     listId
   });
 };
 
-export const createList = (list: { title: string; color: string }): Promise<List> => {
+export const createList = (list: { id?: string; title: string; color: string }): Promise<List> => {
   return _put<List>(`lists`, list);
 };
 
