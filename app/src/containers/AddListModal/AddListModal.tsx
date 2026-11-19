@@ -38,19 +38,17 @@ function AddListModalContainer({ isOpen }: Props) {
       const nlCords = $newList.getBoundingClientRect();
       Object.assign($modal.style, { top: nlCords.top + "px", left: nlCords.width + 10 + "px", bottom: "auto" });
       const mCords = $modal.getBoundingClientRect();
-      const isBottom = mCords.top + mCords.height >= window.innerHeight;
+      const isBottom = mCords.top + mCords.height >= window.innerHeight - 10;
       $arrow.removeAttribute("style");
-      $modal.dataset.bottom = isBottom ? "true" : "false";
       if (isBottom) {
-        Object.assign($modal.style, { top: "auto", bottom: "0" });
+        Object.assign($modal.style, { top: "auto", bottom: 10 + "px" });
         Object.assign($arrow.style, {
           top: "auto",
-          bottom: window.innerHeight - (nlCords.height + nlCords.top) + 10 + "px"
+          bottom: window.innerHeight - (nlCords.height + nlCords.top) + 10 - 10 + "px"
         });
       }
     } else {
       $arrow.removeAttribute("style");
-      $modal.dataset.bottom = "false";
       Object.assign($modal.style, { top: "", left: "", bottom: "" });
       $newList.removeAttribute("style");
     }

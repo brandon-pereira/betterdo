@@ -19,9 +19,6 @@ export const Modal = styled(_Modal)`
   }
   ${theme.queries.medium} {
     position: absolute;
-    &[data-bottom="true"] {
-      border-bottom-left-radius: 0;
-    }
     [data-betterdo-modal-arrow] {
       display: block;
       height: 1.2rem;
