@@ -1,6 +1,6 @@
 import type { Notifier } from "../notifier.js";
 
-const BASE_URL = process.env.APP_URL || "";
+const BASE_URL = (process.env.APP_URL || "").replace(/\/+$/, "");
 
 interface ListWithMembers {
   id: string;
@@ -23,7 +23,7 @@ export function notifyAboutSharedList(title: string, list: ListWithMembers, { no
       if (member.id !== user.id) {
         await notifier.send(member.id, {
           title,
-          url: `${BASE_URL}/#/${listId}`,
+          url: `${BASE_URL}/${listId}`,
           tag: `shared-list:${listId}`,
           data: {
             listId,

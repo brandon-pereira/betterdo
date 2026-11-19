@@ -3,6 +3,7 @@ import { eq, and } from "drizzle-orm";
 import { db } from "./db.js";
 import { pushSubscriptions } from "./schema/notification.js";
 import config from "./config.js";
+import { appUrl } from "./utils/appUrl.js";
 import DrizzleNotificationAdapter from "./helpers/drizzleNotificationAdapter.js";
 
 const require = createRequire(import.meta.url);
@@ -51,7 +52,7 @@ function createNotifier(): Notifier {
     },
     notificationDefaults: {
       icon: `${config.SERVER_URL || ""}/icon-192x192.png`,
-      url: `${config.SERVER_URL || ""}/app`
+      url: appUrl()
     },
     getUserPushSubscriptions,
     removeUserPushSubscription,
