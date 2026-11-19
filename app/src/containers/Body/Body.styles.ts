@@ -8,7 +8,8 @@ const Banner = styled(_Banner)``;
 
 export const Scroller = styled.div`
   position: relative;
-  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   flex: 1;
