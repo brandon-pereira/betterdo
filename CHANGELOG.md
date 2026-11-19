@@ -1,5 +1,9 @@
 # Changelog
 
+## v8.4.0 (2026-11-18)
+
+- Redesign nav to promote recap view
+
 ## v8.3.0 (2026-11-03)
 
 - Add experimental mcp server support
