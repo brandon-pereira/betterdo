@@ -14,7 +14,7 @@ const CACHE_VERSION = "1";
 
 // fetch() rejects with a TypeError when the request never reached the server
 // (offline, DNS failure, captive portal), which is always worth retrying.
-function isNetworkError(error: unknown) {
+export function isNetworkError(error: unknown) {
   return error instanceof TypeError || (error instanceof ServerError && error.originalError instanceof TypeError);
 }
 

@@ -1,9 +1,13 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { onlineManager, useIsMutating } from "@tanstack/react-query";
+import { onlineManager, useIsMutating, useMutationState } from "@tanstack/react-query";
 
-import { failedChangesStore } from "@utilities/queryClient";
+import { failedChangesStore, isNetworkError } from "@utilities/queryClient";
 
 type SyncState = "idle" | "syncing" | "offline" | "failed";
+
+const mutationFilters = { status: "pending" } as const;
+const selectIsUnreachable = (mutation: { state: { failureReason: unknown } }) =>
+  isNetworkError(mutation.state.failureReason);
 
 const subscribeToOnline = (onChange: () => void) => onlineManager.subscribe(onChange);
 const getIsOnline = () => onlineManager.isOnline();
@@ -15,7 +19,11 @@ function useSyncStatus() {
   const isOnline = useSyncExternalStore(subscribeToOnline, getIsOnline);
   const failedChanges = useSyncExternalStore(failedChangesStore.subscribe, failedChangesStore.get);
   const pendingChanges = useIsMutating();
-  const isSending = isOnline && pendingChanges > 0;
+  // Browsers only report offline when every network connection is down, so a
+  // Mac with Wi-Fi off but Docker or a VPN still up says it's online. Changes
+  // that can't reach the server keep retrying; treat that as offline too.
+  const isUnreachable = useMutationState({ filters: mutationFilters, select: selectIsUnreachable }).some(Boolean);
+  const isSending = isOnline && !isUnreachable && pendingChanges > 0;
   const [isSyncingVisible, setSyncingVisible] = useState(false);
 
   useEffect(() => {
@@ -32,7 +40,7 @@ function useSyncStatus() {
   let state: SyncState = "idle";
   if (failedChanges > 0) {
     state = "failed";
-  } else if (!isOnline) {
+  } else if (!isOnline || isUnreachable) {
     state = "offline";
   } else if (isSending && isSyncingVisible) {
     state = "syncing";
