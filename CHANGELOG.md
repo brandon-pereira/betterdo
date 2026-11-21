@@ -2,6 +2,7 @@
 
 ## v8.4.0 (2026-11-18)
 
+- Move app to be local first. Changes will now be synced to server when online again.
 - Redesign nav to promote recap view
 - Move from custom icons to lucide icons
 
