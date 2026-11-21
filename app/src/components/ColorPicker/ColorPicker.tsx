@@ -3,8 +3,7 @@ import randomColor from "randomcolor";
 
 import { Icon, Container, Color, LabelContainer, PickerContainer } from "./ColorPicker.styles";
 
-import Refresh from "@components/Icon/svgs/refresh.svg";
-import Eyedropper from "@components/Icon/svgs/eyedropper.svg";
+import { Pipette as Eyedropper, RefreshCw as Refresh } from "lucide-react";
 import { Label } from "@components/Forms";
 import Tooltip from "@components/Tooltip";
 import TouchEvents from "@utilities/touchevents";

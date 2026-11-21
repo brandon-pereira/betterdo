@@ -109,7 +109,7 @@ export const AccordionTrigger = styled.button`
     width: 1rem;
     height: 1rem;
     flex-shrink: 0;
-    fill: ${theme.colors.forms.label.color};
+    color: ${theme.colors.forms.label.color};
     transform: rotate(180deg);
     transition: transform 0.2s ease;
   }

@@ -5,7 +5,7 @@ import useEscapeKey from "./useEscapeKey";
 import useSaveShortcut from "./useSaveShortcut";
 import { Overlay, FocusLock, Content, Arrow, Container, ModalClose, ContentContainer } from "./Modal.styles";
 
-import x from "@components/Icon/svgs/x.svg";
+import { X as x } from "lucide-react";
 
 interface Props {
   className?: string;

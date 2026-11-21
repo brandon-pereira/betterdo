@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { nextMonday, isSameDay, startOfToday, startOfTomorrow, isSameWeek } from "date-fns";
 
-import { Wrapper, Container, DayIcon, ItemContainer, ItemLabel, DueDateInput } from "./DueDate.styles";
+import { Wrapper, Container, ItemContainer, ItemLabel, DueDateInput } from "./DueDate.styles";
 
-import Calendar from "@components/Icon/svgs/calendar.svg";
-import Eyedropper from "@components/Icon/svgs/eyedropper.svg";
+import { CalendarDays as Calendar, Pipette as Eyedropper } from "lucide-react";
 import Icon from "@components/Icon";
+import CalendarDayIcon from "@components/CalendarDayIcon";
 import { getCurrentDay, getTomorrowDay } from "@utilities/customLists";
 
 type Props = {
@@ -54,7 +54,7 @@ function DueDate({ value, onChange, htmlFor, ...ariaProps }: Props) {
           data-selected={isToday ? "true" : "false"}
           onClick={_onQuickActionSelect(today)}
         >
-          <DayIcon>{getCurrentDay()}</DayIcon>
+          <CalendarDayIcon day={getCurrentDay()} size="30px" />
           <ItemLabel>Today</ItemLabel>
         </ItemContainer>
         <ItemContainer
@@ -63,7 +63,7 @@ function DueDate({ value, onChange, htmlFor, ...ariaProps }: Props) {
           data-selected={isTomorrow ? "true" : "false"}
           onClick={_onQuickActionSelect(tomorrow)}
         >
-          <DayIcon>{getTomorrowDay()}</DayIcon>
+          <CalendarDayIcon day={getTomorrowDay()} size="30px" />
           <ItemLabel>Tomorrow</ItemLabel>
         </ItemContainer>
         <ItemContainer
