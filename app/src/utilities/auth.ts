@@ -62,7 +62,13 @@ export function hasCachedSession() {
   }
 }
 
+// Readable (non-HTTP-only) hint that this browser is signed in, so the marketing
+// website can send returning users straight to the app. Cookies ignore ports, so
+// this also works across the dev servers. It carries no credentials.
+const SIGNED_IN_COOKIE = "betterdoSignedIn";
+
 function writeCachedSession(data: SessionData) {
+  document.cookie = `${SIGNED_IN_COOKIE}=1; path=/; expires=${new Date(data.session.expiresAt).toUTCString()}; SameSite=Lax`;
   try {
     localStorage.setItem(SESSION_CACHE_KEY, JSON.stringify({ ...data, session: { ...data.session, token: "" } }));
   } catch {
@@ -71,6 +77,7 @@ function writeCachedSession(data: SessionData) {
 }
 
 function clearCachedSession() {
+  document.cookie = `${SIGNED_IN_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
   localStorage.removeItem(SESSION_CACHE_KEY);
 }
 

@@ -1,10 +1,11 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect } from "react";
 
 import { DEFAULT_LIST_COLOR } from "../../constants";
 
 import useCurrentListId from "@hooks/useCurrentListId";
 import useListDetails from "@hooks/useListDetails";
 import useChromeColor from "@hooks/useChromeColor";
+import useThemeColor from "@hooks/useThemeColor";
 
 const BASE_TITLE = "BetterDo.";
 
@@ -36,18 +37,7 @@ function Helmet({ title: pageTitle }: Props) {
     };
   }, []);
 
-  const themeColorMeta = useRef<HTMLMetaElement | null>(null);
-  useLayoutEffect(() => {
-    const meta = document.createElement("meta");
-    meta.name = "theme-color";
-    document.head.append(meta);
-    themeColorMeta.current = meta;
-    return () => meta.remove();
-  }, []);
-
-  useLayoutEffect(() => {
-    themeColorMeta.current!.content = themeColor;
-  }, [themeColor]);
+  useThemeColor(themeColor);
 
   return null;
 }

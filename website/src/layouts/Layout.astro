@@ -1,4 +1,6 @@
 ---
+import { LAUNCH_URL } from "../constants";
+
 interface Props {
   title: string;
 }
@@ -9,6 +11,12 @@ const { title } = Astro.props;
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Send signed-in users straight to the app (the app sets this cookie while a session exists). -->
+    <script is:inline define:vars={{ launchUrl: LAUNCH_URL }}>
+      if (document.cookie.split("; ").includes("betterdoSignedIn=1")) {
+        location.replace(launchUrl);
+      }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <title>BetterDo - {title}</title>
     <meta name="description" content="The better task manager" />
