@@ -1,7 +1,10 @@
 import { useEffect, useId, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
 
-import { Button, Dot, DismissButton, Spinner, Tooltip } from "./SyncStatus.styles";
+import { CloudAlert, CloudOff } from "lucide-react";
+
+import { Button, Detail, DismissButton, Spinner, Title, Tooltip } from "./SyncStatus.styles";
 
 import useSyncStatus from "@hooks/useSyncStatus";
 
@@ -9,7 +12,7 @@ interface Props {
   className?: string;
 }
 
-const TOOLTIP_WIDTH = 220;
+const TOOLTIP_WIDTH = 240;
 const VIEWPORT_MARGIN = 8;
 
 const pluralize = (count: number) => `${count} ${count === 1 ? "change" : "changes"}`;
@@ -22,38 +25,69 @@ function SyncStatus({ className }: Props) {
   const pointerType = useRef("");
   const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const tooltipId = useId();
-  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const [position, setPosition] = useState<{ top: number; left: number; arrowLeft: number } | null>(null);
+
+  const [previousState, setPreviousState] = useState(state);
+
+  // Once everything syncs the button disappears, so close the tooltip rather than
+  // having it pop back open the next time the status shows.
+  if (previousState !== state) {
+    setPreviousState(state);
+    if (state === "idle") {
+      setPosition(null);
+    }
+  }
 
   useEffect(() => () => clearTimeout(hideTimer.current), []);
 
   // Touch devices don't hover or blur, so a tap anywhere else closes the tooltip.
+  // It's fixed in place, so scrolling or resizing would leave it behind.
   useEffect(() => {
     if (!position) {
       return;
     }
+    const close = () => setPosition(null);
     const onPointerDown = (e: PointerEvent) => {
       const target = e.target as Node;
       if (!buttonRef.current?.contains(target) && !tooltipRef.current?.contains(target)) {
-        setPosition(null);
+        close();
       }
     };
     document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+    };
   }, [position]);
 
   if (state === "idle") {
     return null;
   }
 
-  let message = `Syncing ${pluralize(pendingChanges)}…`;
+  let title = "Syncing…";
+  let detail = `Saving ${pluralize(pendingChanges)} to your account.`;
   if (state === "failed") {
-    message = `${pluralize(failedChanges)} couldn't be saved, so ${failedChanges === 1 ? "it was" : "they were"} undone.`;
+    title = "Changes undone";
+    detail = `${pluralize(failedChanges)} couldn't be saved, so ${failedChanges === 1 ? "it was" : "they were"} undone.`;
   } else if (state === "offline") {
-    message =
+    title = "You're offline";
+    detail =
       pendingChanges > 0
-        ? `You're offline. ${pluralize(pendingChanges)} saved on this device will sync when you reconnect.`
-        : "You're offline. Changes you make are saved on this device and sync when you reconnect.";
+        ? `${pluralize(pendingChanges)} saved on this device will sync when you reconnect.`
+        : "Changes you make are saved on this device and sync when you reconnect.";
   }
+  const message = `${title}. ${detail}`;
+  const icon =
+    state === "syncing" ? (
+      <Spinner aria-hidden />
+    ) : state === "offline" ? (
+      <CloudOff aria-hidden />
+    ) : (
+      <CloudAlert aria-hidden />
+    );
 
   const show = () => {
     clearTimeout(hideTimer.current);
@@ -61,9 +95,10 @@ function SyncStatus({ className }: Props) {
     if (!rect) {
       return;
     }
-    const centered = rect.left + rect.width / 2 - TOOLTIP_WIDTH / 2;
+    const center = rect.left + rect.width / 2;
     const maxLeft = window.innerWidth - TOOLTIP_WIDTH - VIEWPORT_MARGIN;
-    setPosition({ top: rect.bottom + VIEWPORT_MARGIN, left: Math.max(VIEWPORT_MARGIN, Math.min(centered, maxLeft)) });
+    const left = Math.max(VIEWPORT_MARGIN, Math.min(center - TOOLTIP_WIDTH / 2, maxLeft));
+    setPosition({ top: rect.bottom + VIEWPORT_MARGIN + 2, left, arrowLeft: center - left });
   };
   const hide = () => {
     clearTimeout(hideTimer.current);
@@ -85,28 +120,50 @@ function SyncStatus({ className }: Props) {
         data-state={state}
         aria-label={message}
         aria-describedby={position ? tooltipId : undefined}
-        onMouseEnter={show}
-        onMouseLeave={hideSoon}
-        onFocus={show}
-        onBlur={hide}
+        // Touch fires emulated mouse events and focuses on tap, which would open the
+        // tooltip just before the click toggled it shut, so only real hover and
+        // keyboard focus open it here and taps go through onClick.
+        onPointerEnter={e => e.pointerType === "mouse" && show()}
+        onPointerLeave={e => e.pointerType === "mouse" && hideSoon()}
+        onFocus={e => e.currentTarget.matches(":focus-visible") && show()}
+        onBlur={e => !tooltipRef.current?.contains(e.relatedTarget) && hide()}
         onPointerDown={e => (pointerType.current = e.pointerType)}
-        // A mouse already opened it on hover/focus; a tap toggles it.
-        onClick={() => (pointerType.current !== "mouse" && position ? hide() : show())}
+        onClick={() => {
+          const wasMouse = pointerType.current === "mouse";
+          pointerType.current = "";
+          // Hover already opened it for a mouse; taps and Enter/Space toggle it.
+          if (wasMouse || !position) {
+            show();
+          } else {
+            hide();
+          }
+        }}
         onKeyDown={e => e.key === "Escape" && hide()}
       >
-        {state === "syncing" ? <Spinner size={18} aria-hidden /> : <Dot data-state={state} />}
+        {icon}
       </Button>
       {position &&
         createPortal(
           <Tooltip
             ref={tooltipRef}
-            onMouseEnter={keepOpen}
-            onMouseLeave={hideSoon}
+            onPointerEnter={e => e.pointerType === "mouse" && keepOpen()}
+            onPointerLeave={e => e.pointerType === "mouse" && hideSoon()}
             id={tooltipId}
             role="tooltip"
-            style={{ top: position.top, left: position.left, width: TOOLTIP_WIDTH }}
+            style={
+              {
+                top: position.top,
+                left: position.left,
+                width: TOOLTIP_WIDTH,
+                "--arrow-left": `${position.arrowLeft}px`
+              } as CSSProperties
+            }
           >
-            {message}
+            <Title data-state={state}>
+              {icon}
+              {title}
+            </Title>
+            <Detail>{detail}</Detail>
             {state === "failed" && (
               <DismissButton
                 type="button"
