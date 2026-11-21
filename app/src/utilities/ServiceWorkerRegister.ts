@@ -3,7 +3,8 @@ import { isProduction } from "@utilities/env";
 
 // Disable in dev unless needed
 if ("serviceWorker" in navigator && isProduction) {
-  const swUrl = import.meta.env.PROD ? "service-worker.js" : "dev-sw.js?dev-sw";
+  // Absolute so a first visit to a nested route doesn't resolve it under that route.
+  const swUrl = `${import.meta.env.BASE_URL}${import.meta.env.PROD ? "service-worker.js" : "dev-sw.js?dev-sw"}`;
   const swType = import.meta.env.PROD ? "classic" : "module";
   const wb = new Workbox(swUrl, { type: swType });
   wb.register();

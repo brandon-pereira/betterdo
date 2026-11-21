@@ -1,12 +1,8 @@
 import { startOfToday, startOfTomorrow } from "date-fns";
 
-import Bookmarks from "@components/Icon/svgs/bookmarks.svg";
-import Alarm from "@components/Icon/svgs/alarm.svg";
-import Calendar from "@components/Icon/svgs/calendar.svg";
-import Quill from "@components/Icon/svgs/quill.svg";
-import Drawer from "@components/Icon/svgs/drawer.svg";
+import { AlarmClock, Bookmark, CalendarDays, Feather, Inbox } from "lucide-react";
 import SvgIcon from "@components/Icon";
-import { DateIcon } from "@components/ListItem/ListItem.styles";
+import CalendarDayIcon from "@components/CalendarDayIcon";
 
 const ListItemIcon = ({
   icon
@@ -26,44 +22,44 @@ const lists: CustomList[] = [
   {
     id: "inbox",
     title: "Inbox",
-    icon: ListItemIcon({ icon: Drawer }),
+    icon: ListItemIcon({ icon: Inbox }),
     required: true
   },
   {
     id: "newList",
     title: "New List",
-    icon: ListItemIcon({ icon: Quill }),
+    icon: ListItemIcon({ icon: Feather }),
     required: true
   },
   {
     id: "highPriority",
     title: "High Priority",
-    icon: ListItemIcon({ icon: Bookmarks }),
+    icon: ListItemIcon({ icon: Bookmark }),
     required: false
   },
   {
     id: "today",
     title: "Today",
-    icon: <DateIcon>{getCurrentDay()}</DateIcon>,
+    icon: <CalendarDayIcon day={getCurrentDay()} size="1.375rem" strokeWidth={1.75} />,
     required: false
   },
   {
     id: "tomorrow",
     title: "Tomorrow",
-    icon: <DateIcon>{getTomorrowDay()}</DateIcon>,
+    icon: <CalendarDayIcon day={getTomorrowDay()} size="1.375rem" strokeWidth={1.75} />,
     required: false
   },
   {
     id: "overdue",
     title: "Overdue",
-    icon: ListItemIcon({ icon: Alarm }),
+    icon: ListItemIcon({ icon: AlarmClock }),
     required: false,
     disableTaskCreation: true
   },
   {
     id: "week",
     title: "This Week",
-    icon: ListItemIcon({ icon: Calendar }),
+    icon: ListItemIcon({ icon: CalendarDays }),
     required: false,
     disableTaskCreation: true
   }

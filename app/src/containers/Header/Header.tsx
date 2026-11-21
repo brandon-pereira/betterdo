@@ -1,6 +1,6 @@
 import { Container, Hamburger, Loader, Title, SettingsButton, Icon, SyncStatus } from "./Header.styles";
 
-import Settings from "@components/Icon/svgs/settings.svg";
+import { SlidersVertical as Settings } from "lucide-react";
 import Tooltip from "@components/Tooltip";
 import useEditListModal from "@hooks/useEditListModal";
 import useListDetails from "@hooks/useListDetails";

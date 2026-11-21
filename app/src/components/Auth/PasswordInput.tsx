@@ -1,8 +1,7 @@
 import { forwardRef, useState } from "react";
 import { PasswordField, PasswordToggle } from "./Auth.styles";
 import { Input } from "@components/Forms";
-import EyeIcon from "@components/Icon/svgs/eye.svg";
-import EyeOffIcon from "@components/Icon/svgs/eye-off.svg";
+import { Eye as EyeIcon, EyeOff as EyeOffIcon } from "lucide-react";
 
 type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
   invalid?: boolean;

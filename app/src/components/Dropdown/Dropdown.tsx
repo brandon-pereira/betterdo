@@ -1,6 +1,6 @@
 import { SelectContainer, Icon, Select } from "./Dropdown.styles";
 
-import Chrevron from "@components/Icon/svgs/chevron.svg";
+import { ChevronDown } from "lucide-react";
 
 interface Props {
   value?: string;
@@ -31,7 +31,7 @@ function Dropdown({ onSelect, values, value, id }: Props) {
           );
         })}
       </Select>
-      <Icon size="1.5rem" color="#444" icon={Chrevron} />
+      <Icon size="1.5rem" color="#444" icon={ChevronDown} />
     </SelectContainer>
   );
 }

@@ -11,7 +11,7 @@ import {
   RowTitle
 } from "./Settings.styles";
 
-import Chevron from "@components/Icon/svgs/chevron.svg";
+import { ChevronUp as Chevron } from "lucide-react";
 
 interface Props {
   title: string;

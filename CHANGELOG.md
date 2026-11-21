@@ -3,6 +3,7 @@
 ## v8.4.0 (2026-11-18)
 
 - Redesign nav to promote recap view
+- Move from custom icons to lucide icons
 
 ## v8.3.0 (2026-11-03)
 

@@ -9,7 +9,7 @@ export const Icon = styled(_Icon)`
   position: absolute;
   top: 50%;
   right: 0.8rem;
-  transform: translateY(-50%) rotate(180deg);
+  transform: translateY(-50%);
 `;
 
 export const SelectContainer = styled.label`
@@ -20,7 +20,7 @@ export const SelectContainer = styled.label`
     position: absolute;
     top: 50%;
     right: 0.8rem;
-    transform: translateY(-50%) rotate(180deg);
+    transform: translateY(-50%);
   }
 `;
 

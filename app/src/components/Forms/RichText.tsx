@@ -11,7 +11,7 @@ import Link from "./TipTap/Link";
 import ChecklistItem, { CHECKLIST_COMMIT } from "./TipTap/ChecklistItem";
 import ChecklistHint from "./TipTap/ChecklistHint";
 import MarkdownPaste from "./TipTap/MarkdownPaste";
-import Checklist from "@components/Icon/svgs/checklist.svg";
+import { SquareCheckBig as Checklist } from "lucide-react";
 import Tooltip from "@components/Tooltip";
 
 import { styled } from "@linaria/react";
@@ -68,9 +68,8 @@ const ToolbarButton = styled.button`
   }
 
   svg {
-    width: 12px;
-    height: 12px;
-    fill: currentColor;
+    width: 14px;
+    height: 14px;
   }
 `;
 

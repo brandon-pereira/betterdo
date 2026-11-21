@@ -116,7 +116,7 @@ self.onnotificationclick = event => {
         const openClient = clientList.find(client => {
           return Boolean(client.url);
         });
-        const url = notification.data.url || "https://betterdo.app/app";
+        const url = notification.data.url || self.registration.scope;
         if (openClient) {
           openClient.focus();
           openClient.navigate(url);
